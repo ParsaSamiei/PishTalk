@@ -28,11 +28,12 @@ interface HeroSectionProps {
 
 /**
  * Homepage Hero: communicates what Pishtalk is within the first few
- * seconds (docs/01_PRODUCT.md), now built around a floating robot mascot,
- * an ambient circuit backdrop and a staggered entrance. The section stays
- * on the permanently-dark navy background (docs/02_BRAND_IDENTITY.md:
- * "Deep Navy used for ... Hero") regardless of the site's light/dark theme,
- * which is also why the Navbar always renders its transparent variant here.
+ * seconds (docs/01_PRODUCT.md), built around a floating robot mascot, an
+ * ambient circuit backdrop and a staggered entrance. The Hero follows the
+ * site's own light/dark theme (light surface + dark text in light mode,
+ * navy + white text in dark mode) exactly like every other section, so the
+ * Navbar sitting on top of it can keep using its normal theme-token colors
+ * in both modes.
  */
 function HeroSection({ nextEvent }: HeroSectionProps) {
   const shouldReduceMotion = useReducedMotion();
@@ -73,36 +74,42 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
     <section
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative flex min-h-[92vh] items-center overflow-hidden bg-primary text-white"
+      className="relative flex min-h-[92vh] items-center overflow-hidden bg-surface text-text-primary dark:bg-primary dark:text-white"
     >
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_0%,rgba(244,185,66,0.18),transparent_70%)]"
       />
-      <CircuitBackground id="hero" className="text-white/[0.06]" />
-      <GlowOrb className="top-[-14%] start-[-10%] size-[26rem] bg-accent/25" style={{ animationDelay: "0s" }} />
-      <GlowOrb className="bottom-[-18%] end-[-12%] size-[30rem] bg-sky-400/10" style={{ animationDelay: "-3s" }} />
+      <CircuitBackground id="hero" className="text-primary/[0.05] dark:text-white/[0.06]" />
+      <GlowOrb
+        className="top-[-14%] start-[-10%] size-[26rem] bg-accent/20 dark:bg-accent/25"
+        style={{ animationDelay: "0s" }}
+      />
+      <GlowOrb
+        className="bottom-[-18%] end-[-12%] size-[30rem] bg-sky-400/15 dark:bg-sky-400/10"
+        style={{ animationDelay: "-3s" }}
+      />
 
       <FloatingIcon
         icon={Cpu}
-        className="hidden border-white/15 bg-white/5 text-accent sm:flex top-[16%] start-[6%]"
+        className="hidden border-primary/10 bg-surface-secondary text-accent-hover dark:border-white/15 dark:bg-white/5 dark:text-accent sm:flex top-[16%] start-[6%]"
         style={{ animationDelay: "0s" }}
       />
       <FloatingIcon
         icon={CircuitBoard}
         size="sm"
-        className="hidden border-white/10 bg-white/5 text-white/70 lg:flex top-[68%] start-[10%]"
+        className="hidden border-primary/10 bg-surface-secondary text-text-secondary dark:border-white/10 dark:bg-white/5 dark:text-white/70 lg:flex top-[68%] start-[10%]"
         style={{ animationDelay: "-2.4s" }}
       />
       <FloatingIcon
         icon={Orbit}
-        className="hidden border-white/15 bg-white/5 text-sky-300 sm:flex top-[14%] end-[8%]"
+        className="hidden border-primary/10 bg-surface-secondary text-sky-600 dark:border-white/15 dark:bg-white/5 dark:text-sky-300 sm:flex top-[14%] end-[8%]"
         style={{ animationDelay: "-4.8s" }}
       />
       <FloatingIcon
         icon={Radar}
         size="sm"
-        className="hidden border-white/10 bg-white/5 text-white/70 lg:flex bottom-[18%] end-[14%]"
+        className="hidden border-primary/10 bg-surface-secondary text-text-secondary dark:border-white/10 dark:bg-white/5 dark:text-white/70 lg:flex bottom-[18%] end-[14%]"
         style={{ animationDelay: "-1.2s" }}
       />
 
@@ -115,7 +122,7 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
         >
           <motion.span
             variants={itemVariants}
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm text-white/80"
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-secondary px-4 py-1.5 text-sm text-text-secondary dark:border-white/15 dark:bg-white/5 dark:text-white/80"
           >
             <Bot className="size-4 text-accent" aria-hidden="true" />
             پژوهشکده رباتیک پیشنام
@@ -129,7 +136,7 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
             مصنوعی و فناوری
           </motion.h1>
 
-          <motion.p variants={itemVariants} className="max-w-xl text-lg text-white/70">
+          <motion.p variants={itemVariants} className="max-w-xl text-lg text-text-secondary">
             هر ماه گرد هم می‌آییم تا یاد بگیریم، گفتگو کنیم و شبکه‌سازی کنیم؛ در کنار
             مهندسان و علاقه‌مندانی که مسیر مشابهی را دنبال می‌کنند.
           </motion.p>
@@ -139,10 +146,10 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
               variants={itemVariants}
               className="flex flex-col items-center gap-4 lg:items-start"
             >
-              <p className="text-sm text-white/60">
+              <p className="text-sm text-text-secondary">
                 رویداد بعدی · {formatEventDate(nextEvent.date)}
               </p>
-              <Countdown target={nextEvent.date} />
+              <Countdown target={nextEvent.date} variant="auto" />
             </motion.div>
           ) : null}
 
@@ -157,12 +164,7 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
                 ثبت نام رویداد
               </Link>
             </Button>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="border-white/25 text-white hover:bg-white/10"
-            >
+            <Button asChild variant="outline" size="lg">
               <Link href="/about">
                 درباره پیشتاک
                 <ArrowLeft className="size-4" aria-hidden="true" />
@@ -185,7 +187,7 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
       <motion.a
         href="#next-event"
         aria-label="پیمایش به بخش بعدی"
-        className="absolute inset-x-0 bottom-6 mx-auto flex size-10 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:text-white"
+        className="absolute inset-x-0 bottom-6 mx-auto flex size-10 items-center justify-center rounded-full border border-border text-text-secondary transition-colors hover:text-text-primary dark:border-white/15 dark:text-white/60 dark:hover:text-white"
         animate={shouldReduceMotion ? undefined : { y: [0, 6, 0] }}
         transition={shouldReduceMotion ? undefined : { duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
       >

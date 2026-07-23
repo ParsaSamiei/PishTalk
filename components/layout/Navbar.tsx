@@ -15,9 +15,14 @@ import { cn } from "@/lib/utils";
 /**
  * Sticky primary navigation. Per docs/04_DESIGN_SYSTEM.md ("Sticky",
  * "Transparent on Hero", "Solid after scrolling"): on the homepage the bar
- * starts transparent over the dark Hero and becomes solid once the user
- * scrolls past it. Every other page has no dark Hero, so it's solid
- * immediately.
+ * starts transparent over the Hero and becomes solid once the user scrolls
+ * past it. Every other page has no Hero, so it's solid immediately.
+ *
+ * The Hero itself follows the site's light/dark theme (light background in
+ * light mode, navy in dark mode), so the Logo/links/toggle can keep using
+ * their normal theme-token colors in both the transparent and solid states
+ * — no forced white text, which is what used to make the header vanish in
+ * light mode (white-on-white).
  */
 function Navbar() {
   const pathname = usePathname();
@@ -36,7 +41,7 @@ function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isHomepage]);
 
-  // On any page other than the homepage there's no dark Hero to sit over,
+  // On any page other than the homepage there's no Hero to sit over,
   // so the bar is solid regardless of `scrolled` (which only tracks scroll
   // position on the homepage).
   const isTransparent = isHomepage && !scrolled;
@@ -51,14 +56,10 @@ function Navbar() {
       )}
     >
       <Container className="flex h-[72px] items-center justify-between">
-        <Logo variant={isTransparent ? "light" : "dark"} />
-        <NavLinks
-          className={cn("hidden lg:flex", isTransparent && "[&_a]:text-white/80 [&_a]:hover:text-white")}
-        />
+        <Logo />
+        <NavLinks className="hidden lg:flex" />
         <div className="flex items-center gap-2">
-          <span className={cn(isTransparent && "[&_button]:text-white [&_button:hover]:bg-white/10")}>
-            <ThemeToggle />
-          </span>
+          <ThemeToggle />
           <Button
             asChild
             size="md"

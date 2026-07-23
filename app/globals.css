@@ -2,6 +2,18 @@
 @plugin "@tailwindcss/typography";
 
 /*
+ * Tailwind v4 defaults the `dark:` variant to `@media (prefers-color-scheme:
+ * dark)`, which ignores manual theme switching entirely. This app toggles
+ * dark mode by adding a `.dark` class to <html> (next-themes, `attribute=
+ * "class"` in ThemeProvider — see app/layout.tsx), so `dark:` must be
+ * re-pointed at that class instead. Without this line, every `dark:`
+ * utility in the app (Hero, RobotMascot, Countdown's "auto" variant, etc.)
+ * only follows the OS-level color scheme and never responds to the
+ * in-site theme toggle.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
  * Design tokens sourced from docs/02_BRAND_IDENTITY.md and docs/04_DESIGN_SYSTEM.md.
  * Do not introduce arbitrary colors or spacing outside this system.
  */

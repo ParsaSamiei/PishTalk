@@ -6,7 +6,15 @@ import { cn } from "@/lib/utils";
 interface CountdownProps {
   readonly target: Date;
   readonly className?: string;
-  readonly variant?: "light" | "dark";
+  /**
+   * "light": white numerals for a permanently-dark backdrop (e.g. the
+   * always-navy panel inside NextEventSection).
+   * "dark": text-primary numerals for a normal light surface.
+   * "auto": follows the site's own light/dark theme — use this on anything
+   * that sits on a background which itself switches with the theme (e.g.
+   * the Hero, which is light in light mode and navy in dark mode).
+   */
+  readonly variant?: "light" | "dark" | "auto";
 }
 
 const UNITS: ReadonlyArray<{
@@ -40,9 +48,9 @@ function Countdown({ target, className, variant = "light" }: CountdownProps) {
           key={unit.key}
           className={cn(
             "flex w-16 flex-col items-center gap-1 rounded-2xl px-2 py-3 sm:w-20",
-            variant === "light"
-              ? "bg-white/10 text-white"
-              : "bg-surface-secondary text-text-primary",
+            variant === "light" && "bg-white/10 text-white",
+            variant === "dark" && "bg-surface-secondary text-text-primary",
+            variant === "auto" && "bg-surface-secondary text-text-primary dark:bg-white/10 dark:text-white"
           )}
         >
           <span
