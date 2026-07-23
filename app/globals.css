@@ -76,6 +76,17 @@
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 
+  /* Ambient, CSS-only motion for decorative illustrations (hero glows,
+   * floating icons, circuit nodes). Kept separate from Framer Motion,
+   * which is reserved for scroll reveals and the hero mascot's rig, so
+   * ambient background loops cost no JavaScript. */
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-slow: float 10s ease-in-out infinite;
+  --animate-drift: drift 9s ease-in-out infinite;
+  --animate-glow-pulse: glow-pulse 3.2s ease-in-out infinite;
+  --animate-spin-slow: spin-slow 22s linear infinite;
+  --animate-gradient-x: gradient-x 6s ease infinite;
+
   @keyframes accordion-down {
     from {
       height: 0;
@@ -91,6 +102,70 @@
     to {
       height: 0;
     }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-16px);
+    }
+  }
+  @keyframes drift {
+    0%,
+    100% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    33% {
+      transform: translate(5px, -14px) rotate(3deg);
+    }
+    66% {
+      transform: translate(-6px, -6px) rotate(-3deg);
+    }
+  }
+  @keyframes glow-pulse {
+    0%,
+    100% {
+      opacity: 0.55;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+  }
+  @keyframes spin-slow {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes gradient-x {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+}
+
+@layer utilities {
+  /* Animated gold gradient headline text, used for the hero's key phrase.
+   * Isolated as a utility so any future heading can opt in the same way. */
+  .text-gradient-accent {
+    background-image: linear-gradient(
+      90deg,
+      var(--color-accent),
+      #fde68a,
+      var(--color-accent)
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: var(--animate-gradient-x);
   }
 }
 

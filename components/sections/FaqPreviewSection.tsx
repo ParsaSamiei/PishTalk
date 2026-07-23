@@ -12,6 +12,7 @@ import {
   AccordionContent,
 } from "@/components/ui/Accordion";
 import { Button } from "@/components/ui/Button";
+import { Reveal } from "@/components/animations/Reveal";
 import type { FaqItem } from "@/features/faq/types/faq";
 
 interface FaqPreviewSectionProps {
@@ -26,28 +27,33 @@ function FaqPreviewSection({ faqs }: FaqPreviewSectionProps) {
   return (
     <Section id="faq" className="bg-surface-secondary">
       <Container className="mx-auto flex max-w-3xl flex-col gap-10">
-        <SectionTitle
-          eyebrow="سوالات متداول"
-          title="سوالات پرتکرار"
-          align="center"
-          className="mx-auto"
-        />
+        <Reveal className="mx-auto">
+          <SectionTitle eyebrow="سوالات متداول" title="سوالات پرتکرار" align="center" />
+        </Reveal>
 
         {faqs.length > 0 ? (
-          <Accordion type="single" collapsible className="rounded-[var(--radius-card)] border border-border bg-surface px-6">
-            {faqs.map((faq) => (
-              <AccordionItem key={faq.id} value={faq.id}>
-                <AccordionTrigger>{faq.question}</AccordionTrigger>
-                <AccordionContent>{faq.answer}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+          <Reveal delay={0.1}>
+            <Accordion
+              type="single"
+              collapsible
+              className="rounded-[var(--radius-card)] border border-border bg-surface px-6"
+            >
+              {faqs.map((faq) => (
+                <AccordionItem key={faq.id} value={faq.id}>
+                  <AccordionTrigger>{faq.question}</AccordionTrigger>
+                  <AccordionContent>{faq.answer}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </Reveal>
         ) : (
-          <EmptyState
-            icon={HelpCircle}
-            title="سوالی ثبت نشده است"
-            description="پرتکرارترین سوالات شرکت‌کنندگان به‌زودی اینجا پاسخ داده می‌شود."
-          />
+          <Reveal delay={0.1}>
+            <EmptyState
+              icon={HelpCircle}
+              title="سوالی ثبت نشده است"
+              description="پرتکرارترین سوالات شرکت‌کنندگان به‌زودی اینجا پاسخ داده می‌شود."
+            />
+          </Reveal>
         )}
 
         {faqs.length > 0 ? (

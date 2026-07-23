@@ -5,6 +5,7 @@ import { Section } from "@/components/layout/Section";
 import { SectionTitle } from "@/components/shared/SectionTitle";
 import { Timeline } from "@/components/shared/Timeline";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { Reveal } from "@/components/animations/Reveal";
 import type { EventDetail } from "@/features/events/types/event";
 
 interface EventTimelineSectionProps {
@@ -21,19 +22,25 @@ function EventTimelineSection({ event }: EventTimelineSectionProps) {
   return (
     <Section id="event-timeline" className="bg-surface-secondary">
       <Container className="flex flex-col gap-10">
-        <SectionTitle
-          eyebrow="برنامه رویداد"
-          title="یک عصر پیشتاک چطور می‌گذرد"
-          description="از ورود تا شبکه‌سازی، این‌طور یک رویداد پیشتاک را تجربه خواهید کرد."
-        />
-        {hasTimeline && event ? (
-          <Timeline items={event.timeline} className="max-w-2xl" />
-        ) : (
-          <EmptyState
-            icon={CalendarClock}
-            title="برنامه رویداد بعدی هنوز اعلام نشده است"
-            description="زمان‌بندی کامل رویداد به‌محض قطعی شدن، همین‌جا نمایش داده می‌شود."
+        <Reveal>
+          <SectionTitle
+            eyebrow="برنامه رویداد"
+            title="یک عصر پیشتاک چطور می‌گذرد"
+            description="از ورود تا شبکه‌سازی، این‌طور یک رویداد پیشتاک را تجربه خواهید کرد."
           />
+        </Reveal>
+        {hasTimeline && event ? (
+          <Reveal delay={0.1}>
+            <Timeline items={event.timeline} className="max-w-2xl" />
+          </Reveal>
+        ) : (
+          <Reveal delay={0.1}>
+            <EmptyState
+              icon={CalendarClock}
+              title="برنامه رویداد بعدی هنوز اعلام نشده است"
+              description="زمان‌بندی کامل رویداد به‌محض قطعی شدن، همین‌جا نمایش داده می‌شود."
+            />
+          </Reveal>
         )}
       </Container>
     </Section>

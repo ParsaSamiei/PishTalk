@@ -7,6 +7,7 @@ import { SectionTitle } from "@/components/shared/SectionTitle";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { EventCard } from "@/components/cards/EventCard";
 import { Button } from "@/components/ui/Button";
+import { Reveal } from "@/components/animations/Reveal";
 import type { EventSummary } from "@/features/events/types/event";
 
 interface PreviousEventsSectionProps {
@@ -20,7 +21,7 @@ function PreviousEventsSection({ events }: PreviousEventsSectionProps) {
   return (
     <Section id="previous-events">
       <Container className="flex flex-col gap-10">
-        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+        <Reveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <SectionTitle eyebrow="آرشیو" title="رویدادهای گذشته پیشتاک" />
           {events.length > 0 ? (
             <Button asChild variant="ghost">
@@ -30,20 +31,24 @@ function PreviousEventsSection({ events }: PreviousEventsSectionProps) {
               </Link>
             </Button>
           ) : null}
-        </div>
+        </Reveal>
 
         {events.length > 0 ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {events.map((event) => (
-              <EventCard key={event.id} event={event} />
+            {events.map((event, index) => (
+              <Reveal key={event.id} delay={index * 0.08} className="h-full">
+                <EventCard event={event} />
+              </Reveal>
             ))}
           </div>
         ) : (
-          <EmptyState
-            icon={Archive}
-            title="هنوز رویدادی برگزار نشده است"
-            description="اولین رویداد پیشتاک به‌زودی برگزار می‌شود و اینجا آرشیو خواهد شد."
-          />
+          <Reveal delay={0.1}>
+            <EmptyState
+              icon={Archive}
+              title="هنوز رویدادی برگزار نشده است"
+              description="اولین رویداد پیشتاک به‌زودی برگزار می‌شود و اینجا آرشیو خواهد شد."
+            />
+          </Reveal>
         )}
       </Container>
     </Section>

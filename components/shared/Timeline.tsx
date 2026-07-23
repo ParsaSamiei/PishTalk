@@ -19,10 +19,10 @@ function Timeline({ items, className }: TimelineProps) {
       />
       {items.map((item) => (
         <li key={item.id} className="relative">
-          <span
-            aria-hidden="true"
-            className="absolute -start-8 top-1 size-4 rounded-full border-2 border-accent bg-surface"
-          />
+          <span aria-hidden="true" className="absolute -start-8 top-1 size-4">
+            <span className="absolute -inset-1 rounded-full bg-accent/40 animate-ping" />
+            <span className="relative block size-4 rounded-full border-2 border-accent bg-surface" />
+          </span>
           <div className="flex flex-col gap-1">
             <span className="text-sm font-semibold text-accent-hover">{item.time}</span>
             <h4 className="text-base font-semibold text-text-primary">{item.title}</h4>
