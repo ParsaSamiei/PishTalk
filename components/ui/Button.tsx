@@ -5,18 +5,21 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-button)] text-base font-semibold transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-button)] text-base font-semibold transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        primary: "bg-primary text-white hover:bg-primary-hover",
-        accent: "bg-accent text-primary hover:bg-accent-hover",
+        primary:
+          "bg-primary text-white hover:bg-primary-hover hover:animate-button-glow hover:shadow-lg",
+        accent:
+          "bg-accent text-primary hover:bg-accent-hover hover:animate-button-glow hover:shadow-lg",
         secondary:
-          "bg-surface-secondary text-text-primary hover:bg-border/60 border border-border",
+          "bg-surface-secondary text-text-primary hover:bg-border/60 border border-border hover:shadow-md",
         outline:
-          "border border-border bg-transparent text-text-primary hover:bg-surface-secondary",
+          "border border-border bg-transparent text-text-primary hover:bg-surface-secondary hover:border-accent hover:shadow-md",
         ghost: "bg-transparent text-text-primary hover:bg-surface-secondary",
-        danger: "bg-danger text-white hover:bg-danger/90",
+        danger:
+          "bg-danger text-white hover:bg-danger/90 hover:animate-button-glow hover:shadow-lg",
       },
       size: {
         sm: "h-11 px-4 text-sm",
