@@ -1,0 +1,302 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/*
+ * Tailwind v4 defaults the `dark:` variant to `@media (prefers-color-scheme:
+ * dark)`, which ignores manual theme switching entirely. This app toggles
+ * dark mode by adding a `.dark` class to <html> (next-themes, `attribute=
+ * "class"` in ThemeProvider — see app/layout.tsx), so `dark:` must be
+ * re-pointed at that class instead. Without this line, every `dark:`
+ * utility in the app (Hero, RobotMascot, Countdown's "auto" variant, etc.)
+ * only follows the OS-level color scheme and never responds to the
+ * in-site theme toggle.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Design tokens sourced from docs/02_BRAND_IDENTITY.md and docs/04_DESIGN_SYSTEM.md.
+ * Do not introduce arbitrary colors or spacing outside this system.
+ */
+:root {
+  --color-primary: #0f172a;
+  --color-primary-hover: #1e293b;
+  --color-accent: #f4b942;
+  --color-accent-hover: #d89e2e;
+  --color-surface: #ffffff;
+  --color-surface-secondary: #f8fafc;
+  --color-background: #ffffff;
+  --color-background-dark: #020817;
+  --color-border: #e2e8f0;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-light: #94a3b8;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-info: #3b82f6;
+
+  --radius-button: 12px;
+  --radius-input: 12px;
+  --radius-card: 20px;
+  --radius-dialog: 24px;
+  --radius-hero: 32px;
+
+  --foreground: var(--color-text-primary);
+  --background: var(--color-background);
+}
+
+.dark {
+  --color-surface: #0f172a;
+  --color-surface-secondary: #0b1220;
+  --color-background: var(--color-background-dark);
+  --color-border: #1e293b;
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-text-light: #64748b;
+
+  --foreground: var(--color-text-primary);
+  --background: var(--color-background);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-surface: var(--color-surface);
+  --color-surface-secondary: var(--color-surface-secondary);
+  --color-border: var(--color-border);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-light: var(--color-text-light);
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-danger: var(--color-danger);
+  --color-info: var(--color-info);
+
+  --radius-button: var(--radius-button);
+  --radius-input: var(--radius-input);
+  --radius-card: var(--radius-card);
+  --radius-dialog: var(--radius-dialog);
+  --radius-hero: var(--radius-hero);
+
+  --font-sans: var(--font-vazirmatn);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  /* Ambient, CSS-only motion for decorative illustrations (hero glows,
+   * floating icons, circuit nodes). Kept separate from Framer Motion,
+   * which is reserved for scroll reveals and the hero mascot's rig, so
+   * ambient background loops cost no JavaScript. */
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-slow: float 10s ease-in-out infinite;
+  --animate-drift: drift 9s ease-in-out infinite;
+  --animate-glow-pulse: glow-pulse 3.2s ease-in-out infinite;
+  --animate-spin-slow: spin-slow 22s linear infinite;
+  --animate-gradient-x: gradient-x 6s ease infinite;
+  --animate-button-glow: button-glow 2s ease-in-out infinite;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-16px);
+    }
+  }
+  @keyframes drift {
+    0%,
+    100% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    33% {
+      transform: translate(5px, -14px) rotate(3deg);
+    }
+    66% {
+      transform: translate(-6px, -6px) rotate(-3deg);
+    }
+  }
+  @keyframes glow-pulse {
+    0%,
+    100% {
+      opacity: 0.55;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+  }
+  @keyframes spin-slow {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes gradient-x {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+  @keyframes button-glow {
+    0%,
+    100% {
+      box-shadow:
+        0 0 8px rgba(244, 185, 66, 0.3),
+        0 0 16px rgba(244, 185, 66, 0.15),
+        inset 0 0 8px rgba(244, 185, 66, 0.1);
+    }
+    50% {
+      box-shadow:
+        0 0 12px rgba(244, 185, 66, 0.5),
+        0 0 24px rgba(244, 185, 66, 0.25),
+        inset 0 0 12px rgba(244, 185, 66, 0.15);
+    }
+  }
+}
+
+@layer utilities {
+  /* Animated gold gradient headline text, used for the hero's key phrase.
+   * Isolated as a utility so any future heading can opt in the same way. */
+  .text-gradient-accent {
+    background-image: linear-gradient(
+      90deg,
+      var(--color-accent),
+      #fde68a,
+      var(--color-accent)
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: var(--animate-gradient-x);
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-background);
+    color: var(--color-text-primary);
+    font-family: var(--font-vazirmatn), sans-serif;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+/* hide native cursor site-wide */
+@media (hover: hover) and (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
+
+  .cursor-gear {
+    position: fixed;
+    left: 0;
+    top: 0;
+
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    pointer-events: none;
+
+    z-index: 2147483647;
+
+    transform-origin: center center;
+
+    will-change: transform;
+
+    color: var(--primary);
+  }
+
+  .cursor-hover {
+    filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.35))
+      drop-shadow(0 0 18px rgba(59, 130, 246, 0.15));
+  }
+
+  .cursor-clicking {
+    filter: brightness(1.15) drop-shadow(0 0 10px rgba(59, 130, 246, 0.45));
+  }
+
+  .gear-body {
+    fill: currentColor;
+  }
+
+  .gear-hole {
+    opacity: 0.9;
+  }
+
+  .cursor-trail-node {
+    position: fixed;
+    left: 0;
+    top: 0;
+
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: currentColor;
+
+    pointer-events: none;
+
+    z-index: 2147483646;
+
+    will-change: transform, opacity;
+  }
+}
+
+/* Touch devices */
+@media (hover: none), (pointer: coarse) {
+  .cursor-gear,
+  .cursor-trail-node {
+    display: none;
+  }
+
+  * {
+    cursor: auto !important;
+  }
+}
