@@ -23,7 +23,7 @@ interface RulesPreviewSectionProps {
 
 function RulesPreviewSection({ rules }: RulesPreviewSectionProps) {
   return (
-    <Section id="rules">
+    <Section id="rules" circuit>
       <Container className="flex flex-col gap-10">
         <Reveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <SectionTitle eyebrow="قوانین" title="قوانین حضور در پیشتاک" />

@@ -6,7 +6,6 @@ import { SectionTitle } from "@/components/shared/SectionTitle";
 import { SocialLinks } from "@/components/shared/SocialLinks";
 import { ContactForm } from "@/features/contact/components/ContactForm";
 import { Reveal } from "@/components/animations/Reveal";
-import { CircuitBackground } from "@/components/illustrations/CircuitBackground";
 import { FloatingIcon } from "@/components/illustrations/FloatingIcon";
 
 interface ContactSectionProps {
@@ -29,11 +28,7 @@ function ContactSection({
   telegram,
 }: ContactSectionProps) {
   return (
-    <Section id="contact" className="relative overflow-hidden bg-surface-secondary">
-      <CircuitBackground
-        id="contact"
-        className="text-primary/[0.04] dark:text-white/[0.04]"
-      />
+    <Section id="contact" className="bg-surface-secondary" circuit>
       <FloatingIcon
         icon={Bot}
         size="sm"

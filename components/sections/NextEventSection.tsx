@@ -24,7 +24,7 @@ interface NextEventSectionProps {
  */
 function NextEventSection({ event }: NextEventSectionProps) {
   return (
-    <Section id="next-event" className="scroll-mt-24">
+    <Section id="next-event" className="scroll-mt-24" circuit>
       <Container className="flex flex-col gap-10">
         <Reveal>
           <SectionTitle eyebrow="رویداد بعدی" title="در رویداد پیش رو ما را همراهی کنید" />
@@ -62,9 +62,12 @@ function NextEventSection({ event }: NextEventSectionProps) {
                 </div>
               </div>
 
-              <div className="relative flex items-center justify-center overflow-hidden rounded-[var(--radius-card)] bg-primary p-6">
-                <CircuitBackground id="next-event" className="text-white/[0.08]" />
-                <Countdown target={event.date} className="relative" />
+              <div className="relative flex items-center justify-center overflow-hidden rounded-[var(--radius-card)] bg-surface-secondary p-6 dark:bg-primary">
+                <CircuitBackground
+                  id="next-event-panel"
+                  className="text-primary/[0.05] dark:text-white/[0.08]"
+                />
+                <Countdown target={event.date} variant="auto" className="relative" />
               </div>
             </Card>
           </Reveal>

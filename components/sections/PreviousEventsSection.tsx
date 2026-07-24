@@ -19,7 +19,7 @@ interface PreviousEventsSectionProps {
  */
 function PreviousEventsSection({ events }: PreviousEventsSectionProps) {
   return (
-    <Section id="previous-events">
+    <Section id="previous-events" circuit>
       <Container className="flex flex-col gap-10">
         <Reveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <SectionTitle eyebrow="آرشیو" title="رویدادهای گذشته پیشتاک" />

@@ -16,7 +16,7 @@ interface ResourcesSectionProps {
 
 function ResourcesSection({ resources }: ResourcesSectionProps) {
   return (
-    <Section id="resources">
+    <Section id="resources" circuit>
       <Container className="flex flex-col gap-10">
         <Reveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <SectionTitle eyebrow="منابع آموزشی" title="یادگیری را ادامه دهید" />

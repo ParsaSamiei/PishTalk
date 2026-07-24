@@ -44,7 +44,7 @@ const REASONS = [
  */
 function WhyAttendSection() {
   return (
-    <Section id="why-attend">
+    <Section id="why-attend" circuit>
       <Container className="flex flex-col gap-10">
         <Reveal className="mx-auto">
           <SectionTitle

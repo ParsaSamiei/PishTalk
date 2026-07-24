@@ -20,7 +20,7 @@ interface GalleryPreviewSectionProps {
  */
 function GalleryPreviewSection({ images }: GalleryPreviewSectionProps) {
   return (
-    <Section id="gallery-preview" className="bg-surface-secondary">
+    <Section id="gallery-preview" className="bg-surface-secondary" circuit>
       <Container className="flex flex-col gap-10">
         <Reveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <SectionTitle eyebrow="گالری" title="لحظاتی از رویدادهای پیشتاک" />

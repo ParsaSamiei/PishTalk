@@ -25,7 +25,7 @@ interface FaqPreviewSectionProps {
  */
 function FaqPreviewSection({ faqs }: FaqPreviewSectionProps) {
   return (
-    <Section id="faq" className="bg-surface-secondary">
+    <Section id="faq" className="bg-surface-secondary" circuit>
       <Container className="mx-auto flex max-w-3xl flex-col gap-10">
         <Reveal className="mx-auto">
           <SectionTitle eyebrow="سوالات متداول" title="سوالات پرتکرار" align="center" />
