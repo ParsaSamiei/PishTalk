@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import { ToastProvider } from "@/providers/ToastProvider";
 import { SITE_URL, SITE_NAME } from "@/lib/constants";
 import { getSiteSettings } from "@/lib/site-settings";
+import CustomCursor from "@/components/ui/CustomCursor";
 
 import "./globals.css";
 
@@ -22,8 +23,11 @@ const DEFAULT_DESCRIPTION =
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
   const title = settings.seoTitle || DEFAULT_TITLE;
-  const description = settings.seoDescription || settings.description || DEFAULT_DESCRIPTION;
-  const ogImages = settings.defaultOgImage ? [{ url: settings.defaultOgImage }] : undefined;
+  const description =
+    settings.seoDescription || settings.description || DEFAULT_DESCRIPTION;
+  const ogImages = settings.defaultOgImage
+    ? [{ url: settings.defaultOgImage }]
+    : undefined;
 
   return {
     metadataBase: new URL(SITE_URL),
@@ -56,6 +60,7 @@ export default async function RootLayout({
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
       <body className={`${vazirmatn.variable} antialiased`}>
+        <CustomCursor />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ToastProvider>{children}</ToastProvider>
         </ThemeProvider>
@@ -69,7 +74,11 @@ export default async function RootLayout({
               name: SITE_NAME,
               url: SITE_URL,
               description: settings.description ?? DEFAULT_DESCRIPTION,
-              sameAs: [settings.instagram, settings.telegram, settings.pishnamUrl].filter(Boolean),
+              sameAs: [
+                settings.instagram,
+                settings.telegram,
+                settings.pishnamUrl,
+              ].filter(Boolean),
             }),
           }}
         />
