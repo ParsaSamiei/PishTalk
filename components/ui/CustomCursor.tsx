@@ -38,7 +38,13 @@ export default function CustomCursor() {
   const raf = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!window.matchMedia("(pointer:fine)").matches) return;
+    const isTouchDevice =
+      window.matchMedia("(hover: none)").matches ||
+      navigator.maxTouchPoints > 0;
+
+    if (isTouchDevice && window.innerWidth < 768) {
+      return;
+    }
 
     const move = (e: MouseEvent) => {
       target.current.x = e.clientX;

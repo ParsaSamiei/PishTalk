@@ -208,63 +208,79 @@
   }
 }
 /* hide native cursor site-wide */
-* {
-  cursor: none !important;
+@media (hover: hover) and (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
+
+  .cursor-gear {
+    position: fixed;
+    left: 0;
+    top: 0;
+
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    pointer-events: none;
+
+    z-index: 2147483647;
+
+    transform-origin: center center;
+
+    will-change: transform;
+
+    color: var(--primary);
+  }
+
+  .cursor-hover {
+    filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.35))
+      drop-shadow(0 0 18px rgba(59, 130, 246, 0.15));
+  }
+
+  .cursor-clicking {
+    filter: brightness(1.15) drop-shadow(0 0 10px rgba(59, 130, 246, 0.45));
+  }
+
+  .gear-body {
+    fill: currentColor;
+  }
+
+  .gear-hole {
+    opacity: 0.9;
+  }
+
+  .cursor-trail-node {
+    position: fixed;
+    left: 0;
+    top: 0;
+
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: currentColor;
+
+    pointer-events: none;
+
+    z-index: 2147483646;
+
+    will-change: transform, opacity;
+  }
 }
 
-.cursor-gear {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 34px;
-  height: 34px;
-  pointer-events: none;
-  z-index: 99999;
+/* Touch devices */
+@media (hover: none), (pointer: coarse) {
+  .cursor-gear,
+  .cursor-trail-node {
+    display: none;
+  }
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  color: var(--primary);
-
-  transition:
-    filter 0.25s ease,
-    color 0.25s ease;
-
-  will-change: transform;
-}
-
-.cursor-hover {
-  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.35))
-    drop-shadow(0 0 18px rgba(59, 130, 246, 0.15));
-}
-
-.cursor-clicking {
-  filter: brightness(1.15) drop-shadow(0 0 10px rgba(59, 130, 246, 0.45));
-}
-
-.gear-body {
-  fill: currentColor;
-}
-
-.gear-hole {
-  opacity: 0.9;
-}
-
-.cursor-trail-node {
-  position: fixed;
-  left: 0;
-  top: 0;
-
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-
-  background: currentColor;
-
-  pointer-events: none;
-
-  z-index: 99998;
-
-  will-change: transform, opacity;
+  * {
+    cursor: auto !important;
+  }
 }
