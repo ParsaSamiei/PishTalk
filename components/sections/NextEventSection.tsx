@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { Countdown } from "@/components/shared/Countdown";
 import { Reveal } from "@/components/animations/Reveal";
 import { CircuitBackground } from "@/components/illustrations/CircuitBackground";
+import { GlowOrb } from "@/components/illustrations/GlowOrb";
 import type { EventDetail } from "@/features/events/types/event";
 import { formatEventDate, formatWeekday } from "@/utils/formatDate";
 
@@ -21,10 +22,17 @@ interface NextEventSectionProps {
  * "What is happening next?" — per docs/09_DEVELOPMENT_GUIDELINES.md,
  * every section answers exactly one question. `scroll-mt-24` keeps this
  * section clear of the sticky Navbar when the Hero's scroll cue jumps here.
+ *
+ * The countdown panel deliberately mirrors the Hero's own recipe (radial
+ * gold glow + circuit backdrop + a floating orb) so it reads as a direct
+ * continuation of it. This section skips the shared `circuit` texture at
+ * the outer `<Section>` level — layering that fainter, differently-phased
+ * grid directly behind a panel that already carries its own denser one
+ * was what looked misaligned; one circuit treatment per area reads clean.
  */
 function NextEventSection({ event }: NextEventSectionProps) {
   return (
-    <Section id="next-event" className="scroll-mt-24" circuit>
+    <Section id="next-event" className="scroll-mt-24">
       <Container className="flex flex-col gap-10">
         <Reveal>
           <SectionTitle eyebrow="رویداد بعدی" title="در رویداد پیش رو ما را همراهی کنید" />
@@ -62,10 +70,19 @@ function NextEventSection({ event }: NextEventSectionProps) {
                 </div>
               </div>
 
-              <div className="relative flex items-center justify-center overflow-hidden rounded-[var(--radius-card)] bg-surface-secondary p-6 dark:bg-primary">
+              <div className="relative flex min-h-56 items-center justify-center overflow-hidden rounded-[var(--radius-card)] bg-surface-secondary p-6 dark:bg-primary">
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_20%,rgba(244,185,66,0.18),transparent_70%)]"
+                />
                 <CircuitBackground
                   id="next-event-panel"
+                  size={48}
                   className="text-primary/[0.05] dark:text-white/[0.08]"
+                />
+                <GlowOrb
+                  className="top-[-25%] end-[-15%] size-48 bg-accent/20 dark:bg-accent/25"
+                  style={{ animationDelay: "-1.5s" }}
                 />
                 <Countdown target={event.date} variant="auto" className="relative" />
               </div>
