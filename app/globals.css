@@ -46,6 +46,11 @@
 }
 
 .dark {
+  --color-primary: #1e293b;
+  --color-primary-hover: #334155;
+  --color-accent: #f4b942;
+  --color-accent-hover: #d89e2e;
+
   --color-surface: #0f172a;
   --color-surface-secondary: #0b1220;
   --color-background: var(--color-background-dark);

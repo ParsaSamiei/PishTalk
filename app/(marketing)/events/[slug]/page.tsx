@@ -103,42 +103,51 @@ export default async function EventPage({ params }: EventPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="relative bg-primary text-white">
+      <section className="relative overflow-hidden bg-surface-primary">
         {event.coverImage ? (
           <div className="absolute inset-0">
             <Image
               src={event.coverImage}
               alt=""
               fill
-              className="object-cover opacity-25"
               priority
+              className="object-cover"
             />
+            <div className="absolute inset-0 bg-surface-primary/75 dark:bg-surface-primary/60 backdrop-blur-[2px]" />
           </div>
         ) : null}
+
         <Container className="relative flex flex-col gap-6 py-20">
           <Breadcrumbs
-            variant="light"
+            variant="default"
             items={[
               { label: "رویدادها", href: "/events" },
               { label: event.title },
             ]}
           />
-          <h1 className="max-w-3xl text-3xl font-bold sm:text-5xl">
+
+          <h1 className="max-w-3xl text-3xl font-bold text-text-primary sm:text-5xl">
             {event.title}
           </h1>
+
           {event.subtitle ? (
-            <p className="max-w-2xl text-lg text-white/80">{event.subtitle}</p>
+            <p className="max-w-2xl text-lg text-text-secondary">
+              {event.subtitle}
+            </p>
           ) : null}
-          <div className="flex flex-col gap-3 text-sm text-white/80 sm:flex-row sm:gap-8">
+
+          <div className="flex flex-col gap-3 text-sm text-text-secondary sm:flex-row sm:gap-8">
             <span className="flex items-center gap-2">
               <Calendar className="size-4 text-accent" aria-hidden="true" />
               {formatWeekday(event.date)}، {formatEventDate(event.date)}
             </span>
+
             <span className="flex items-center gap-2">
               <Clock className="size-4 text-accent" aria-hidden="true" />
               {event.startTime}
               {event.endTime ? ` تا ${event.endTime}` : ""}
             </span>
+
             <span className="flex items-center gap-2">
               <MapPin className="size-4 text-accent" aria-hidden="true" />
               {event.location}

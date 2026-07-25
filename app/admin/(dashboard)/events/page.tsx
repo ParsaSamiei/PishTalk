@@ -32,10 +32,18 @@ const FILTER_OPTIONS = [
 const PAGE_SIZE = 25;
 
 interface AdminEventsPageProps {
-  readonly searchParams: Promise<{ q?: string; status?: string; page?: string }>;
+  readonly searchParams: Promise<{
+    q?: string;
+    status?: string;
+    page?: string;
+  }>;
 }
 
-async function getAdminEvents(q: string | undefined, status: string | undefined, page: number) {
+async function getAdminEvents(
+  q: string | undefined,
+  status: string | undefined,
+  page: number,
+) {
   const where: Prisma.EventWhereInput = { deletedAt: null };
 
   if (q) {
@@ -48,7 +56,8 @@ async function getAdminEvents(q: string | undefined, status: string | undefined,
   const today = new Date(new Date().toDateString());
   if (status === "upcoming") where.date = { gte: today };
   else if (status === "past") where.date = { lt: today };
-  else if (status && status !== "all") where.status = status as Prisma.EventWhereInput["status"];
+  else if (status && status !== "all")
+    where.status = status as Prisma.EventWhereInput["status"];
 
   const [events, total] = await Promise.all([
     prisma.event.findMany({
@@ -64,7 +73,9 @@ async function getAdminEvents(q: string | undefined, status: string | undefined,
   return { events, totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)) };
 }
 
-export default async function AdminEventsPage({ searchParams }: AdminEventsPageProps) {
+export default async function AdminEventsPage({
+  searchParams,
+}: AdminEventsPageProps) {
   const { q, status, page: pageParam } = await searchParams;
   const page = Math.max(1, Number(pageParam) || 1);
   const { events, totalPages } = await getAdminEvents(q, status, page);
@@ -93,7 +104,10 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
       </Suspense>
 
       {events.length === 0 ? (
-        <EmptyState title="رویدادی پیدا نشد" description="فیلتر یا عبارت جستجو را تغییر دهید." />
+        <EmptyState
+          title="رویدادی پیدا نشد"
+          description="فیلتر یا عبارت جستجو را تغییر دهید."
+        />
       ) : (
         <Card className="overflow-x-auto p-0">
           <table className="w-full min-w-[820px] text-start text-sm">
@@ -115,28 +129,53 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
                     index % 2 === 1 ? "bg-surface-secondary/30" : ""
                   }`}
                 >
-                  <td className="p-4 font-medium text-text-primary">{event.title}</td>
-                  <td className="p-4 text-text-secondary">{formatEventDate(event.date)}</td>
+                  <td className="p-4 font-medium text-text-primary">
+                    {event.title}
+                  </td>
+                  <td className="p-4 text-text-secondary">
+                    {formatEventDate(event.date)}
+                  </td>
                   <td className="p-4">
-                    <Badge variant={event.status === "PUBLISHED" ? "success" : "neutral"}>
+                    <Badge
+                      variant={
+                        event.status === "PUBLISHED" ? "success" : "neutral"
+                      }
+                    >
                       {STATUS_LABELS[event.status] ?? event.status}
                     </Badge>
                   </td>
-                  <td className="p-4 text-text-secondary">{event._count.registrations}</td>
-                  <td className="p-4 text-text-secondary">{formatEventDate(event.createdAt)}</td>
+                  <td className="p-4 text-text-secondary">
+                    {event._count.registrations}
+                  </td>
+                  <td className="p-4 text-text-secondary">
+                    {formatEventDate(event.createdAt)}
+                  </td>
                   <td className="p-4">
                     <div className="flex items-center gap-1">
-                      <Button asChild variant="ghost" size="icon" aria-label="مشاهده در سایت">
+                      <Button
+                        asChild
+                        variant="ghost"
+                        size="icon"
+                        aria-label="مشاهده در سایت"
+                      >
                         <Link href={`/events/${event.slug}`} target="_blank">
                           <ExternalLink className="size-4" aria-hidden="true" />
                         </Link>
                       </Button>
-                      <Button asChild variant="ghost" size="icon" aria-label="ویرایش">
+                      <Button
+                        asChild
+                        variant="ghost"
+                        size="icon"
+                        aria-label="ویرایش"
+                      >
                         <Link href={`/admin/events/${event.id}`}>
                           <Pencil className="size-4" aria-hidden="true" />
                         </Link>
                       </Button>
-                      <DeleteEventButton eventId={event.id} eventTitle={event.title} />
+                      <DeleteEventButton
+                        eventId={event.id}
+                        eventTitle={event.title}
+                      />
                     </div>
                   </td>
                 </tr>

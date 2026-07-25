@@ -31,7 +31,10 @@ async function getGroupedResources() {
     });
 
     const general: ResourceSummary[] = [];
-    const byEvent = new Map<string, { eventTitle: string; resources: ResourceSummary[] }>();
+    const byEvent = new Map<
+      string,
+      { eventTitle: string; resources: ResourceSummary[] }
+    >();
 
     for (const resource of resources) {
       const summary: ResourceSummary = {
@@ -66,11 +69,13 @@ export default async function ResourcesPage() {
   const isEmpty = general.length === 0 && eventGroups.length === 0;
 
   return (
-    <Section className="pt-12">
+    <Section className="pt-12" circuit>
       <Container className="flex flex-col gap-14">
         <Breadcrumbs items={[{ label: "منابع آموزشی" }]} />
         <div className="flex flex-col gap-3">
-          <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">منابع آموزشی</h1>
+          <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">
+            منابع آموزشی
+          </h1>
           <p className="max-w-2xl text-lg text-text-secondary">
             اسلایدها، مقالات و لینک‌های به‌جامانده از رویدادهای پیشتاک.
           </p>
@@ -86,7 +91,9 @@ export default async function ResourcesPage() {
           <>
             {general.length > 0 ? (
               <div className="flex flex-col gap-6">
-                <h2 className="text-xl font-bold text-text-primary">منابع عمومی</h2>
+                <h2 className="text-xl font-bold text-text-primary">
+                  منابع عمومی
+                </h2>
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {general.map((resource) => (
                     <ResourceCard key={resource.id} resource={resource} />
@@ -97,7 +104,9 @@ export default async function ResourcesPage() {
 
             {eventGroups.map((group) => (
               <div key={group.eventTitle} className="flex flex-col gap-6">
-                <h2 className="text-xl font-bold text-text-primary">{group.eventTitle}</h2>
+                <h2 className="text-xl font-bold text-text-primary">
+                  {group.eventTitle}
+                </h2>
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {group.resources.map((resource) => (
                     <ResourceCard key={resource.id} resource={resource} />

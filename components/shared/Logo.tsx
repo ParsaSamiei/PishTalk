@@ -15,11 +15,7 @@ function Logo({ className, variant = "dark" }: LogoProps) {
   return (
     <Link
       href="/"
-      className={cn(
-        "flex items-center gap-2 text-xl font-bold",
-        variant === "light" ? "text-white" : "text-text-primary",
-        className,
-      )}
+      className={cn("flex items-center gap-2 text-xl font-bold", className)}
       aria-label="پیشتاک - صفحه اصلی"
     >
       <Image
@@ -30,7 +26,17 @@ function Logo({ className, variant = "dark" }: LogoProps) {
         className="size-9 rounded-xl"
         priority
       />
-      <span>پیشتاک</span>
+
+      <span className="flex items-center">
+        <span className="font-bold">
+          <span className="text-yellow-400">پیش</span>
+          <span
+            className={variant === "light" ? "text-white" : "text-text-primary"}
+          >
+            تاک
+          </span>
+        </span>
+      </span>
     </Link>
   );
 }

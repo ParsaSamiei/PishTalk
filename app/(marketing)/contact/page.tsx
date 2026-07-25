@@ -19,7 +19,7 @@ export default async function ContactPage() {
   const phoneNumber = settings.phone ?? CONTACT_PHONE;
 
   return (
-    <Section className="pt-12">
+    <Section className="pt-12" circuit>
       <Container className="grid gap-12 lg:grid-cols-2">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3">

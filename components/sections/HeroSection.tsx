@@ -147,8 +147,16 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
             className="max-w-xl text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl"
           >
             جامعه‌ای برای مهندسان{" "}
-            <span className="text-gradient-accent">رباتیک</span>، هوش مصنوعی و
-            فناوری
+            <span
+              className="
+                text-gradient-accent
+                drop-shadow-[0_1px_2px_rgba(245,158,11,0.35)]
+                dark:drop-shadow-[0_0_8px_rgba(250,204,21,0.4)]
+                "
+            >
+              رباتیک
+            </span>
+            ، هوش مصنوعی و فناوری
           </motion.h1>
 
           <motion.p
