@@ -26,7 +26,7 @@ export default async function RulesPage() {
   const rules = await getRules();
 
   return (
-    <Section className="pt-12">
+    <Section className="pt-12" circuit>
       <Container className="flex flex-col gap-10">
         <Breadcrumbs items={[{ label: "قوانین" }]} />
         <div className="flex flex-col gap-3">

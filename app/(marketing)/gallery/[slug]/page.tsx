@@ -52,7 +52,7 @@ export default async function EventGalleryPage({ params }: EventGalleryPageProps
   const videos = event.gallery.media.filter((item) => item.type === "VIDEO");
 
   return (
-    <Section className="pt-12">
+    <Section className="pt-12" circuit>
       <Container className="flex flex-col gap-8">
         <Breadcrumbs items={[{ label: "گالری", href: "/gallery" }, { label: event.title }]} />
         <div className="flex flex-col gap-2">

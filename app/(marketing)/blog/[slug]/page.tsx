@@ -84,7 +84,7 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <Section className="pt-12">
+      <Section className="pt-12" circuit>
         <Container className="mx-auto flex max-w-3xl flex-col gap-8">
           <Breadcrumbs
             items={[{ label: "وبلاگ", href: "/blog" }, { label: blog.title }]}

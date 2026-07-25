@@ -6,6 +6,7 @@ import { Calendar, Clock, MapPin, Images, BookOpen } from "lucide-react";
 
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
+import { CircuitBackground } from "@/components/illustrations/CircuitBackground";
 import { Timeline } from "@/components/shared/Timeline";
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { ShareButton } from "@/components/shared/ShareButton";
@@ -115,7 +116,12 @@ export default async function EventPage({ params }: EventPageProps) {
             />
             <div className="absolute inset-0 bg-surface-primary/75 dark:bg-surface-primary/60 backdrop-blur-[2px]" />
           </div>
-        ) : null}
+        ) : (
+          <CircuitBackground
+            id="event-hero"
+            className="text-primary/4.5 dark:text-white/4.5"
+          />
+        )}
 
         <Container className="relative flex flex-col gap-6 py-20">
           <Breadcrumbs
@@ -156,7 +162,7 @@ export default async function EventPage({ params }: EventPageProps) {
         </Container>
       </section>
 
-      <Section>
+      <Section circuit>
         <Container className="grid gap-12 lg:grid-cols-[1fr_1.3fr]">
           {/* Registration comes right after the Hero per docs/03_Information_Architecture.md */}
           <div id="register" className="scroll-mt-24 lg:order-1">
