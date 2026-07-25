@@ -31,7 +31,7 @@ function ContactSection({
   const phoneNumber = phone ?? CONTACT_PHONE;
 
   return (
-    <Section id="contact" className="bg-surface-secondary" circuit>
+    <Section id="contact" circuit>
       <FloatingIcon
         icon={Bot}
         size="sm"

@@ -9,7 +9,6 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Countdown } from "@/components/shared/Countdown";
 import { Reveal } from "@/components/animations/Reveal";
-import { CircuitBackground } from "@/components/illustrations/CircuitBackground";
 import { GlowOrb } from "@/components/illustrations/GlowOrb";
 import type { EventDetail } from "@/features/events/types/event";
 import { formatEventDate, formatWeekday } from "@/utils/formatDate";
@@ -32,10 +31,13 @@ interface NextEventSectionProps {
  */
 function NextEventSection({ event }: NextEventSectionProps) {
   return (
-    <Section id="next-event" className="scroll-mt-24">
+    <Section id="next-event" className="scroll-mt-24" circuit>
       <Container className="flex flex-col gap-10">
         <Reveal>
-          <SectionTitle eyebrow="رویداد بعدی" title="در رویداد پیش رو ما را همراهی کنید" />
+          <SectionTitle
+            eyebrow="رویداد بعدی"
+            title="در رویداد پیش رو ما را همراهی کنید"
+          />
         </Reveal>
 
         {event ? (
@@ -51,11 +53,18 @@ function NextEventSection({ event }: NextEventSectionProps) {
 
                 <div className="flex flex-col gap-3 text-sm text-text-secondary sm:flex-row sm:gap-8">
                   <span className="flex items-center gap-2">
-                    <Calendar className="size-4 text-accent-hover" aria-hidden="true" />
-                    {formatWeekday(event.date)}، {formatEventDate(event.date)} — {event.startTime}
+                    <Calendar
+                      className="size-4 text-accent-hover"
+                      aria-hidden="true"
+                    />
+                    {formatWeekday(event.date)}، {formatEventDate(event.date)} —{" "}
+                    {event.startTime}
                   </span>
                   <span className="flex items-center gap-2">
-                    <MapPin className="size-4 text-accent-hover" aria-hidden="true" />
+                    <MapPin
+                      className="size-4 text-accent-hover"
+                      aria-hidden="true"
+                    />
                     {event.location}
                   </span>
                 </div>
@@ -70,21 +79,20 @@ function NextEventSection({ event }: NextEventSectionProps) {
                 </div>
               </div>
 
-              <div className="relative flex min-h-56 items-center justify-center overflow-hidden rounded-[var(--radius-card)] bg-surface-secondary p-6 dark:bg-primary">
+              <div className="relative flex min-h-56 items-center justify-center overflow-hidden rounded-card bg-surface-secondary p-6 dark:bg-primary">
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_20%,rgba(244,185,66,0.18),transparent_70%)]"
                 />
-                <CircuitBackground
-                  id="next-event-panel"
-                  size={48}
-                  className="text-primary/[0.05] dark:text-white/[0.08]"
-                />
                 <GlowOrb
-                  className="top-[-25%] end-[-15%] size-48 bg-accent/20 dark:bg-accent/25"
+                  className="top-[-25%] inset-e-[-15%] size-48 bg-accent/20 dark:bg-accent/25"
                   style={{ animationDelay: "-1.5s" }}
                 />
-                <Countdown target={event.date} variant="auto" className="relative" />
+                <Countdown
+                  target={event.date}
+                  variant="auto"
+                  className="relative"
+                />
               </div>
             </Card>
           </Reveal>

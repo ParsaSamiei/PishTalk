@@ -10,7 +10,15 @@ import {
   useReducedMotion,
   type Variants,
 } from "framer-motion";
-import { ArrowLeft, Bot, ChevronDown, Cpu, CircuitBoard, Orbit, Radar } from "lucide-react";
+import {
+  ArrowLeft,
+  Bot,
+  ChevronDown,
+  Cpu,
+  CircuitBoard,
+  Orbit,
+  Radar,
+} from "lucide-react";
 
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
@@ -66,7 +74,10 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: shouldReduceMotion ? 0.01 : 0.6, ease: [0.16, 1, 0.3, 1] },
+      transition: {
+        duration: shouldReduceMotion ? 0.01 : 0.6,
+        ease: [0.16, 1, 0.3, 1],
+      },
     },
   };
 
@@ -80,36 +91,39 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_0%,rgba(244,185,66,0.18),transparent_70%)]"
       />
-      <CircuitBackground id="hero" className="text-primary/[0.05] dark:text-white/[0.06]" />
+      <CircuitBackground
+        id="hero"
+        className="text-primary/5 dark:text-white/6"
+      />
       <GlowOrb
-        className="top-[-14%] start-[-10%] size-[26rem] bg-accent/20 dark:bg-accent/25"
+        className="top-[-14%] inset-s-[-10%]%sisize-104accent/20 dark:bg-accent/25"
         style={{ animationDelay: "0s" }}
       />
       <GlowOrb
-        className="bottom-[-18%] end-[-12%] size-[30rem] bg-sky-400/15 dark:bg-sky-400/10"
+        className="bottom-[-18%] inset-e-[-12%]12%] size-120sky-400/15 dark:bg-sky-400/10"
         style={{ animationDelay: "-3s" }}
       />
 
       <FloatingIcon
         icon={Cpu}
-        className="hidden border-primary/10 bg-surface-secondary text-accent-hover dark:border-white/15 dark:bg-white/5 dark:text-accent sm:flex top-[16%] start-[6%]"
+        className="hidden border-primary/10 bg-surface-secondary text-accent-hover dark:border-white/15 dark:bg-white/5 dark:text-accent sm:flex top-[16%] inset-s-[6%]%]"
         style={{ animationDelay: "0s" }}
       />
       <FloatingIcon
         icon={CircuitBoard}
         size="sm"
-        className="hidden border-primary/10 bg-surface-secondary text-text-secondary dark:border-white/10 dark:bg-white/5 dark:text-white/70 lg:flex top-[68%] start-[10%]"
+        className="hidden border-primary/10 bg-surface-secondary text-text-secondary dark:border-white/10 dark:bg-white/5 dark:text-white/70 lg:flex top-[68%] inset-s-[10%]"
         style={{ animationDelay: "-2.4s" }}
       />
       <FloatingIcon
         icon={Orbit}
-        className="hidden border-primary/10 bg-surface-secondary text-sky-600 dark:border-white/15 dark:bg-white/5 dark:text-sky-300 sm:flex top-[14%] end-[8%]"
+        className="hidden border-primary/10 bg-surface-secondary text-sky-600 dark:border-white/15 dark:bg-white/5 dark:text-sky-300 sm:flex top-[14%] inset-e-[8%]"
         style={{ animationDelay: "-4.8s" }}
       />
       <FloatingIcon
         icon={Radar}
         size="sm"
-        className="hidden border-primary/10 bg-surface-secondary text-text-secondary dark:border-white/10 dark:bg-white/5 dark:text-white/70 lg:flex bottom-[18%] end-[14%]"
+        className="hidden border-primary/10 bg-surface-secondary text-text-secondary dark:border-white/10 dark:bg-white/5 dark:text-white/70 lg:flex bottom-[18%] inset-e-[14%]14%]"
         style={{ animationDelay: "-1.2s" }}
       />
 
@@ -132,13 +146,17 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
             variants={itemVariants}
             className="max-w-xl text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl"
           >
-            جامعه‌ای برای مهندسان <span className="text-gradient-accent">رباتیک</span>، هوش
-            مصنوعی و فناوری
+            جامعه‌ای برای مهندسان{" "}
+            <span className="text-gradient-accent">رباتیک</span>، هوش مصنوعی و
+            فناوری
           </motion.h1>
 
-          <motion.p variants={itemVariants} className="max-w-xl text-lg text-text-secondary">
-            هر ماه گرد هم می‌آییم تا یاد بگیریم، گفتگو کنیم و شبکه‌سازی کنیم؛ در کنار
-            مهندسان و علاقه‌مندانی که مسیر مشابهی را دنبال می‌کنند.
+          <motion.p
+            variants={itemVariants}
+            className="max-w-xl text-lg text-text-secondary"
+          >
+            هر ماه گرد هم می‌آییم تا یاد بگیریم، گفتگو کنیم و شبکه‌سازی کنیم؛ در
+            کنار مهندسان و علاقه‌مندانی که مسیر مشابهی را دنبال می‌کنند.
           </motion.p>
 
           {nextEvent ? (
@@ -153,7 +171,10 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
             </motion.div>
           ) : null}
 
-          <motion.div variants={itemVariants} className="flex flex-col gap-3 sm:flex-row">
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-col gap-3 sm:flex-row"
+          >
             <Button
               asChild
               variant="accent"
@@ -178,7 +199,7 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
           initial={{ opacity: 0, scale: 0.85 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          className="relative mx-auto w-full max-w-[220px] sm:max-w-xs lg:mx-0 lg:max-w-md"
+          className="relative mx-auto w-full max-w-55 sm:max-w-xs lg:mx-0 lg:max-w-md"
         >
           <RobotMascot className="w-full" />
         </motion.div>
@@ -189,7 +210,11 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
         aria-label="پیمایش به بخش بعدی"
         className="absolute inset-x-0 bottom-6 mx-auto flex size-10 items-center justify-center rounded-full border border-border text-text-secondary transition-colors hover:text-text-primary dark:border-white/15 dark:text-white/60 dark:hover:text-white"
         animate={shouldReduceMotion ? undefined : { y: [0, 6, 0] }}
-        transition={shouldReduceMotion ? undefined : { duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+        transition={
+          shouldReduceMotion
+            ? undefined
+            : { duration: 1.8, repeat: Infinity, ease: "easeInOut" }
+        }
       >
         <ChevronDown className="size-5" aria-hidden="true" />
       </motion.a>

@@ -41,7 +41,11 @@ function ToggleReadButton({ id, isRead }: ToggleReadButtonProps) {
       type="button"
       variant="ghost"
       size="icon"
-      aria-label={isRead ? "علامت‌گذاری به‌عنوان خوانده‌نشده" : "علامت‌گذاری به‌عنوان خوانده‌شده"}
+      aria-label={
+        isRead
+          ? "علامت‌گذاری به‌عنوان خوانده‌نشده"
+          : "علامت‌گذاری به‌عنوان خوانده‌شده"
+      }
       onClick={handleClick}
       disabled={isPending}
     >

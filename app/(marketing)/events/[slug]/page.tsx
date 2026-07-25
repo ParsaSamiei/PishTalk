@@ -21,7 +21,9 @@ interface EventPageProps {
   readonly params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({ params }: EventPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: EventPageProps): Promise<Metadata> {
   const { slug } = await params;
   const event = await getEventBySlug(slug);
 
@@ -42,10 +44,19 @@ export async function generateMetadata({ params }: EventPageProps): Promise<Meta
 async function getEventExtras(eventId: string) {
   try {
     const [resources, gallery] = await Promise.all([
-      prisma.resource.findMany({ where: { eventId, deletedAt: null }, orderBy: { title: "asc" } }),
+      prisma.resource.findMany({
+        where: { eventId, deletedAt: null },
+        orderBy: { title: "asc" },
+      }),
       prisma.gallery.findUnique({
         where: { eventId },
-        include: { media: { where: { type: "IMAGE" }, orderBy: { sortOrder: "asc" }, take: 8 } },
+        include: {
+          media: {
+            where: { type: "IMAGE" },
+            orderBy: { sortOrder: "asc" },
+            take: 8,
+          },
+        },
       }),
     ]);
     return { resources, galleryImages: gallery?.media ?? [] };
@@ -63,7 +74,8 @@ export default async function EventPage({ params }: EventPageProps) {
   }
 
   const { resources, galleryImages } = await getEventExtras(event.id);
-  const isPast = event.date.getTime() < new Date(new Date().toDateString()).getTime();
+  const isPast =
+    event.date.getTime() < new Date(new Date().toDateString()).getTime();
   const eventUrl = `${SITE_URL}/events/${event.slug}`;
 
   const jsonLd = {
@@ -78,7 +90,9 @@ export default async function EventPage({ params }: EventPageProps) {
       : "https://schema.org/EventScheduled",
     location: { "@type": "Place", name: event.location },
     image: event.coverImage ? [event.coverImage] : undefined,
-    performer: event.speakerName ? { "@type": "Person", name: event.speakerName } : undefined,
+    performer: event.speakerName
+      ? { "@type": "Person", name: event.speakerName }
+      : undefined,
     organizer: { "@type": "Organization", name: "پیشتاک", url: SITE_URL },
   };
 
@@ -104,10 +118,17 @@ export default async function EventPage({ params }: EventPageProps) {
         <Container className="relative flex flex-col gap-6 py-20">
           <Breadcrumbs
             variant="light"
-            items={[{ label: "رویدادها", href: "/events" }, { label: event.title }]}
+            items={[
+              { label: "رویدادها", href: "/events" },
+              { label: event.title },
+            ]}
           />
-          <h1 className="max-w-3xl text-3xl font-bold sm:text-5xl">{event.title}</h1>
-          {event.subtitle ? <p className="max-w-2xl text-lg text-white/80">{event.subtitle}</p> : null}
+          <h1 className="max-w-3xl text-3xl font-bold sm:text-5xl">
+            {event.title}
+          </h1>
+          {event.subtitle ? (
+            <p className="max-w-2xl text-lg text-white/80">{event.subtitle}</p>
+          ) : null}
           <div className="flex flex-col gap-3 text-sm text-white/80 sm:flex-row sm:gap-8">
             <span className="flex items-center gap-2">
               <Calendar className="size-4 text-accent" aria-hidden="true" />
@@ -132,11 +153,14 @@ export default async function EventPage({ params }: EventPageProps) {
           <div id="register" className="scroll-mt-24 lg:order-1">
             <Card className="p-8">
               <h2 className="mb-6 text-xl font-bold text-text-primary">
-                {isPast ? "ثبت‌نام این رویداد بسته شده است" : "ثبت‌نام در رویداد"}
+                {isPast
+                  ? "ثبت‌نام این رویداد بسته شده است"
+                  : "ثبت‌نام در رویداد"}
               </h2>
               {isPast ? (
                 <p className="text-text-secondary">
-                  این رویداد برگزار شده است. رویداد بعدی را در صفحه رویدادها دنبال کنید.
+                  این رویداد برگزار شده است. رویداد بعدی را در صفحه رویدادها
+                  دنبال کنید.
                 </p>
               ) : (
                 <RegistrationForm eventId={event.id} />
@@ -146,7 +170,9 @@ export default async function EventPage({ params }: EventPageProps) {
 
           <div className="flex flex-col gap-12 lg:order-2">
             <div className="flex flex-col gap-4">
-              <h2 className="text-2xl font-bold text-text-primary">درباره این رویداد</h2>
+              <h2 className="text-2xl font-bold text-text-primary">
+                درباره این رویداد
+              </h2>
               <p className="whitespace-pre-line leading-relaxed text-text-secondary">
                 {event.description}
               </p>
@@ -155,18 +181,24 @@ export default async function EventPage({ params }: EventPageProps) {
             {event.speakerName ? (
               <Card>
                 <CardHeader>
-                  <span className="text-sm font-semibold text-accent-hover">سخنران</span>
+                  <span className="text-sm font-semibold text-accent-hover">
+                    سخنران
+                  </span>
                   <CardTitle>{event.speakerName}</CardTitle>
                 </CardHeader>
                 {event.speakerBio ? (
-                  <p className="text-text-secondary leading-relaxed">{event.speakerBio}</p>
+                  <p className="text-text-secondary leading-relaxed">
+                    {event.speakerBio}
+                  </p>
                 ) : null}
               </Card>
             ) : null}
 
             {event.timeline.length > 0 ? (
               <div className="flex flex-col gap-6">
-                <h2 className="text-2xl font-bold text-text-primary">برنامه زمانی</h2>
+                <h2 className="text-2xl font-bold text-text-primary">
+                  برنامه زمانی
+                </h2>
                 <Timeline items={event.timeline} />
               </div>
             ) : null}
@@ -174,7 +206,10 @@ export default async function EventPage({ params }: EventPageProps) {
             {resources.length > 0 ? (
               <div className="flex flex-col gap-6">
                 <h2 className="flex items-center gap-2 text-2xl font-bold text-text-primary">
-                  <BookOpen className="size-6 text-accent-hover" aria-hidden="true" />
+                  <BookOpen
+                    className="size-6 text-accent-hover"
+                    aria-hidden="true"
+                  />
                   منابع این رویداد
                 </h2>
                 <div className="grid gap-6 sm:grid-cols-2">
@@ -198,14 +233,17 @@ export default async function EventPage({ params }: EventPageProps) {
             {galleryImages.length > 0 ? (
               <div className="flex flex-col gap-6">
                 <h2 className="flex items-center gap-2 text-2xl font-bold text-text-primary">
-                  <Images className="size-6 text-accent-hover" aria-hidden="true" />
+                  <Images
+                    className="size-6 text-accent-hover"
+                    aria-hidden="true"
+                  />
                   گالری این رویداد
                 </h2>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                   {galleryImages.map((image) => (
                     <div
                       key={image.id}
-                      className="relative aspect-square overflow-hidden rounded-[var(--radius-card)] bg-surface-secondary"
+                      className="relative aspect-square overflow-hidden rounded-card bg-surface-secondary"
                     >
                       <Image
                         src={image.url}

@@ -17,16 +17,24 @@ const ICON_OPTIONS = [
 
 interface RuleFormProps {
   readonly defaultValues?: Partial<RuleFormValues>;
-  readonly onSubmit: (values: RuleFormValues) => Promise<{ success: boolean; error?: string }>;
+  readonly onSubmit: (
+    values: RuleFormValues,
+  ) => Promise<{ success: boolean; error?: string }>;
   readonly submitLabel: string;
 }
 
 function RuleForm({ defaultValues, onSubmit, submitLabel }: RuleFormProps) {
   const [title, setTitle] = React.useState(defaultValues?.title ?? "");
-  const [description, setDescription] = React.useState(defaultValues?.description ?? "");
+  const [description, setDescription] = React.useState(
+    defaultValues?.description ?? "",
+  );
   const [icon, setIcon] = React.useState(defaultValues?.icon ?? "");
-  const [sortOrder, setSortOrder] = React.useState(defaultValues?.sortOrder ?? 0);
-  const [published, setPublished] = React.useState(defaultValues?.published ?? true);
+  const [sortOrder, setSortOrder] = React.useState(
+    defaultValues?.sortOrder ?? 0,
+  );
+  const [published, setPublished] = React.useState(
+    defaultValues?.published ?? true,
+  );
   const [error, setError] = React.useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -51,7 +59,12 @@ function RuleForm({ defaultValues, onSubmit, submitLabel }: RuleFormProps) {
     <form onSubmit={handleSubmit} className="flex max-w-2xl flex-col gap-5">
       <div className="flex flex-col gap-2">
         <Label htmlFor="title">عنوان</Label>
-        <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+        <Input
+          id="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+        />
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="description">توضیحات</Label>
@@ -70,9 +83,11 @@ function RuleForm({ defaultValues, onSubmit, submitLabel }: RuleFormProps) {
             id="icon"
             value={icon}
             onChange={(e) =>
-              setIcon(e.target.value as "" | "respect" | "community" | "discussion")
+              setIcon(
+                e.target.value as "" | "respect" | "community" | "discussion",
+              )
             }
-            className="h-12 rounded-[var(--radius-input)] border border-border bg-surface px-4 text-base text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            className="h-12 rounded-input border border-border bg-surface px-4 text-base text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             {ICON_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
