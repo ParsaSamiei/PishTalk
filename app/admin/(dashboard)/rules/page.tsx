@@ -14,7 +14,7 @@ export default async function AdminRulesPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">قوانین</h1>
           <p className="text-text-secondary">مدیریت قوانین حضور در رویدادها</p>
@@ -32,9 +32,9 @@ export default async function AdminRulesPage() {
       ) : (
         <div className="flex flex-col gap-3">
           {rules.map((rule) => (
-            <Card key={rule.id} className="flex items-center justify-between gap-4 p-4">
+            <Card key={rule.id} className="flex flex-wrap items-center justify-between gap-4 p-4">
               <div className="flex flex-1 flex-col gap-1">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <p className="font-medium text-text-primary">{rule.title}</p>
                   {!rule.published ? <Badge variant="neutral">پنهان</Badge> : null}
                 </div>

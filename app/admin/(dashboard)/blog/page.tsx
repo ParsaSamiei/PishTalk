@@ -64,7 +64,7 @@ export default async function AdminBlogPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">وبلاگ</h1>
           <p className="text-text-secondary">مدیریت مطالب وبلاگ</p>
@@ -95,10 +95,10 @@ export default async function AdminBlogPage({
           {blogs.map((blog) => (
             <Card
               key={blog.id}
-              className="flex items-center justify-between gap-4 p-4"
+              className="flex flex-wrap items-center justify-between gap-4 p-4"
             >
               <div className="flex flex-1 flex-col gap-1">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <p className="font-medium text-text-primary">{blog.title}</p>
                   <Badge variant={blog.published ? "success" : "neutral"}>
                     {blog.published ? "منتشرشده" : "پیش‌نویس"}
