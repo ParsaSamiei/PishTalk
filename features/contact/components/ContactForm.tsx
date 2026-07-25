@@ -9,7 +9,10 @@ import { Label } from "@/components/ui/Label";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
-import { contactFormSchema, type ContactFormValues } from "@/features/contact/types/contact";
+import {
+  contactFormSchema,
+  type ContactFormValues,
+} from "@/features/contact/types/contact";
 import { sendContactMessage } from "@/features/contact/actions/sendContactMessage";
 
 function ContactForm() {
@@ -39,9 +42,11 @@ function ContactForm() {
 
   if (submitted) {
     return (
-      <div className="flex flex-col items-center gap-3 rounded-[var(--radius-card)] border border-border bg-surface p-10 text-center">
+      <div className="flex flex-col items-center gap-3 rounded-card border border-border bg-surface p-10 text-center">
         <CheckCircle2 className="size-10 text-success" aria-hidden="true" />
-        <h3 className="text-lg font-semibold text-text-primary">پیام شما ارسال شد</h3>
+        <h3 className="text-lg font-semibold text-text-primary">
+          پیام شما ارسال شد
+        </h3>
         <p className="text-sm text-text-secondary">
           به‌زودی با شما تماس خواهیم گرفت. متشکریم!
         </p>
@@ -53,7 +58,11 @@ function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      className="flex flex-col gap-5"
+    >
       <div className="flex flex-col gap-2">
         <Label htmlFor="name">نام</Label>
         <Input
@@ -83,6 +92,28 @@ function ContactForm() {
       </div>
 
       <div className="flex flex-col gap-2">
+        <Label htmlFor="phone">
+          تلفن{" "}
+          <span className="font-normal text-text-secondary">(اختیاری)</span>
+        </Label>
+        <Input
+          id="phone"
+          type="tel"
+          dir="ltr"
+          autoComplete="tel"
+          aria-invalid={Boolean(errors.phone)}
+          {...register("phone")}
+        />
+        {errors.phone ? (
+          <p className="text-sm text-danger">{errors.phone.message}</p>
+        ) : (
+          <p className="text-sm text-text-secondary">
+            اگر ترجیح می‌دهید با تماس تلفنی پاسخ بگیرید وارد کنید.
+          </p>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-2">
         <Label htmlFor="message">پیام</Label>
         <Textarea
           id="message"
@@ -95,7 +126,9 @@ function ContactForm() {
         ) : null}
       </div>
 
-      {serverError ? <p className="text-sm text-danger">{serverError}</p> : null}
+      {serverError ? (
+        <p className="text-sm text-danger">{serverError}</p>
+      ) : null}
 
       <Button type="submit" size="lg" isLoading={isSubmitting}>
         ارسال پیام

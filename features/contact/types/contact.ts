@@ -7,6 +7,7 @@ import { z } from "zod";
 export const contactFormSchema = z.object({
   name: z.string().trim().min(2, "نام باید حداقل ۲ حرف باشد").max(100),
   email: z.string().trim().email("ایمیل معتبر نیست"),
+  phone: z.string().trim().max(20, "شماره تلفن معتبر نیست").optional().or(z.literal("")),
   message: z.string().trim().min(10, "پیام باید حداقل ۱۰ حرف باشد").max(2000),
 });
 

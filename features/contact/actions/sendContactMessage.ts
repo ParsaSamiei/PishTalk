@@ -1,7 +1,10 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { contactFormSchema, type ContactFormValues } from "@/features/contact/types/contact";
+import {
+  contactFormSchema,
+  type ContactFormValues,
+} from "@/features/contact/types/contact";
 
 export interface SendContactMessageResult {
   readonly success: boolean;
@@ -18,7 +21,7 @@ export interface SendContactMessageResult {
  * a provider is chosen.
  */
 export async function sendContactMessage(
-  values: ContactFormValues
+  values: ContactFormValues,
 ): Promise<SendContactMessageResult> {
   const parsed = contactFormSchema.safeParse(values);
 
@@ -27,7 +30,14 @@ export async function sendContactMessage(
   }
 
   try {
-    await prisma.contactMessage.create({ data: parsed.data });
+    await prisma.contactMessage.create({
+      data: {
+        name: parsed.data.name,
+        email: parsed.data.email,
+        phone: parsed.data.phone || null,
+        message: parsed.data.message,
+      },
+    });
     return { success: true };
   } catch {
     return {

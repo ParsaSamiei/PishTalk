@@ -35,7 +35,7 @@ function ContactSection({
       <FloatingIcon
         icon={Bot}
         size="sm"
-        className="hidden border-border bg-surface text-accent-hover sm:flex top-[8%] end-[6%]"
+        className="hidden border-border bg-surface text-accent-hover sm:flex top-[8%] inset-e-[6%]"
         style={{ animationDelay: "-2s" }}
       />
 
