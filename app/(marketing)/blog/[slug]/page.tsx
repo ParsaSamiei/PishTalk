@@ -91,7 +91,9 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
           />
           <div className="flex flex-col gap-4">
             {blog.category ? (
-              <Badge variant="accent">{blog.category.name}</Badge>
+              <Badge variant="accent" className="w-fit">
+                {blog.category.name}
+              </Badge>
             ) : null}
             <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">
               {blog.title}
