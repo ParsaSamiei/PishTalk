@@ -16,7 +16,7 @@ const vazirmatn = Vazirmatn({
   display: "swap",
 });
 
-const DEFAULT_TITLE = "پیشتاک | جامعه مهندسان رباتیک،";
+const DEFAULT_TITLE = "پیشتاک | جامعه مهندسان رباتیک";
 const DEFAULT_DESCRIPTION =
   "پیشتاک رویداد ماهانه رباتیک، هوش مصنوعی و مهندسی نرم‌افزار، برگزار شده توسط پژوهشکده رباتیک پیشنام.";
 
@@ -50,6 +50,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     icons: {
       icon: settings.favicon || "/favicon.ico",
+      apple: "/apple-icon.png",
     },
   };
 }
