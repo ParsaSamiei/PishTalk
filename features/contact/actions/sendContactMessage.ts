@@ -1,6 +1,9 @@
 "use server";
 
+import { headers } from "next/headers";
+
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import {
   contactFormSchema,
   type ContactFormValues,
@@ -10,6 +13,9 @@ export interface SendContactMessageResult {
   readonly success: boolean;
   readonly error?: string;
 }
+
+const SUBMIT_LIMIT = 5;
+const SUBMIT_WINDOW_MS = 60 * 60 * 1000;
 
 /**
  * Validates and stores a contact form submission.
@@ -23,6 +29,12 @@ export interface SendContactMessageResult {
 export async function sendContactMessage(
   values: ContactFormValues,
 ): Promise<SendContactMessageResult> {
+  const ip = getClientIp(await headers());
+  const rateLimit = checkRateLimit(`contact:${ip}`, SUBMIT_LIMIT, SUBMIT_WINDOW_MS);
+  if (!rateLimit.allowed) {
+    return { success: false, error: "تعداد درخواست‌ها زیاد است. کمی بعد دوباره تلاش کنید." };
+  }
+
   const parsed = contactFormSchema.safeParse(values);
 
   if (!parsed.success) {

@@ -3,11 +3,23 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/requireAdmin";
 
+/**
+ * Registration fields are free text supplied by anonymous site visitors.
+ * Excel/Sheets treats a cell starting with =, +, -, or @ as a formula, so an
+ * attacker could enter a value like `=HYPERLINK(...)` as their "company" and
+ * have it execute when an admin opens the export (CSV/formula injection).
+ * Prefixing with a leading apostrophe forces the cell to be read as text.
+ */
+function neutralizeFormula(value: string): string {
+  return /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+}
+
 function escapeCsvField(value: string): string {
-  if (/[",\n]/.test(value)) {
-    return `"${value.replace(/"/g, '""')}"`;
+  const safeValue = neutralizeFormula(value);
+  if (/[",\n]/.test(safeValue)) {
+    return `"${safeValue.replace(/"/g, '""')}"`;
   }
-  return value;
+  return safeValue;
 }
 
 export async function GET() {

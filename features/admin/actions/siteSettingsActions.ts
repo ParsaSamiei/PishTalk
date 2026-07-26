@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import DOMPurify from "isomorphic-dompurify";
 
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/requireAdmin";
@@ -9,6 +10,21 @@ import {
   type SiteSettingsFormValues,
 } from "@/features/admin/types/siteSettingsForm";
 import type { ActionResult } from "@/features/admin/actions/eventActions";
+
+/**
+ * `googleMapsEmbed` is rendered with `dangerouslySetInnerHTML` in the
+ * site-wide Footer and on the contact page, so — exactly like blog content —
+ * it must be sanitized here rather than trusted as-is, regardless of which
+ * UI produced it. A real Google Maps embed is just an <iframe>, so only
+ * that tag and the attributes it actually uses are allowed; anything else
+ * (script tags, event handlers, etc.) is stripped.
+ */
+function sanitizeMapsEmbed(html: string): string {
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: ["iframe"],
+    ALLOWED_ATTR: ["src", "width", "height", "style", "allowfullscreen", "loading", "referrerpolicy", "title"],
+  });
+}
 
 export async function updateSiteSettings(values: SiteSettingsFormValues): Promise<ActionResult> {
   await requireAdmin();
@@ -29,7 +45,9 @@ export async function updateSiteSettings(values: SiteSettingsFormValues): Promis
     instagram: parsed.data.instagram || null,
     telegram: parsed.data.telegram || null,
     pishnamUrl: parsed.data.pishnamUrl || null,
-    googleMapsEmbed: parsed.data.googleMapsEmbed || null,
+    googleMapsEmbed: parsed.data.googleMapsEmbed
+      ? sanitizeMapsEmbed(parsed.data.googleMapsEmbed)
+      : null,
     seoTitle: parsed.data.seoTitle || null,
     seoDescription: parsed.data.seoDescription || null,
     defaultOgImage: parsed.data.defaultOgImage || null,
