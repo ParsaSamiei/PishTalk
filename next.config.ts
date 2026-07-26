@@ -1,21 +1,25 @@
 import type { NextConfig } from "next";
 
+const isDev = process.env.NODE_ENV !== "production";
+
 const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
   {
-    // 'unsafe-inline' on script/style is a pragmatic baseline for Next.js's
-    // hydration payload and Tailwind/styled-jsx inline styles without
-    // wiring up nonce-based CSP in middleware; frame-ancestors/object-src/
-    // base-uri/form-action are the parts doing the real work here, capping
-    // the blast radius of any XSS that does slip through (e.g. via the two
-    // dangerouslySetInnerHTML sinks for blog content and the maps embed).
+    key: "Permissions-Policy",
+    value: "camera=(), microphone=(), geolocation=()",
+  },
+  {
+    // 'unsafe-eval' is added to script-src ONLY in development: next dev's
+    // webpack/HMR runtime relies on eval() to wire up fast refresh, and
+    // without it the whole client bundle can fail to execute (this is what
+    // was silently killing client-only components like CustomCursor).
+    // Production builds don't need it and stay locked down.
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
+      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https:",
       "font-src 'self' data:",
