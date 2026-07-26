@@ -1,9 +1,20 @@
 "use client";
 
 import * as React from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 
-import { GalleryLightbox, type LightboxImage } from "@/components/shared/GalleryLightbox";
+import type { LightboxImage } from "@/components/shared/GalleryLightbox";
+
+/**
+ * The lightbox (and the embla-carousel-react dependency it pulls in) is only
+ * ever needed after a visitor taps a thumbnail, so it's split into its own
+ * chunk instead of shipping with every page that renders this grid.
+ */
+const GalleryLightbox = dynamic(
+  () => import("@/components/shared/GalleryLightbox").then((mod) => mod.GalleryLightbox),
+  { ssr: false }
+);
 
 interface GalleryImageGridProps {
   readonly images: readonly LightboxImage[];

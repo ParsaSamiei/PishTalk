@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import dynamic from "next/dynamic";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -9,8 +10,25 @@ import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { RichTextEditor } from "@/features/admin/components/RichTextEditor";
 import { blogFormSchema, type BlogFormValues, type BlogFormInput } from "@/features/admin/types/blogForm";
+
+/**
+ * Tiptap (editor core + starter-kit + link/image extensions) is one of the
+ * heaviest client bundles in the app and is only ever needed on this one
+ * admin form, so it's split into its own chunk and never rendered on the
+ * server. `RichTextEditor` already renders a pulse skeleton while its
+ * internal `useEditor()` call resolves, so the loading state lines up with
+ * this component's own skeleton exactly.
+ */
+const RichTextEditor = dynamic(
+  () => import("@/features/admin/components/RichTextEditor").then((mod) => mod.RichTextEditor),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="min-h-64 animate-pulse rounded-[var(--radius-input)] border border-border bg-surface-secondary" />
+    ),
+  }
+);
 
 interface CategoryOption {
   readonly id: string;
