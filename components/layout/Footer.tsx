@@ -1,4 +1,4 @@
-import { Globe, Mail, Phone } from "lucide-react";
+import { Globe, Mail, MapPin, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -14,6 +14,7 @@ interface FooterProps {
   readonly tagline?: string;
   readonly contactEmail?: string | null;
   readonly phone?: string | null;
+  readonly address?: string | null;
   readonly instagram?: string | null;
   readonly telegram?: string | null;
   readonly pishnamUrl?: string | null;
@@ -27,6 +28,7 @@ async function Footer({
   tagline = "جامعه مهندسان رباتیک، هوش مصنوعی و فناوری",
   contactEmail,
   phone,
+  address,
   instagram,
   telegram,
   pishnamUrl = "https://pishnam.org",
@@ -35,6 +37,7 @@ async function Footer({
   const settings = await getSiteSettings();
   const email = contactEmail ?? settings.contactEmail;
   const phoneNumber = phone ?? settings.phone ?? CONTACT_PHONE;
+  const streetAddress = address ?? settings.address;
   const instagramUrl = instagram ?? settings.instagram;
   const telegramUrl = telegram ?? settings.telegram;
   const pishnamWebsite =
@@ -42,8 +45,8 @@ async function Footer({
 
   return (
     <footer className="border-t border-border bg-surface-secondary">
-      <Container className="grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="flex flex-col gap-4 lg:col-span-2">
+      <Container className="grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="flex flex-col gap-3 lg:col-span-2">
           <Logo />
           <p className="max-w-sm text-sm leading-relaxed text-text-secondary">
             {tagline}
@@ -51,12 +54,12 @@ async function Footer({
           <SocialLinks instagram={instagramUrl} telegram={telegramUrl} />
 
           {SPONSORS.length > 0 ? (
-            <div className="mt-2 flex flex-col gap-3">
+            <div className="mt-1 flex flex-col gap-2">
               <h3 className="text-sm font-semibold text-text-primary">
                 حامیان و اسپانسرها
               </h3>
 
-              <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+              <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
                 {SPONSORS.map((sponsor) => (
                   <a
                     key={sponsor.name}
@@ -71,7 +74,7 @@ async function Footer({
                       alt={sponsor.name}
                       width={200}
                       height={80}
-                      className="h-14 w-auto object-contain"
+                      className="h-12 w-auto object-contain"
                     />
                   </a>
                 ))}
@@ -80,12 +83,12 @@ async function Footer({
           ) : null}
         </div>
 
-        <nav aria-label="لینک‌های سریع" className="flex flex-col gap-3">
+        <nav aria-label="لینک‌های سریع" className="flex flex-col gap-2">
           <h3 className="text-sm font-semibold text-text-primary">
             لینک‌های سریع
           </h3>
 
-          <ul className="flex flex-col gap-2">
+          <ul className="flex flex-col gap-1.5">
             {MAIN_NAV_ITEMS.slice(0, 6).map((item) => (
               <li key={item.href}>
                 <Link
@@ -99,19 +102,19 @@ async function Footer({
           </ul>
         </nav>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
           <h3 className="text-sm font-semibold text-text-primary">
             ارتباط با ما
           </h3>
 
-          <ul className="flex flex-col gap-3 text-sm text-text-secondary">
+          <ul className="flex flex-col gap-2 text-sm text-text-secondary">
             {email ? (
               <li>
                 <a
                   href={`mailto:${email}`}
                   className="group flex items-center gap-3 transition-colors hover:text-text-primary"
                 >
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border transition-colors duration-150 group-hover:border-accent group-hover:text-accent-hover">
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-border transition-colors duration-150 group-hover:border-accent group-hover:text-accent-hover">
                     <Mail className="size-3.5" aria-hidden="true" />
                   </span>
                   {email}
@@ -125,11 +128,23 @@ async function Footer({
                   href={`tel:${phoneNumber}`}
                   className="group flex items-center gap-3 transition-colors hover:text-text-primary"
                 >
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border transition-colors duration-150 group-hover:border-accent group-hover:text-accent-hover">
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-border transition-colors duration-150 group-hover:border-accent group-hover:text-accent-hover">
                     <Phone className="size-3.5" aria-hidden="true" />
                   </span>
                   <span dir="ltr">{phoneNumber}</span>
                 </a>
+              </li>
+            ) : null}
+
+            {streetAddress ? (
+              <li className="flex items-center gap-3">
+                <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-border">
+                  <MapPin
+                    className="size-3.5 text-text-secondary"
+                    aria-hidden="true"
+                  />
+                </span>
+                <span>{streetAddress}</span>
               </li>
             ) : null}
 
@@ -140,7 +155,7 @@ async function Footer({
                 rel="noreferrer noopener"
                 className="group flex items-center gap-3 transition-colors hover:text-text-primary"
               >
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border transition-colors duration-150 group-hover:border-accent group-hover:text-accent-hover">
+                <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-border transition-colors duration-150 group-hover:border-accent group-hover:text-accent-hover">
                   <Globe className="size-3.5" aria-hidden="true" />
                 </span>
                 وب‌سایت پیشنام
@@ -150,7 +165,7 @@ async function Footer({
 
           {settings.googleMapsEmbed ? (
             <div
-              className="overflow-hidden rounded-card border border-border [&_iframe]:h-full [&_iframe]:w-full"
+              className="max-h-32 overflow-hidden rounded-card border border-border [&_iframe]:h-full [&_iframe]:w-full"
               style={{ aspectRatio: "16 / 9" }}
               dangerouslySetInnerHTML={{
                 __html: settings.googleMapsEmbed,
@@ -161,7 +176,7 @@ async function Footer({
       </Container>
 
       <div className="border-t border-border">
-        <Container className="py-6 text-center text-sm text-text-secondary">
+        <Container className="py-4 text-center text-sm text-text-secondary">
           © {year} پیشتاک. تمامی حقوق محفوظ است.
         </Container>
       </div>
