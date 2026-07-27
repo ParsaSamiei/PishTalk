@@ -5,6 +5,7 @@ import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { SocialLinks } from "@/components/shared/SocialLinks";
 import { ContactForm } from "@/features/contact/components/ContactForm";
+import { CONTACT_PHONE } from "@/lib/constants";
 import { getSiteSettings } from "@/lib/site-settings";
 
 export const metadata: Metadata = {
@@ -15,9 +16,10 @@ export const metadata: Metadata = {
 
 export default async function ContactPage() {
   const settings = await getSiteSettings();
+  const phoneNumber = settings.phone ?? CONTACT_PHONE;
 
   return (
-    <Section className="pt-12">
+    <Section className="pt-12" circuit>
       <Container className="grid gap-12 lg:grid-cols-2">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3">
@@ -30,37 +32,39 @@ export default async function ContactPage() {
           </div>
           <ul className="flex flex-col gap-4 text-text-secondary">
             {settings.contactEmail ? (
-              <li className="flex items-center gap-3">
-                <Mail className="size-5 text-accent-hover" aria-hidden="true" />
+              <li>
                 <a
                   href={`mailto:${settings.contactEmail}`}
-                  className="hover:text-text-primary"
+                  className="group flex items-center gap-3 transition-colors hover:text-text-primary"
                 >
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border transition-colors duration-150 group-hover:border-accent group-hover:text-accent-hover">
+                    <Mail className="size-4" aria-hidden="true" />
+                  </span>
                   {settings.contactEmail}
                 </a>
               </li>
             ) : null}
-            {settings.phone ? (
-              <li className="flex items-center gap-3">
-                <Phone
-                  className="size-5 text-accent-hover"
-                  aria-hidden="true"
-                />
+            {phoneNumber ? (
+              <li>
                 <a
-                  href={`tel:${settings.phone}`}
-                  className="hover:text-text-primary"
-                  dir="ltr"
+                  href={`tel:${phoneNumber}`}
+                  className="group flex items-center gap-3 transition-colors hover:text-text-primary"
                 >
-                  {settings.phone}
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border transition-colors duration-150 group-hover:border-accent group-hover:text-accent-hover">
+                    <Phone className="size-4" aria-hidden="true" />
+                  </span>
+                  <span dir="ltr">{phoneNumber}</span>
                 </a>
               </li>
             ) : null}
             {settings.address ? (
               <li className="flex items-center gap-3">
-                <MapPin
-                  className="size-5 text-accent-hover"
-                  aria-hidden="true"
-                />
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border">
+                  <MapPin
+                    className="size-4 text-text-secondary"
+                    aria-hidden="true"
+                  />
+                </span>
                 <span>{settings.address}</span>
               </li>
             ) : null}

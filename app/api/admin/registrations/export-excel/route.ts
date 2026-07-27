@@ -10,6 +10,16 @@ const STATUS_LABELS: Record<string, string> = {
   ATTENDED: "حضور یافته",
 };
 
+/**
+ * Registration fields are free text supplied by anonymous site visitors.
+ * A value starting with =, +, -, or @ can be sniffed as a formula by some
+ * spreadsheet tools, so neutralize it before writing the cell (see the
+ * matching helper in the CSV export route for the full rationale).
+ */
+function neutralizeFormula(value: string): string {
+  return /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+}
+
 export async function GET() {
   await requireAdmin();
 
@@ -19,13 +29,13 @@ export async function GET() {
   });
 
   const rows = registrations.map((registration) => ({
-    نام: registration.firstName,
-    "نام خانوادگی": registration.lastName,
+    نام: neutralizeFormula(registration.firstName),
+    "نام خانوادگی": neutralizeFormula(registration.lastName),
     موبایل: registration.phone,
     ایمیل: registration.email ?? "",
-    دانشگاه: registration.university ?? "",
-    شرکت: registration.company ?? "",
-    حرفه: registration.profession ?? "",
+    دانشگاه: neutralizeFormula(registration.university ?? ""),
+    شرکت: neutralizeFormula(registration.company ?? ""),
+    حرفه: neutralizeFormula(registration.profession ?? ""),
     رویداد: registration.event.title,
     وضعیت: STATUS_LABELS[registration.status] ?? registration.status,
     "تاریخ ثبت‌نام": registration.createdAt.toLocaleDateString("fa-IR"),

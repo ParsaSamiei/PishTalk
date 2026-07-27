@@ -13,10 +13,15 @@ import { FloatingIcon } from "@/components/illustrations/FloatingIcon";
  * "Why does Pishtalk exist?" homepage section. The text column carries the
  * copy; the illustrated panel is purely atmospheric (circuit backdrop +
  * drifting tech icons) echoing the Hero without introducing new claims.
+ *
+ * This section skips the shared `circuit` texture at the outer `<Section>`
+ * level on purpose: the panel already carries its own denser circuit
+ * pattern, and layering a second, differently-phased grid right behind it
+ * is what made the two look misaligned rather than like one cohesive motif.
  */
 function AboutSection() {
   return (
-    <Section id="about" className="bg-surface-secondary" circuit>
+    <Section id="about" className="bg-surface-secondary">
       <Container className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <Reveal className="flex flex-col gap-6">
           <SectionTitle
@@ -25,9 +30,9 @@ function AboutSection() {
             description="پیشتاک رویداد ماهانه‌ای است که توسط پژوهشکده رباتیک پیشنام برگزار می‌شود؛ فضایی برای مهندسان، دانشجویان و علاقه‌مندان رباتیک و هوش مصنوعی تا یاد بگیرند، تجربه‌هایشان را به اشتراک بگذارند و با یکدیگر آشنا شوند."
           />
           <p className="text-text-secondary leading-relaxed">
-            هر رویداد پیشتاک میزبان یک سخنرانی تخصصی، بحث آزاد و فرصتی برای شبکه‌سازی
-            میان اعضای جامعه است. تمرکز ما بر کیفیت محتوا و ارتباط واقعی میان
-            شرکت‌کنندگان است، نه صرفاً برگزاری یک رویداد بزرگ.
+            هر رویداد پیشتاک میزبان یک سخنرانی تخصصی، بحث آزاد و فرصتی برای
+            شبکه‌سازی میان اعضای جامعه است. تمرکز ما بر کیفیت محتوا و ارتباط
+            واقعی میان شرکت‌کنندگان است، نه صرفاً برگزاری یک رویداد بزرگ.
           </p>
           <Button asChild variant="outline" className="self-start">
             <Link href="/about">
@@ -41,6 +46,7 @@ function AboutSection() {
           <div className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-[var(--radius-hero)] border border-border bg-surface lg:mx-0 lg:ms-auto dark:bg-primary">
             <CircuitBackground
               id="about-panel"
+              size={60}
               className="text-primary/[0.05] dark:text-white/[0.07]"
             />
             <div

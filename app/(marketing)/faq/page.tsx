@@ -36,7 +36,7 @@ export default async function FaqPage() {
     : null;
 
   return (
-    <Section className="pt-12">
+    <Section className="pt-12" circuit>
       <Container className="mx-auto flex max-w-3xl flex-col gap-10">
         {jsonLd ? (
           <script
@@ -46,8 +46,12 @@ export default async function FaqPage() {
         ) : null}
         <Breadcrumbs items={[{ label: "سوالات متداول" }]} />
         <div className="flex flex-col gap-3">
-          <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">سوالات متداول</h1>
-          <p className="text-lg text-text-secondary">پاسخ سوالات پرتکرار درباره پیشتاک.</p>
+          <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">
+            سوالات متداول
+          </h1>
+          <p className="text-lg text-text-secondary">
+            پاسخ سوالات پرتکرار درباره پیشتاک.
+          </p>
         </div>
 
         {faqs.length > 0 ? (

@@ -1,12 +1,21 @@
 "use server";
 
+import { headers } from "next/headers";
+
 import { prisma } from "@/lib/prisma";
-import { contactFormSchema, type ContactFormValues } from "@/features/contact/types/contact";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
+import {
+  contactFormSchema,
+  type ContactFormValues,
+} from "@/features/contact/types/contact";
 
 export interface SendContactMessageResult {
   readonly success: boolean;
   readonly error?: string;
 }
+
+const SUBMIT_LIMIT = 5;
+const SUBMIT_WINDOW_MS = 60 * 60 * 1000;
 
 /**
  * Validates and stores a contact form submission.
@@ -18,8 +27,14 @@ export interface SendContactMessageResult {
  * a provider is chosen.
  */
 export async function sendContactMessage(
-  values: ContactFormValues
+  values: ContactFormValues,
 ): Promise<SendContactMessageResult> {
+  const ip = getClientIp(await headers());
+  const rateLimit = checkRateLimit(`contact:${ip}`, SUBMIT_LIMIT, SUBMIT_WINDOW_MS);
+  if (!rateLimit.allowed) {
+    return { success: false, error: "تعداد درخواست‌ها زیاد است. کمی بعد دوباره تلاش کنید." };
+  }
+
   const parsed = contactFormSchema.safeParse(values);
 
   if (!parsed.success) {
@@ -27,7 +42,14 @@ export async function sendContactMessage(
   }
 
   try {
-    await prisma.contactMessage.create({ data: parsed.data });
+    await prisma.contactMessage.create({
+      data: {
+        name: parsed.data.name,
+        email: parsed.data.email,
+        phone: parsed.data.phone || null,
+        message: parsed.data.message,
+      },
+    });
     return { success: true };
   } catch {
     return {

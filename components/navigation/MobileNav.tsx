@@ -31,10 +31,10 @@ function MobileNav() {
         </Button>
       </DialogPrimitive.Trigger>
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-primary/40 backdrop-blur-sm" />
+        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-primary/40 backdrop-blur-sm data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out" />
         <DialogPrimitive.Content
           className={cn(
-            "fixed inset-y-0 start-0 z-50 flex h-full w-[85%] max-w-sm flex-col gap-8 bg-surface p-6 shadow-lg outline-none"
+            "fixed inset-y-0 start-0 z-50 flex h-full w-[85%] max-w-sm flex-col gap-8 bg-surface p-6 shadow-lg outline-none data-[state=open]:animate-drawer-in data-[state=closed]:animate-drawer-out"
           )}
         >
           <div className="flex items-center justify-between">

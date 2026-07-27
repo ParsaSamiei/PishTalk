@@ -42,7 +42,10 @@ async function getGalleries(): Promise<GalleryGroup[]> {
         id: gallery.id,
         eventSlug: gallery.event.slug,
         title: gallery.title,
-        coverImage: gallery.coverImage ?? gallery.media.find((m) => m.type === "IMAGE")?.url ?? null,
+        coverImage:
+          gallery.coverImage ??
+          gallery.media.find((m) => m.type === "IMAGE")?.url ??
+          null,
         imageCount: gallery.media.filter((m) => m.type === "IMAGE").length,
         videoCount: gallery.media.filter((m) => m.type === "VIDEO").length,
       }));
@@ -55,11 +58,13 @@ export default async function GalleryPage() {
   const galleries = await getGalleries();
 
   return (
-    <Section className="pt-12">
+    <Section className="pt-12" circuit>
       <Container className="flex flex-col gap-10">
         <Breadcrumbs items={[{ label: "گالری" }]} />
         <div className="flex flex-col gap-3">
-          <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">گالری</h1>
+          <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">
+            گالری
+          </h1>
           <p className="max-w-2xl text-lg text-text-secondary">
             لحظاتی از رویدادهای برگزار شده پیشتاک را مرور کنید.
           </p>
@@ -89,10 +94,14 @@ export default async function GalleryPage() {
                   )}
                 </div>
                 <div className="flex flex-col gap-1 p-5">
-                  <h2 className="font-semibold text-text-primary">{gallery.title}</h2>
+                  <h2 className="font-semibold text-text-primary">
+                    {gallery.title}
+                  </h2>
                   <p className="text-sm text-text-secondary">
                     {gallery.imageCount} تصویر
-                    {gallery.videoCount > 0 ? ` · ${gallery.videoCount} ویدیو` : ""}
+                    {gallery.videoCount > 0
+                      ? ` · ${gallery.videoCount} ویدیو`
+                      : ""}
                   </p>
                 </div>
               </Link>

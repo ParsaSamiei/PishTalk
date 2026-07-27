@@ -28,7 +28,11 @@ function FaqPreviewSection({ faqs }: FaqPreviewSectionProps) {
     <Section id="faq" className="bg-surface-secondary" circuit>
       <Container className="mx-auto flex max-w-3xl flex-col gap-10">
         <Reveal className="mx-auto">
-          <SectionTitle eyebrow="سوالات متداول" title="سوالات پرتکرار" align="center" />
+          <SectionTitle
+            eyebrow="سوالات متداول"
+            title="سوالات پرتکرار"
+            align="center"
+          />
         </Reveal>
 
         {faqs.length > 0 ? (
@@ -36,12 +40,24 @@ function FaqPreviewSection({ faqs }: FaqPreviewSectionProps) {
             <Accordion
               type="single"
               collapsible
-              className="rounded-[var(--radius-card)] border border-border bg-surface px-6"
+              className="flex flex-col gap-3"
             >
               {faqs.map((faq) => (
-                <AccordionItem key={faq.id} value={faq.id}>
-                  <AccordionTrigger>{faq.question}</AccordionTrigger>
-                  <AccordionContent>{faq.answer}</AccordionContent>
+                <AccordionItem
+                  key={faq.id}
+                  value={faq.id}
+                  className="group overflow-hidden rounded-card border border-border bg-surface px-6 transition-colors duration-300 data-[state=open]:border-accent/40 data-[state=open]:shadow-[0_16px_40px_-24px_rgba(244,185,66,0.55)]"
+                >
+                  <AccordionTrigger className="flex w-full items-center gap-4 py-5 text-start text-base font-medium text-text-primary [&>svg]:transition-transform [&>svg]:duration-300 [&[data-state=open]>svg]:rotate-180">
+                    <HelpCircle
+                      className="size-5 shrink-0 text-accent-hover"
+                      aria-hidden="true"
+                    />
+                    <span className="flex-1">{faq.question}</span>
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-5 ps-9 text-text-secondary">
+                    {faq.answer}
+                  </AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>
@@ -57,7 +73,11 @@ function FaqPreviewSection({ faqs }: FaqPreviewSectionProps) {
         )}
 
         {faqs.length > 0 ? (
-          <Button asChild variant="ghost" className="mx-auto">
+          <Button
+            asChild
+            variant="ghost"
+            className="mx-auto border border-border-primary hover:border-accent hover:bg-accent/5"
+          >
             <Link href="/faq">
               مشاهده همه سوالات
               <ArrowLeft className="size-4" aria-hidden="true" />

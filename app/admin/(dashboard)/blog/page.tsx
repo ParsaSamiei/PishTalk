@@ -23,10 +23,18 @@ const FILTER_OPTIONS = [
 const PAGE_SIZE = 25;
 
 interface AdminBlogPageProps {
-  readonly searchParams: Promise<{ q?: string; status?: string; page?: string }>;
+  readonly searchParams: Promise<{
+    q?: string;
+    status?: string;
+    page?: string;
+  }>;
 }
 
-async function getAdminBlogs(q: string | undefined, status: string | undefined, page: number) {
+async function getAdminBlogs(
+  q: string | undefined,
+  status: string | undefined,
+  page: number,
+) {
   const where: Prisma.BlogWhereInput = { deletedAt: null };
 
   if (q) where.title = { contains: q, mode: "insensitive" };
@@ -47,14 +55,16 @@ async function getAdminBlogs(q: string | undefined, status: string | undefined, 
   return { blogs, totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)) };
 }
 
-export default async function AdminBlogPage({ searchParams }: AdminBlogPageProps) {
+export default async function AdminBlogPage({
+  searchParams,
+}: AdminBlogPageProps) {
   const { q, status, page: pageParam } = await searchParams;
   const page = Math.max(1, Number(pageParam) || 1);
   const { blogs, totalPages } = await getAdminBlogs(q, status, page);
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">وبلاگ</h1>
           <p className="text-text-secondary">مدیریت مطالب وبلاگ</p>
@@ -76,22 +86,34 @@ export default async function AdminBlogPage({ searchParams }: AdminBlogPageProps
       </Suspense>
 
       {blogs.length === 0 ? (
-        <EmptyState title="مطلبی پیدا نشد" description="فیلتر یا عبارت جستجو را تغییر دهید." />
+        <EmptyState
+          title="مطلبی پیدا نشد"
+          description="فیلتر یا عبارت جستجو را تغییر دهید."
+        />
       ) : (
         <div className="flex flex-col gap-3">
           {blogs.map((blog) => (
-            <Card key={blog.id} className="flex items-center justify-between gap-4 p-4">
+            <Card
+              key={blog.id}
+              className="flex flex-wrap items-center justify-between gap-4 p-4"
+            >
               <div className="flex flex-1 flex-col gap-1">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <p className="font-medium text-text-primary">{blog.title}</p>
                   <Badge variant={blog.published ? "success" : "neutral"}>
                     {blog.published ? "منتشرشده" : "پیش‌نویس"}
                   </Badge>
-                  {blog.category ? <Badge variant="accent">{blog.category.name}</Badge> : null}
+                  {blog.category ? (
+                    <Badge variant="accent">{blog.category.name}</Badge>
+                  ) : null}
                 </div>
-                <p className="line-clamp-1 text-sm text-text-secondary">{blog.excerpt}</p>
+                <p className="line-clamp-1 text-sm text-text-secondary">
+                  {blog.excerpt}
+                </p>
                 <p className="text-xs text-text-light">
-                  {blog.readingTime ? `${blog.readingTime} دقیقه مطالعه · ` : ""}
+                  {blog.readingTime
+                    ? `${blog.readingTime} دقیقه مطالعه · `
+                    : ""}
                   {blog.publishedAt
                     ? `منتشر شده در ${formatEventDate(blog.publishedAt)}`
                     : `ایجاد شده در ${formatEventDate(blog.createdAt)}`}
@@ -99,7 +121,12 @@ export default async function AdminBlogPage({ searchParams }: AdminBlogPageProps
               </div>
               <div className="flex items-center gap-1">
                 {blog.published ? (
-                  <Button asChild variant="ghost" size="icon" aria-label="مشاهده در سایت">
+                  <Button
+                    asChild
+                    variant="ghost"
+                    size="icon"
+                    aria-label="مشاهده در سایت"
+                  >
                     <Link href={`/blog/${blog.slug}`} target="_blank">
                       <ExternalLink className="size-4" aria-hidden="true" />
                     </Link>

@@ -8,12 +8,14 @@ export default async function AdminSettingsPage() {
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-2xl font-bold text-text-primary">تنظیمات سایت</h1>
-        <p className="text-text-secondary">اطلاعاتی که در سراسر سایت نمایش داده می‌شود</p>
+        <p className="text-text-secondary">
+          اطلاعاتی که در سراسر سایت نمایش داده می‌شود
+        </p>
       </div>
       <SiteSettingsForm
         defaultValues={{
           siteName: settings?.siteName ?? "پیشتاک",
-          tagline: settings?.tagline ?? "جامعه مهندسان رباتیک، هوش مصنوعی و فناوری",
+          tagline: settings?.tagline ?? "جامعه مهندسان رباتیک",
           description: settings?.description ?? "",
           logo: settings?.logo ?? "",
           favicon: settings?.favicon ?? "",

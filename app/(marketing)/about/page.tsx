@@ -15,11 +15,13 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <Section className="pt-12">
+    <Section className="pt-12" circuit>
       <Container className="mx-auto flex max-w-3xl flex-col gap-8">
         <Breadcrumbs items={[{ label: "درباره ما" }]} />
         <div className="flex flex-col gap-3">
-          <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">درباره پیشتاک</h1>
+          <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">
+            درباره پیشتاک
+          </h1>
           <p className="text-lg text-text-secondary">
             جامعه‌ای برای مهندسان رباتیک، هوش مصنوعی و فناوری.
           </p>
@@ -27,19 +29,21 @@ export default function AboutPage() {
 
         <div className="flex flex-col gap-6 leading-relaxed text-text-secondary">
           <p>
-            پیشتاک رویداد ماهانه‌ای است که توسط پژوهشکده رباتیک پیشنام برگزار می‌شود. هدف
-            ما ایجاد فضایی است که در آن مهندسان، دانشجویان و علاقه‌مندان به رباتیک و هوش
-            مصنوعی بتوانند دانش خود را به اشتراک بگذارند، از تجربه‌های یکدیگر یاد بگیرند
-            و ارتباطات حرفه‌ای واقعی شکل دهند.
+            پیشتاک رویداد ماهانه‌ای است که توسط پژوهشکده رباتیک پیشنام برگزار
+            می‌شود. هدف ما ایجاد فضایی است که در آن مهندسان، دانشجویان و
+            علاقه‌مندان به رباتیک و هوش مصنوعی بتوانند دانش خود را به اشتراک
+            بگذارند، از تجربه‌های یکدیگر یاد بگیرند و ارتباطات حرفه‌ای واقعی شکل
+            دهند.
           </p>
           <p>
-            هر رویداد پیشتاک شامل یک سخنرانی تخصصی، بحث آزاد و زمانی برای شبکه‌سازی است.
-            ما به کیفیت محتوا و کوچک نگه‌داشتن جامعه اهمیت می‌دهیم تا هر شرکت‌کننده فرصت
-            واقعی برای گفتگو داشته باشد.
+            هر رویداد پیشتاک شامل یک سخنرانی تخصصی، بحث آزاد و زمانی برای
+            شبکه‌سازی است. ما به کیفیت محتوا و کوچک نگه‌داشتن جامعه اهمیت
+            می‌دهیم تا هر شرکت‌کننده فرصت واقعی برای گفتگو داشته باشد.
           </p>
           <p>
-            پیشتاک بخشی از فعالیت‌های آموزشی و اجتماعی پژوهشکده رباتیک پیشنام است که در
-            زمینه آموزش رباتیک، برگزاری مسابقات و توسعه تیم‌های دانشگاهی فعالیت می‌کند.
+            پیشتاک بخشی از فعالیت‌های آموزشی و اجتماعی پژوهشکده رباتیک پیشنام
+            است که در زمینه آموزش رباتیک، برگزاری مسابقات و توسعه تیم‌های
+            دانشگاهی فعالیت می‌کند.
           </p>
         </div>
 
@@ -49,8 +53,10 @@ export default function AboutPage() {
           </a>
         </Button>
 
-        <div className="flex flex-col gap-3 rounded-[var(--radius-card)] border border-border bg-surface-secondary p-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-text-primary">می‌خواهید در رویداد بعدی شرکت کنید؟</p>
+        <div className="flex flex-col gap-3 rounded-card border border-border bg-surface-secondary p-6 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-text-primary">
+            می‌خواهید در رویداد بعدی شرکت کنید؟
+          </p>
           <Button asChild>
             <Link href="/events">مشاهده رویدادها</Link>
           </Button>

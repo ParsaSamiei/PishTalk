@@ -24,7 +24,11 @@ function PreviousEventsSection({ events }: PreviousEventsSectionProps) {
         <Reveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <SectionTitle eyebrow="آرشیو" title="رویدادهای گذشته پیشتاک" />
           {events.length > 0 ? (
-            <Button asChild variant="ghost">
+            <Button
+              asChild
+              variant="ghost"
+              className="border border-border-primary hover:border-accent hover:bg-accent/5"
+            >
               <Link href="/events">
                 مشاهده همه
                 <ArrowLeft className="size-4" aria-hidden="true" />

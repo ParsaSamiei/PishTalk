@@ -3,6 +3,17 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rateLimit";
+
+// Precomputed once so `authorize` can always await a bcrypt compare of the
+// same cost, even when no admin row exists for the given email — otherwise
+// an unknown email returns near-instantly while a known one takes as long
+// as a real bcrypt comparison, letting an attacker enumerate valid admin
+// emails purely from response time.
+const DUMMY_PASSWORD_HASH = bcrypt.hashSync("not-a-real-password", 10);
+
+const LOGIN_ATTEMPT_LIMIT = 5;
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 
 /**
  * Admin-only authentication (docs/07_ADMIN_PANEL.md: "Auth: Simple email +
@@ -24,13 +35,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (typeof email !== "string" || typeof password !== "string") return null;
 
+        // Rate-limit per email rather than per IP: the login form doesn't
+        // have easy access to the caller's IP here, and since there is a
+        // small, fixed set of admin accounts, limiting attempts per email
+        // still meaningfully blocks credential-stuffing against them.
+        const rateLimit = checkRateLimit(`login:${email.toLowerCase()}`, LOGIN_ATTEMPT_LIMIT, LOGIN_WINDOW_MS);
+        if (!rateLimit.allowed) return null;
+
         const admin = await prisma.admin.findFirst({
           where: { email, deletedAt: null },
         });
-        if (!admin) return null;
 
-        const isValid = await bcrypt.compare(password, admin.passwordHash);
-        if (!isValid) return null;
+        const isValid = await bcrypt.compare(password, admin?.passwordHash ?? DUMMY_PASSWORD_HASH);
+        if (!admin || !isValid) return null;
 
         return {
           id: admin.id,

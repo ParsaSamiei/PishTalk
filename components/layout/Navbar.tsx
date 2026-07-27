@@ -52,10 +52,10 @@ function Navbar() {
         "sticky top-0 z-40 border-b transition-colors duration-300",
         isTransparent
           ? "border-transparent bg-transparent"
-          : "border-border bg-surface/80 backdrop-blur-md"
+          : "border-border bg-surface/80 backdrop-blur-md",
       )}
     >
-      <Container className="flex h-[72px] items-center justify-between">
+      <Container className="flex h-18 items-center justify-between">
         <Logo />
         <NavLinks className="hidden lg:flex" />
         <div className="flex items-center gap-2">

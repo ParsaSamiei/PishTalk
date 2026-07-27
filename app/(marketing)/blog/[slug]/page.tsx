@@ -27,7 +27,9 @@ async function getBlogBySlug(slug: string) {
   }
 }
 
-export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: BlogPageProps): Promise<Metadata> {
   const { slug } = await params;
   const blog = await getBlogBySlug(slug);
 
@@ -41,7 +43,12 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
     description,
     alternates: { canonical: `${SITE_URL}/blog/${blog.slug}` },
     openGraph: blog.coverImage
-      ? { images: [{ url: blog.coverImage }], title, description, type: "article" }
+      ? {
+          images: [{ url: blog.coverImage }],
+          title,
+          description,
+          type: "article",
+        }
       : { title, description, type: "article" },
   };
 }
@@ -77,15 +84,25 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <Section className="pt-12">
+      <Section className="pt-12" circuit>
         <Container className="mx-auto flex max-w-3xl flex-col gap-8">
-          <Breadcrumbs items={[{ label: "وبلاگ", href: "/blog" }, { label: blog.title }]} />
+          <Breadcrumbs
+            items={[{ label: "وبلاگ", href: "/blog" }, { label: blog.title }]}
+          />
           <div className="flex flex-col gap-4">
-            {blog.category ? <Badge variant="accent">{blog.category.name}</Badge> : null}
-            <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">{blog.title}</h1>
+            {blog.category ? (
+              <Badge variant="accent" className="w-fit">
+                {blog.category.name}
+              </Badge>
+            ) : null}
+            <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">
+              {blog.title}
+            </h1>
             <div className="flex flex-wrap items-center gap-4 text-sm text-text-secondary">
               <span>نویسنده: تیم پیشتاک</span>
-              {blog.publishedAt ? <span>{formatEventDate(blog.publishedAt)}</span> : null}
+              {blog.publishedAt ? (
+                <span>{formatEventDate(blog.publishedAt)}</span>
+              ) : null}
               {blog.readingTime ? (
                 <span className="flex items-center gap-1.5">
                   <Clock className="size-4" aria-hidden="true" />
@@ -96,8 +113,14 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
           </div>
 
           {blog.coverImage ? (
-            <div className="relative aspect-video w-full overflow-hidden rounded-[var(--radius-card)]">
-              <Image src={blog.coverImage} alt={blog.title} fill className="object-cover" priority />
+            <div className="relative aspect-video w-full overflow-hidden rounded-card">
+              <Image
+                src={blog.coverImage}
+                alt={blog.title}
+                fill
+                className="object-cover"
+                priority
+              />
             </div>
           ) : null}
 
