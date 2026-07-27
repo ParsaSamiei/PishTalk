@@ -21,7 +21,11 @@ function LatestBlogsSection({ blogs }: LatestBlogsSectionProps) {
         <Reveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <SectionTitle eyebrow="وبلاگ" title="جدیدترین نوشته‌ها" />
           {blogs.length > 0 ? (
-            <Button asChild variant="ghost">
+            <Button
+              asChild
+              variant="ghost"
+              className="border border-border-primary hover:border-accent hover:bg-accent/5"
+            >
               <Link href="/blog">
                 مشاهده همه مطالب
                 <ArrowLeft className="size-4" aria-hidden="true" />

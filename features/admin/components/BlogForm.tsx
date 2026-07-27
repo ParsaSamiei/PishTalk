@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import dynamic from "next/dynamic";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -9,8 +10,33 @@ import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { RichTextEditor } from "@/features/admin/components/RichTextEditor";
-import { blogFormSchema, type BlogFormValues, type BlogFormInput } from "@/features/admin/types/blogForm";
+import {
+  blogFormSchema,
+  type BlogFormValues,
+  type BlogFormInput,
+} from "@/features/admin/types/blogForm";
+import { useToast } from "@/providers/ToastProvider";
+
+/**
+ * Tiptap (editor core + starter-kit + link/image extensions) is one of the
+ * heaviest client bundles in the app and is only ever needed on this one
+ * admin form, so it's split into its own chunk and never rendered on the
+ * server. `RichTextEditor` already renders a pulse skeleton while its
+ * internal `useEditor()` call resolves, so the loading state lines up with
+ * this component's own skeleton exactly.
+ */
+const RichTextEditor = dynamic(
+  () =>
+    import("@/features/admin/components/RichTextEditor").then(
+      (mod) => mod.RichTextEditor,
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="min-h-64 animate-pulse rounded-[var(--radius-input)] border border-border bg-surface-secondary" />
+    ),
+  },
+);
 
 interface CategoryOption {
   readonly id: string;
@@ -20,12 +46,20 @@ interface CategoryOption {
 interface BlogFormProps {
   readonly defaultValues?: Partial<BlogFormValues>;
   readonly categories: readonly CategoryOption[];
-  readonly onSubmit: (values: BlogFormValues) => Promise<{ success: boolean; error?: string }>;
+  readonly onSubmit: (
+    values: BlogFormValues,
+  ) => Promise<{ success: boolean; error?: string }>;
   readonly submitLabel: string;
 }
 
-function BlogForm({ defaultValues, categories, onSubmit, submitLabel }: BlogFormProps) {
+function BlogForm({
+  defaultValues,
+  categories,
+  onSubmit,
+  submitLabel,
+}: BlogFormProps) {
   const [serverError, setServerError] = React.useState<string | null>(null);
+  const { showToast } = useToast();
 
   const {
     register,
@@ -39,23 +73,54 @@ function BlogForm({ defaultValues, categories, onSubmit, submitLabel }: BlogForm
 
   async function handleFormSubmit(values: BlogFormValues) {
     setServerError(null);
-    const result = await onSubmit(values);
-    if (!result.success) setServerError(result.error ?? "خطایی رخ داد.");
+    try {
+      const result = await onSubmit(values);
+      if (result.success) {
+        showToast("مطلب با موفقیت ذخیره شد", { variant: "success" });
+      } else {
+        const message = result.error ?? "خطایی رخ داد.";
+        setServerError(message);
+        showToast("ذخیره مطلب ناموفق بود", {
+          variant: "danger",
+          description: message,
+        });
+      }
+    } catch {
+      setServerError("خطایی غیرمنتظره رخ داد.");
+      showToast("ذخیره مطلب ناموفق بود", { variant: "danger" });
+    }
   }
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} noValidate className="flex flex-col gap-8">
+    <form
+      onSubmit={handleSubmit(handleFormSubmit)}
+      noValidate
+      className="flex flex-col gap-8"
+    >
       <Card className="flex flex-col gap-5">
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="flex flex-col gap-2">
             <Label htmlFor="title">عنوان</Label>
-            <Input id="title" aria-invalid={Boolean(errors.title)} {...register("title")} />
-            {errors.title ? <p className="text-sm text-danger">{errors.title.message}</p> : null}
+            <Input
+              id="title"
+              aria-invalid={Boolean(errors.title)}
+              {...register("title")}
+            />
+            {errors.title ? (
+              <p className="text-sm text-danger">{errors.title.message}</p>
+            ) : null}
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="slug">نامک (slug)</Label>
-            <Input id="slug" dir="ltr" aria-invalid={Boolean(errors.slug)} {...register("slug")} />
-            {errors.slug ? <p className="text-sm text-danger">{errors.slug.message}</p> : null}
+            <Input
+              id="slug"
+              dir="ltr"
+              aria-invalid={Boolean(errors.slug)}
+              {...register("slug")}
+            />
+            {errors.slug ? (
+              <p className="text-sm text-danger">{errors.slug.message}</p>
+            ) : null}
           </div>
         </div>
 
@@ -67,7 +132,9 @@ function BlogForm({ defaultValues, categories, onSubmit, submitLabel }: BlogForm
             aria-invalid={Boolean(errors.excerpt)}
             {...register("excerpt")}
           />
-          {errors.excerpt ? <p className="text-sm text-danger">{errors.excerpt.message}</p> : null}
+          {errors.excerpt ? (
+            <p className="text-sm text-danger">{errors.excerpt.message}</p>
+          ) : null}
         </div>
 
         <div className="flex flex-col gap-2">
@@ -96,7 +163,12 @@ function BlogForm({ defaultValues, categories, onSubmit, submitLabel }: BlogForm
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="readingTime">زمان مطالعه (دقیقه، اختیاری)</Label>
-            <Input id="readingTime" type="number" min={1} {...register("readingTime")} />
+            <Input
+              id="readingTime"
+              type="number"
+              min={1}
+              {...register("readingTime")}
+            />
           </div>
         </div>
       </Card>
@@ -107,10 +179,15 @@ function BlogForm({ defaultValues, categories, onSubmit, submitLabel }: BlogForm
           name="content"
           control={control}
           render={({ field }) => (
-            <RichTextEditor value={field.value ?? ""} onChange={field.onChange} />
+            <RichTextEditor
+              value={field.value ?? ""}
+              onChange={field.onChange}
+            />
           )}
         />
-        {errors.content ? <p className="text-sm text-danger">{errors.content.message}</p> : null}
+        {errors.content ? (
+          <p className="text-sm text-danger">{errors.content.message}</p>
+        ) : null}
       </Card>
 
       <label className="flex items-center gap-2 text-sm text-text-primary">
@@ -122,9 +199,16 @@ function BlogForm({ defaultValues, categories, onSubmit, submitLabel }: BlogForm
         انتشار در سایت
       </label>
 
-      {serverError ? <p className="text-sm text-danger">{serverError}</p> : null}
+      {serverError ? (
+        <p className="text-sm text-danger">{serverError}</p>
+      ) : null}
 
-      <Button type="submit" size="lg" isLoading={isSubmitting} className="self-start">
+      <Button
+        type="submit"
+        size="lg"
+        isLoading={isSubmitting}
+        className="self-start"
+      >
         {submitLabel}
       </Button>
     </form>

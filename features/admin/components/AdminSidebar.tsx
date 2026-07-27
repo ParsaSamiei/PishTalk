@@ -13,6 +13,7 @@ import {
   Settings,
   Users,
   UserCircle,
+  MessageSquare,
 } from "lucide-react";
 
 import { Logo } from "@/components/shared/Logo";
@@ -22,11 +23,17 @@ import { cn } from "@/lib/utils";
  * Order matches docs/07_ADMIN_PANEL.md's Sidebar Navigation spec exactly:
  * Dashboard, Events, Registrations, Blogs, Resources, Gallery, FAQ, Rules,
  * Site Settings, Profile. (Logout is rendered separately in AdminTopbar.)
+ *
+ * "پیام‌ها" (Messages) is an addition beyond that spec — same rationale as
+ * the ContactMessage model itself (see prisma/schema.prisma): the docs never
+ * defined a place to read contact-form submissions, so this closes that gap.
+ * Placed right after Registrations since both are visitor-submitted data.
  */
 export const ADMIN_NAV = [
   { label: "داشبورد", href: "/admin", icon: LayoutDashboard },
   { label: "رویدادها", href: "/admin/events", icon: CalendarDays },
   { label: "ثبت‌نام‌ها", href: "/admin/registrations", icon: Users },
+  { label: "پیام‌ها", href: "/admin/messages", icon: MessageSquare },
   { label: "وبلاگ", href: "/admin/blog", icon: Newspaper },
   { label: "منابع", href: "/admin/resources", icon: BookOpen },
   { label: "گالری", href: "/admin/gallery", icon: Images },
@@ -44,14 +51,17 @@ function AdminSidebar() {
       <Logo />
       <nav className="flex flex-1 flex-col gap-1">
         {ADMIN_NAV.map(({ label, href, icon: Icon }) => {
-          const isActive = href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+          const isActive =
+            href === "/admin"
+              ? pathname === "/admin"
+              : pathname.startsWith(href);
           return (
             <Link
               key={href}
               href={href}
               className={cn(
-                "flex items-center gap-3 rounded-[var(--radius-button)] px-3 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-surface-secondary hover:text-text-primary",
-                isActive && "bg-surface-secondary text-text-primary"
+                "flex items-center gap-3 rounded-button px-3 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-surface-secondary hover:text-text-primary",
+                isActive && "bg-surface-secondary text-text-primary",
               )}
             >
               <Icon className="size-4" aria-hidden="true" />

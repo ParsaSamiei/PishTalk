@@ -19,7 +19,7 @@
  */
 :root {
   --color-primary: #0f172a;
-  --color-primary-hover: #1e293b;
+  --color-primary-hover: #334155;
   --color-accent: #f4b942;
   --color-accent-hover: #d89e2e;
   --color-surface: #ffffff;
@@ -46,6 +46,11 @@
 }
 
 .dark {
+  --color-primary: #1e293b;
+  --color-primary-hover: #334155;
+  --color-accent: #f4b942;
+  --color-accent-hover: #d89e2e;
+
   --color-surface: #0f172a;
   --color-surface-secondary: #0b1220;
   --color-background: var(--color-background-dark);
@@ -99,6 +104,16 @@
   --animate-spin-slow: spin-slow 22s linear infinite;
   --animate-gradient-x: gradient-x 6s ease infinite;
   --animate-button-glow: button-glow 2s ease-in-out infinite;
+
+  /* Drawer/overlay entrance-exit, driven by Radix's data-state attribute
+   * (see MobileNav and MobileAdminNav) so the panels slide/fade in and out
+   * instead of popping in instantly. The site is always RTL (dir="rtl" in
+   * app/layout.tsx), and both drawers anchor to inset-s-0 (the right edge
+   * in RTL), so they slide in from the right. */
+  --animate-fade-in: fade-in 0.5s ease-out;
+  --animate-fade-out: fade-out 0.3s ease-in;
+  --animate-drawer-in: drawer-in 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-drawer-out: drawer-out 0.3s ease-in;
 
   @keyframes accordion-down {
     from {
@@ -166,15 +181,47 @@
     0%,
     100% {
       box-shadow:
-        0 0 8px rgba(244, 185, 66, 0.3),
-        0 0 16px rgba(244, 185, 66, 0.15),
-        inset 0 0 8px rgba(244, 185, 66, 0.1);
+        0 0 10px rgba(244, 185, 66, 0.4),
+        0 0 20px rgba(244, 185, 66, 0.2),
+        inset 0 0 8px rgba(244, 185, 66, 0.15);
     }
     50% {
       box-shadow:
-        0 0 12px rgba(244, 185, 66, 0.5),
-        0 0 24px rgba(244, 185, 66, 0.25),
-        inset 0 0 12px rgba(244, 185, 66, 0.15);
+        0 0 14px rgba(244, 185, 66, 0.6),
+        0 0 28px rgba(244, 185, 66, 0.3),
+        inset 0 0 12px rgba(244, 185, 66, 0.2);
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes drawer-in {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+  @keyframes drawer-out {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(100%);
     }
   }
 }
@@ -253,6 +300,7 @@
   }
 
   .cursor-hover {
+    opacity: 0.65;
     filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.35))
       drop-shadow(0 0 18px rgba(59, 130, 246, 0.15));
   }

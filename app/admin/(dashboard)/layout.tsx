@@ -24,12 +24,12 @@ export default async function AdminLayout({
   return (
     <div className="flex min-h-screen bg-surface-secondary">
       <AdminSidebar />
-      <div className="flex flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col">
         <AdminTopbar
           userName={session.user.name ?? session.user.email ?? "مدیر"}
           userRole={role ? ROLE_LABELS[role] : undefined}
         />
-        <main className="flex-1 p-6">{children}</main>
+        <main className="min-w-0 flex-1 p-6">{children}</main>
       </div>
     </div>
   );

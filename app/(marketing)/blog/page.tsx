@@ -43,7 +43,7 @@ export default async function BlogPage() {
   const blogs = await getAllBlogs();
 
   return (
-    <Section className="pt-12">
+    <Section className="pt-12" circuit>
       <Container className="flex flex-col gap-10">
         <Breadcrumbs items={[{ label: "وبلاگ" }]} />
         <div className="flex flex-col gap-3">

@@ -43,18 +43,30 @@ function RegistrationForm({ eventId }: RegistrationFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      className="flex flex-col gap-5"
+    >
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="flex flex-col gap-2">
           <Label htmlFor="firstName">نام</Label>
-          <Input id="firstName" aria-invalid={Boolean(errors.firstName)} {...register("firstName")} />
+          <Input
+            id="firstName"
+            aria-invalid={Boolean(errors.firstName)}
+            {...register("firstName")}
+          />
           {errors.firstName ? (
             <p className="text-sm text-danger">{errors.firstName.message}</p>
           ) : null}
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="lastName">نام خانوادگی</Label>
-          <Input id="lastName" aria-invalid={Boolean(errors.lastName)} {...register("lastName")} />
+          <Input
+            id="lastName"
+            aria-invalid={Boolean(errors.lastName)}
+            {...register("lastName")}
+          />
           {errors.lastName ? (
             <p className="text-sm text-danger">{errors.lastName.message}</p>
           ) : null}
@@ -71,13 +83,17 @@ function RegistrationForm({ eventId }: RegistrationFormProps) {
           aria-invalid={Boolean(errors.phone)}
           {...register("phone")}
         />
-        {errors.phone ? <p className="text-sm text-danger">{errors.phone.message}</p> : null}
+        {errors.phone ? (
+          <p className="text-sm text-danger">{errors.phone.message}</p>
+        ) : null}
       </div>
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="email">ایمیل (اختیاری)</Label>
         <Input id="email" type="email" dir="ltr" {...register("email")} />
-        {errors.email ? <p className="text-sm text-danger">{errors.email.message}</p> : null}
+        {errors.email ? (
+          <p className="text-sm text-danger">{errors.email.message}</p>
+        ) : null}
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
@@ -101,7 +117,9 @@ function RegistrationForm({ eventId }: RegistrationFormProps) {
         <Textarea id="notes" rows={3} {...register("notes")} />
       </div>
 
-      {serverError ? <p className="text-sm text-danger">{serverError}</p> : null}
+      {serverError ? (
+        <p className="text-sm text-danger">{serverError}</p>
+      ) : null}
 
       <Button type="submit" size="lg" isLoading={isSubmitting}>
         ثبت‌نام در رویداد

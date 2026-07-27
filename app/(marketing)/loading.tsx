@@ -17,7 +17,10 @@ export default function MarketingLoading() {
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, index) => (
-            <div key={index} className="flex flex-col gap-4 rounded-[var(--radius-card)] border border-border p-4">
+            <div
+              key={index}
+              className="flex flex-col gap-4 rounded-card border border-border p-4"
+            >
               <Skeleton className="aspect-video w-full" />
               <Skeleton className="h-5 w-3/4" />
               <Skeleton className="h-4 w-1/2" />

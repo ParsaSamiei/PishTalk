@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 
 import { Input } from "@/components/ui/Input";
@@ -23,7 +24,8 @@ function EventsFilterBar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const activeFilter = searchParams.get("filter") === "past" ? "past" : "upcoming";
+  const activeFilter =
+    searchParams.get("filter") === "past" ? "past" : "upcoming";
   const [query, setQuery] = React.useState(searchParams.get("q") ?? "");
 
   function updateParams(next: { filter?: string; q?: string }) {
@@ -43,26 +45,39 @@ function EventsFilterBar() {
 
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex gap-2 rounded-[var(--radius-button)] bg-surface-secondary p-1">
-        {TABS.map((tab) => (
-          <button
-            key={tab.value}
-            type="button"
-            onClick={() => updateParams({ filter: tab.value })}
-            className={cn(
-              "rounded-[var(--radius-button)] px-4 py-2 text-sm font-medium transition-colors duration-150",
-              activeFilter === tab.value
-                ? "bg-surface text-text-primary shadow-sm"
-                : "text-text-secondary hover:text-text-primary"
-            )}
-            aria-pressed={activeFilter === tab.value}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div className="relative flex gap-1 rounded-button border border-border bg-surface-secondary p-1">
+        {TABS.map((tab) => {
+          const isActive = activeFilter === tab.value;
+          return (
+            <button
+              key={tab.value}
+              type="button"
+              onClick={() => updateParams({ filter: tab.value })}
+              className={cn(
+                "relative z-10 rounded-button px-4 py-2 text-sm font-medium transition-colors duration-200",
+                isActive
+                  ? "text-primary dark:text-primary"
+                  : "text-text-secondary hover:text-text-primary",
+              )}
+              aria-pressed={isActive}
+            >
+              {isActive ? (
+                <motion.span
+                  layoutId="events-filter-active"
+                  transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                  className="absolute inset-0 -z-10 rounded-button bg-accent shadow-[0_4px_16px_-4px_rgba(244,185,66,0.5)]"
+                />
+              ) : null}
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
-      <form onSubmit={handleSearchSubmit} className="flex w-full max-w-sm gap-2">
+      <form
+        onSubmit={handleSearchSubmit}
+        className="flex w-full max-w-sm gap-2"
+      >
         <Input
           value={query}
           onChange={(e) => setQuery(e.target.value)}

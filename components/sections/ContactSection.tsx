@@ -7,6 +7,7 @@ import { SocialLinks } from "@/components/shared/SocialLinks";
 import { ContactForm } from "@/features/contact/components/ContactForm";
 import { Reveal } from "@/components/animations/Reveal";
 import { FloatingIcon } from "@/components/illustrations/FloatingIcon";
+import { CONTACT_PHONE } from "@/lib/constants";
 
 interface ContactSectionProps {
   readonly contactEmail?: string | null;
@@ -27,12 +28,14 @@ function ContactSection({
   instagram,
   telegram,
 }: ContactSectionProps) {
+  const phoneNumber = phone ?? CONTACT_PHONE;
+
   return (
-    <Section id="contact" className="bg-surface-secondary" circuit>
+    <Section id="contact" circuit>
       <FloatingIcon
         icon={Bot}
         size="sm"
-        className="hidden border-border bg-surface text-accent-hover sm:flex top-[8%] end-[6%]"
+        className="hidden border-border bg-surface text-accent-hover sm:flex top-[8%] inset-e-[6%]"
         style={{ animationDelay: "-2s" }}
       />
 
@@ -45,24 +48,39 @@ function ContactSection({
           />
           <ul className="flex flex-col gap-4 text-text-secondary">
             {contactEmail ? (
-              <li className="flex items-center gap-3">
-                <Mail className="size-5 text-accent-hover" aria-hidden="true" />
-                <a href={`mailto:${contactEmail}`} className="hover:text-text-primary">
+              <li>
+                <a
+                  href={`mailto:${contactEmail}`}
+                  className="group flex items-center gap-3 transition-colors hover:text-text-primary"
+                >
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border transition-colors duration-150 group-hover:border-accent group-hover:text-accent-hover">
+                    <Mail className="size-4" aria-hidden="true" />
+                  </span>
                   {contactEmail}
                 </a>
               </li>
             ) : null}
-            {phone ? (
-              <li className="flex items-center gap-3">
-                <Phone className="size-5 text-accent-hover" aria-hidden="true" />
-                <a href={`tel:${phone}`} className="hover:text-text-primary" dir="ltr">
-                  {phone}
+            {phoneNumber ? (
+              <li>
+                <a
+                  href={`tel:${phoneNumber}`}
+                  className="group flex items-center gap-3 transition-colors hover:text-text-primary"
+                >
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border transition-colors duration-150 group-hover:border-accent group-hover:text-accent-hover">
+                    <Phone className="size-4" aria-hidden="true" />
+                  </span>
+                  <span dir="ltr">{phoneNumber}</span>
                 </a>
               </li>
             ) : null}
             {address ? (
               <li className="flex items-center gap-3">
-                <MapPin className="size-5 text-accent-hover" aria-hidden="true" />
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border">
+                  <MapPin
+                    className="size-4 text-text-secondary"
+                    aria-hidden="true"
+                  />
+                </span>
                 <span>{address}</span>
               </li>
             ) : null}

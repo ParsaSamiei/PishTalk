@@ -13,8 +13,12 @@ interface BlogCardProps {
 
 function BlogCard({ blog }: BlogCardProps) {
   return (
-    <Card asChild className="group overflow-hidden p-0 hover:-translate-y-0.5">
+    <Card
+      asChild
+      className="group overflow-hidden p-0 transition-all duration-300 hover:-translate-y-1.5 hover:border-accent/40 hover:shadow-[0_16px_40px_-24px_rgba(244,185,66,0.55)]"
+    >
       <Link href={`/blog/${blog.slug}`} className="flex h-full flex-col">
+        <div className="h-1 w-full scale-x-0 bg-linear-to-l from-accent to-sky-400 transition-transform duration-300 group-hover:scale-x-100" />
         <div className="relative aspect-video w-full overflow-hidden bg-surface-secondary">
           {blog.coverImage ? (
             <Image
@@ -30,7 +34,7 @@ function BlogCard({ blog }: BlogCardProps) {
             </div>
           )}
           {blog.categoryName ? (
-            <Badge variant="accent" className="absolute top-4 end-4">
+            <Badge variant="accent" className="absolute top-4 inset-e-4">
               {blog.categoryName}
             </Badge>
           ) : null}
@@ -40,7 +44,9 @@ function BlogCard({ blog }: BlogCardProps) {
             {blog.title}
           </h3>
           <div className="mt-auto flex items-center gap-4 pt-2 text-sm text-text-secondary">
-            {blog.publishedAt ? <span>{formatEventDate(blog.publishedAt)}</span> : null}
+            {blog.publishedAt ? (
+              <span>{formatEventDate(blog.publishedAt)}</span>
+            ) : null}
             {blog.readingTime ? (
               <span className="flex items-center gap-1.5">
                 <Clock className="size-4" aria-hidden="true" />

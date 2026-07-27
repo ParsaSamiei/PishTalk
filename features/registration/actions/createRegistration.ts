@@ -1,6 +1,10 @@
 "use server";
 
+import { headers } from "next/headers";
+import type { Prisma } from "@prisma/client";
+
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import {
   registrationFormSchema,
   type RegistrationFormValues,
@@ -11,6 +15,9 @@ export interface CreateRegistrationResult {
   readonly error?: string;
 }
 
+const SUBMIT_LIMIT = 5;
+const SUBMIT_WINDOW_MS = 60 * 60 * 1000;
+
 /**
  * Registers a visitor for a specific event. Capacity is checked against
  * the event's `capacity` field (null = unlimited), and duplicate phone
@@ -20,6 +27,12 @@ export async function createRegistration(
   eventId: string,
   values: RegistrationFormValues
 ): Promise<CreateRegistrationResult> {
+  const ip = getClientIp(await headers());
+  const rateLimit = checkRateLimit(`registration:${ip}`, SUBMIT_LIMIT, SUBMIT_WINDOW_MS);
+  if (!rateLimit.allowed) {
+    return { success: false, error: "تعداد درخواست‌ها زیاد است. کمی بعد دوباره تلاش کنید." };
+  }
+
   const parsed = registrationFormSchema.safeParse(values);
 
   if (!parsed.success) {
@@ -36,40 +49,58 @@ export async function createRegistration(
       return { success: false, error: "این رویداد برای ثبت‌نام در دسترس نیست." };
     }
 
-    if (event.capacity !== null) {
-      const registeredCount = await prisma.registration.count({
-        where: { eventId, status: "REGISTERED" },
-      });
+    // The capacity check, duplicate-phone check, and insert all run inside
+    // one Serializable transaction so two concurrent submissions near
+    // capacity can't both read "one spot left" and both insert — Postgres
+    // will abort one of them with a serialization failure instead, which we
+    // surface as a normal "please try again" error.
+    await prisma.$transaction(
+      async (tx: Prisma.TransactionClient) => {
+        if (event.capacity !== null) {
+          const registeredCount = await tx.registration.count({
+            where: { eventId, status: "REGISTERED" },
+          });
 
-      if (registeredCount >= event.capacity) {
-        return { success: false, error: "ظرفیت این رویداد تکمیل شده است." };
-      }
-    }
+          if (registeredCount >= event.capacity) {
+            throw new Error("CAPACITY_FULL");
+          }
+        }
 
-    const existing = await prisma.registration.findFirst({
-      where: { eventId, phone: parsed.data.phone, status: "REGISTERED" },
-    });
+        const existing = await tx.registration.findFirst({
+          where: { eventId, phone: parsed.data.phone, status: "REGISTERED" },
+        });
 
-    if (existing) {
-      return { success: false, error: "این شماره موبایل قبلاً برای این رویداد ثبت‌نام کرده است." };
-    }
+        if (existing) {
+          throw new Error("DUPLICATE_PHONE");
+        }
 
-    await prisma.registration.create({
-      data: {
-        eventId,
-        firstName: parsed.data.firstName,
-        lastName: parsed.data.lastName,
-        phone: parsed.data.phone,
-        email: parsed.data.email || null,
-        university: parsed.data.university || null,
-        company: parsed.data.company || null,
-        profession: parsed.data.profession || null,
-        notes: parsed.data.notes || null,
+        await tx.registration.create({
+          data: {
+            eventId,
+            firstName: parsed.data.firstName,
+            lastName: parsed.data.lastName,
+            phone: parsed.data.phone,
+            email: parsed.data.email || null,
+            university: parsed.data.university || null,
+            company: parsed.data.company || null,
+            profession: parsed.data.profession || null,
+            notes: parsed.data.notes || null,
+          },
+        });
       },
-    });
+      { isolationLevel: "Serializable" }
+    );
 
     return { success: true };
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && error.message === "CAPACITY_FULL") {
+      return { success: false, error: "ظرفیت این رویداد تکمیل شده است." };
+    }
+    if (error instanceof Error && error.message === "DUPLICATE_PHONE") {
+      return { success: false, error: "این شماره موبایل قبلاً برای این رویداد ثبت‌نام کرده است." };
+    }
+    // Includes Prisma's P2034 serialization-failure code, raised when the
+    // transaction above loses a race with another concurrent submission.
     return { success: false, error: "ثبت‌نام با خطا مواجه شد. لطفاً دوباره تلاش کنید." };
   }
 }
