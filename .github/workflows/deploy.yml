@@ -1,3 +1,9 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -25,3 +31,19 @@ jobs:
           tags: ghcr.io/parsasamiei/pishtalk:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH and deploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/pishtalk
+            docker compose pull app
+            docker compose up -d
+            docker image prune -f
