@@ -22,6 +22,12 @@ const LOGIN_WINDOW_MS = 15 * 60 * 1000;
  */
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
+  // Required for self-hosted deployments behind a reverse proxy (Nginx,
+  // Docker). Auth.js only trusts the incoming Host header automatically on
+  // Vercel or in dev; otherwise it rejects requests as an "untrusted host"
+  // and, in production, masks that behind the generic server-config error
+  // page — the same one AUTH_SECRET being missing produces.
+  trustHost: true,
   pages: { signIn: "/admin/login" },
   providers: [
     Credentials({
