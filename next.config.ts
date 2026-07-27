@@ -38,6 +38,7 @@ const nextConfig: NextConfig = {
     // Media (event covers, gallery, blog covers, logo/favicon/OG image) is
     // uploaded through the admin panel by URL from any host, so remote
     // images are optimized from any https source.
+    unoptimized: true,
     remotePatterns: [{ protocol: "https", hostname: "**" }],
   },
   async headers() {
