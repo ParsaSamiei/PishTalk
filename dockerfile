@@ -14,6 +14,9 @@ RUN npm run build
 FROM builder AS migrator
 CMD ["npx", "prisma", "db", "push"]
 
+FROM builder AS seeder
+CMD ["npx", "prisma", "db", "seed"]
+
 FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production

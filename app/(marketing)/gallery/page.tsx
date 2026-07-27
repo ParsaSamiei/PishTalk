@@ -10,6 +10,9 @@ import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { prisma } from "@/lib/prisma";
 import { SITE_URL } from "@/lib/constants";
 
+// Prevents this page from being statically prerendered at Docker build time (when the DB may be empty/unreachable) and cached forever.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "گالری",
   description: "مجموعه تصاویر رویدادهای پیشتاک.",

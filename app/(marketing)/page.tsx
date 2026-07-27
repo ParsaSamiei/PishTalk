@@ -19,6 +19,14 @@ import { getFaqs } from "@/features/faq/actions/getFaqs";
 import { getRules } from "@/lib/rules";
 import { getSiteSettings } from "@/lib/site-settings";
 
+// Without this, Next.js prerenders this page once at `next build` time and
+// serves that snapshot forever. In the Docker build, `npm run build` runs
+// before `prisma db push`/seeding, so the DB is empty/unreachable at build
+// time — every getX() below hits its try/catch and returns null/[], and
+// that empty HTML gets baked into .next/standalone permanently. Forcing
+// dynamic rendering makes every request hit the DB fresh instead.
+export const dynamic = "force-dynamic";
+
 /**
  * Homepage. Section order follows docs/03_Information_Architecture.md
  * exactly: Hero → Next Event → About → Why Attend → Event Timeline →

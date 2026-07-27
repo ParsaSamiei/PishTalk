@@ -14,6 +14,9 @@ import {
 } from "@/features/events/actions/getEvents";
 import { SITE_URL } from "@/lib/constants";
 
+// Prevents this page from being statically prerendered at Docker build time (when the DB may be empty/unreachable) and cached forever.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "رویدادها",
   description: "تمام رویدادهای پیشتاک، پیش رو و گذشته، در یک صفحه.",

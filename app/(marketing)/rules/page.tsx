@@ -16,6 +16,9 @@ import { Reveal } from "@/components/animations/Reveal";
 import { getRules } from "@/lib/rules";
 import { SITE_URL } from "@/lib/constants";
 
+// Prevents this page from being statically prerendered at Docker build time (when the DB may be empty/unreachable) and cached forever.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "قوانین",
   description: "قوانین حضور در رویدادهای پیشتاک.",

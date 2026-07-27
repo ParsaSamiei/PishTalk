@@ -10,6 +10,9 @@ import { prisma } from "@/lib/prisma";
 import { SITE_URL } from "@/lib/constants";
 import type { BlogSummary } from "@/features/blogs/types/blog";
 
+// Prevents this page from being statically prerendered at Docker build time (when the DB may be empty/unreachable) and cached forever.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "وبلاگ",
   description: "نوشته‌ها و یادداشت‌های جامعه پیشتاک درباره رباتیک، هوش مصنوعی و فناوری.",

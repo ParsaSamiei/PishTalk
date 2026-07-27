@@ -10,6 +10,9 @@ import { prisma } from "@/lib/prisma";
 import { SITE_URL } from "@/lib/constants";
 import type { ResourceSummary } from "@/features/resources/types/resource";
 
+// Prevents this page from being statically prerendered at Docker build time (when the DB may be empty/unreachable) and cached forever.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "منابع آموزشی",
   description: "اسلایدها، مقالات و لینک‌های آموزشی رویدادهای پیشتاک.",

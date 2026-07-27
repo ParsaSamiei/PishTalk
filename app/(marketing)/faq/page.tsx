@@ -14,6 +14,9 @@ import {
 import { getFaqs } from "@/features/faq/actions/getFaqs";
 import { SITE_URL } from "@/lib/constants";
 
+// Prevents this page from being statically prerendered at Docker build time (when the DB may be empty/unreachable) and cached forever.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "سوالات متداول",
   description: "پاسخ سوالات پرتکرار درباره پیشتاک.",
