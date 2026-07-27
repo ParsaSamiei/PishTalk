@@ -32,6 +32,14 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Build and push migrator image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: migrator
+          push: true
+          tags: ghcr.io/parsasamiei/pishtalk:migrator
+
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
