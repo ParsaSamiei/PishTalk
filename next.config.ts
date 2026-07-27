@@ -33,6 +33,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   images: {
     // Media (event covers, gallery, blog covers, logo/favicon/OG image) is
     // uploaded through the admin panel by URL from any host, so remote
