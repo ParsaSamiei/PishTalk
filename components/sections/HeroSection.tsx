@@ -139,7 +139,7 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
             className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-secondary px-4 py-1.5 text-sm text-text-secondary dark:border-white/15 dark:bg-white/5 dark:text-white/80"
           >
             <Bot className="size-4 text-accent" aria-hidden="true" />
-            پژوهشکده رباتیک پیشنام
+            باشگاه رباتیک پیشنام
           </motion.span>
 
           <motion.h1
