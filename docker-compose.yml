@@ -8,15 +8,15 @@ services:
       POSTGRES_DB: pishtalk
     volumes:
       - pishtalk_db:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U pishtalk"]
       interval: 5s
       timeout: 5s
       retries: 10
-      ports:
-      - "127.0.0.1:5432:5432"
 
-migrator:
+  migrator:
     image: ghcr.io/parsasamiei/pishtalk:migrator
     build:
       context: .
@@ -27,14 +27,27 @@ migrator:
       db:
         condition: service_healthy
 
-app:
+  seeder:
+    image: ghcr.io/parsasamiei/pishtalk:seeder
+    build:
+      context: .
+      target: seeder
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+
+  app:
     image: ghcr.io/parsasamiei/pishtalk:latest
     build:
       context: .
       target: runner
-      restart: unless-stopped
-      ports:
-        - "3000:3000"
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - pishtalk_uploads:/app/public/uploads
     environment:
       DATABASE_URL: ${DATABASE_URL}
       AUTH_SECRET: ${AUTH_SECRET:?set AUTH_SECRET in .env, generate with: npx auth secret}
@@ -45,3 +58,4 @@ app:
 
 volumes:
   pishtalk_db:
+  pishtalk_uploads:

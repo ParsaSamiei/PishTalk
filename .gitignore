@@ -42,3 +42,6 @@ next-env.d.ts
 
 # zip_files
 Archive.zip
+
+# user-uploaded media (persisted via a docker volume in production, see docker-compose.yml)
+/public/uploads

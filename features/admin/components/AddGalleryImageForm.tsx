@@ -7,6 +7,7 @@ import { Plus } from "lucide-react";
 import { Label } from "@/components/ui/Label";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { ImageUploadField } from "@/components/shared/ImageUploadField";
 import { addGalleryImage } from "@/features/admin/actions/galleryActions";
 
 interface AddGalleryImageFormProps {
@@ -23,8 +24,13 @@ function AddGalleryImageForm({ eventId }: AddGalleryImageFormProps) {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setError(null);
-    setIsSubmitting(true);
 
+    if (!url) {
+      setError("ابتدا یک تصویر آپلود کنید.");
+      return;
+    }
+
+    setIsSubmitting(true);
     const result = await addGalleryImage(eventId, { url, caption });
 
     setIsSubmitting(false);
@@ -39,15 +45,13 @@ function AddGalleryImageForm({ eventId }: AddGalleryImageFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:flex-row sm:items-end">
-      <div className="flex flex-1 flex-col gap-2">
-        <Label htmlFor="url">آدرس تصویر</Label>
-        <Input
+      <div className="flex-1">
+        <ImageUploadField
           id="url"
-          dir="ltr"
+          label="تصویر"
           value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder="https://..."
-          required
+          onChange={setUrl}
+          folder="gallery"
         />
       </div>
       <div className="flex flex-1 flex-col gap-2">

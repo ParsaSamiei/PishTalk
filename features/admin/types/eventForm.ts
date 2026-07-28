@@ -15,7 +15,14 @@ export const eventFormSchema = z.object({
     .regex(/^[a-z0-9-]+$/, "نامک فقط می‌تواند شامل حروف انگلیسی کوچک، عدد و خط تیره باشد"),
   subtitle: z.string().trim().max(300).optional().or(z.literal("")),
   description: z.string().trim().min(10, "توضیحات باید حداقل ۱۰ حرف باشد"),
-  coverImage: z.string().trim().url("آدرس تصویر معتبر نیست").optional().or(z.literal("")),
+  coverImage: z
+    .string()
+    .trim()
+    .refine((val) => val === "" || val.startsWith("/") || /^https?:\/\//.test(val), {
+      message: "آدرس تصویر معتبر نیست",
+    })
+    .optional()
+    .or(z.literal("")),
   date: z.string().min(1, "تاریخ الزامی است"),
   startTime: z.string().trim().min(1, "ساعت شروع الزامی است"),
   endTime: z.string().trim().optional().or(z.literal("")),

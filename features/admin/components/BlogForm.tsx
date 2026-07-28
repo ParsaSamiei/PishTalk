@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { ImageUploadField } from "@/components/shared/ImageUploadField";
 import {
   blogFormSchema,
   type BlogFormValues,
@@ -137,13 +138,20 @@ function BlogForm({
           ) : null}
         </div>
 
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="coverImage">آدرس تصویر کاور (اختیاری)</Label>
-          <Input id="coverImage" dir="ltr" {...register("coverImage")} />
-          {errors.coverImage ? (
-            <p className="text-sm text-danger">{errors.coverImage.message}</p>
-          ) : null}
-        </div>
+        <Controller
+          control={control}
+          name="coverImage"
+          render={({ field }) => (
+            <ImageUploadField
+              id="coverImage"
+              label="تصویر کاور (اختیاری)"
+              value={field.value}
+              onChange={field.onChange}
+              folder="blog"
+              error={errors.coverImage?.message}
+            />
+          )}
+        />
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="flex flex-col gap-2">
