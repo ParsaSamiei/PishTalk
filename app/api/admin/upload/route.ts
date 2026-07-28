@@ -24,17 +24,28 @@ export async function POST(request: NextRequest) {
   const folderInput = formData.get("folder");
 
   if (!(file instanceof File)) {
-    return NextResponse.json({ error: "فایلی ارسال نشده است." }, { status: 400 });
+    return NextResponse.json(
+      { error: "فایلی ارسال نشده است." },
+      { status: 400 },
+    );
   }
   if (!ALLOWED_TYPES.includes(file.type)) {
-    return NextResponse.json({ error: "فرمت تصویر پشتیبانی نمی‌شود." }, { status: 400 });
+    return NextResponse.json(
+      { error: "فرمت تصویر پشتیبانی نمی‌شود." },
+      { status: 400 },
+    );
   }
   if (file.size > MAX_IMAGE_SIZE) {
-    return NextResponse.json({ error: "حجم تصویر نباید بیشتر از ۱۰ مگابایت باشد." }, { status: 400 });
+    return NextResponse.json(
+      { error: "حجم تصویر نباید بیشتر از ۱۰ مگابایت باشد." },
+      { status: 400 },
+    );
   }
 
   // Never trust the folder value from the client beyond an allow-list
-  const folder = (ALLOWED_FOLDERS as readonly string[]).includes(folderInput as string)
+  const folder = (ALLOWED_FOLDERS as readonly string[]).includes(
+    folderInput as string,
+  )
     ? (folderInput as (typeof ALLOWED_FOLDERS)[number])
     : "misc";
 
@@ -51,10 +62,9 @@ export async function POST(request: NextRequest) {
 
   // Only downscale, never upscale a small source image
   if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
-    image.scaleToFit(MAX_DIMENSION, MAX_DIMENSION);
+    image.scaleToFit({ w: MAX_DIMENSION, h: MAX_DIMENSION });
   }
-  image.quality(82);
-  await image.write(filepath as `${string}.jpg`);
+  await image.write(filepath as `${string}.jpg`, { quality: 82 });
 
   return NextResponse.json({ url: `/uploads/${folder}/${filename}` });
 }
