@@ -8,14 +8,20 @@ import { requireAdmin } from "@/lib/requireAdmin";
 import type { ActionResult } from "@/features/admin/actions/eventActions";
 
 const addImageSchema = z.object({
-  url: z.string().trim().url("آدرس تصویر معتبر نیست"),
+  url: z
+    .string()
+    .trim()
+    .refine((val) => val.startsWith("/") || /^https?:\/\//.test(val), {
+      message: "آدرس تصویر معتبر نیست",
+    }),
   caption: z.string().trim().max(200).optional().or(z.literal("")),
 });
 
 /**
  * Ensures a Gallery row exists for the event and appends one image to it.
- * There is no file-upload pipeline yet (docs don't specify a storage
- * provider), so images are added by URL until one is chosen.
+ * Images are uploaded through the admin panel via /api/admin/upload, which
+ * returns a relative /uploads/... path; a full https URL is still accepted
+ * as a fallback.
  */
 export async function addGalleryImage(
   eventId: string,

@@ -9,7 +9,14 @@ export const blogFormSchema = z.object({
     .regex(/^[a-z0-9-]+$/, "نامک فقط می‌تواند شامل حروف انگلیسی کوچک، عدد و خط تیره باشد"),
   excerpt: z.string().trim().min(10, "خلاصه باید حداقل ۱۰ حرف باشد").max(300),
   content: z.string().trim().min(20, "محتوا باید حداقل ۲۰ حرف باشد"),
-  coverImage: z.string().trim().url("آدرس تصویر معتبر نیست").optional().or(z.literal("")),
+  coverImage: z
+    .string()
+    .trim()
+    .refine((val) => val === "" || val.startsWith("/") || /^https?:\/\//.test(val), {
+      message: "آدرس تصویر معتبر نیست",
+    })
+    .optional()
+    .or(z.literal("")),
   categoryId: z.string().trim().optional().or(z.literal("")),
   readingTime: z.coerce.number().int().positive().optional().or(z.literal("")),
   published: z.boolean().default(false),

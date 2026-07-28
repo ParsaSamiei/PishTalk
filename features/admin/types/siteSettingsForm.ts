@@ -10,6 +10,7 @@ export const siteSettingsFormSchema = z.object({
   heroSubtitle: z.string().trim().max(300).optional().or(z.literal("")),
   contactEmail: z.string().trim().email("ایمیل معتبر نیست").optional().or(z.literal("")),
   phone: z.string().trim().max(20).optional().or(z.literal("")),
+  phone2: z.string().trim().max(20).optional().or(z.literal("")),
   address: z.string().trim().max(300).optional().or(z.literal("")),
   instagram: z.string().trim().url("آدرس معتبر نیست").optional().or(z.literal("")),
   telegram: z.string().trim().url("آدرس معتبر نیست").optional().or(z.literal("")),

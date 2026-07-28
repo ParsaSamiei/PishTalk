@@ -41,6 +41,7 @@ export async function updateSiteSettings(values: SiteSettingsFormValues): Promis
     heroSubtitle: parsed.data.heroSubtitle || null,
     contactEmail: parsed.data.contactEmail || null,
     phone: parsed.data.phone || null,
+    phone2: parsed.data.phone2 || null,
     address: parsed.data.address || null,
     instagram: parsed.data.instagram || null,
     telegram: parsed.data.telegram || null,

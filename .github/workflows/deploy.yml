@@ -52,6 +52,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /opt/pishtalk
-            docker compose pull app
+            docker compose pull app migrator
             docker compose up -d
             docker image prune -f

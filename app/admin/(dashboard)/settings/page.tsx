@@ -23,6 +23,7 @@ export default async function AdminSettingsPage() {
           heroSubtitle: settings?.heroSubtitle ?? "",
           contactEmail: settings?.contactEmail ?? "",
           phone: settings?.phone ?? "",
+          phone2: settings?.phone2 ?? "",
           address: settings?.address ?? "",
           instagram: settings?.instagram ?? "",
           telegram: settings?.telegram ?? "",

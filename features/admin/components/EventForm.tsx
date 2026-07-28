@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Trash2 } from "lucide-react";
 
@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { ImageUploadField } from "@/components/shared/ImageUploadField";
 import { eventFormSchema, type EventFormValues, type EventFormInput } from "@/features/admin/types/eventForm";
 
 const STATUS_OPTIONS: ReadonlyArray<{ value: EventFormValues["status"]; label: string }> = [
@@ -93,13 +94,20 @@ function EventForm({ defaultValues, onSubmit, submitLabel }: EventFormProps) {
           ) : null}
         </div>
 
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="coverImage">آدرس تصویر کاور (اختیاری)</Label>
-          <Input id="coverImage" dir="ltr" {...register("coverImage")} />
-          {errors.coverImage ? (
-            <p className="text-sm text-danger">{errors.coverImage.message}</p>
-          ) : null}
-        </div>
+        <Controller
+          control={control}
+          name="coverImage"
+          render={({ field }) => (
+            <ImageUploadField
+              id="coverImage"
+              label="تصویر کاور (اختیاری)"
+              value={field.value}
+              onChange={field.onChange}
+              folder="events"
+              error={errors.coverImage?.message}
+            />
+          )}
+        />
       </Card>
 
       <Card className="flex flex-col gap-5">

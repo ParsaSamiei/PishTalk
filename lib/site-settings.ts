@@ -10,6 +10,7 @@ export interface SiteSettingsData {
   heroSubtitle: string | null;
   contactEmail: string | null;
   phone: string | null;
+  phone2: string | null;
   address: string | null;
   instagram: string | null;
   telegram: string | null;
@@ -26,13 +27,14 @@ const FALLBACK_SETTINGS: SiteSettingsData = {
   siteName: "پیشتاک",
   tagline: "جامعه مهندسان رباتیک، هوش مصنوعی و فناوری",
   description:
-    "پیشتاک رویداد ماهانه رباتیک، هوش مصنوعی و مهندسی نرم‌افزار است که توسط پژوهشکده رباتیک پیشنام برگزار می‌شود.",
+    "پیشتاک رویداد ماهانه رباتیک، هوش مصنوعی و مهندسی نرم‌افزار است که توسط باشگاه رباتیک پیشنام برگزار می‌شود.",
   logo: null,
   favicon: null,
   heroTitle: null,
   heroSubtitle: null,
   contactEmail: null,
   phone: null,
+  phone2: null,
   address: null,
   instagram: null,
   telegram: null,
@@ -67,6 +69,7 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
       heroSubtitle: settings.heroSubtitle,
       contactEmail: settings.contactEmail,
       phone: settings.phone,
+      phone2: settings.phone2,
       address: settings.address,
       instagram: settings.instagram,
       telegram: settings.telegram,

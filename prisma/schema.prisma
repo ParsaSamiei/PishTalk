@@ -263,6 +263,7 @@ model SiteSettings {
   heroSubtitle     String? @map("hero_subtitle")
   contactEmail     String? @map("contact_email")
   phone            String?
+  phone2           String? @map("phone_2")
   address          String?
   instagram        String?
   telegram         String?

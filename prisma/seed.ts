@@ -12,7 +12,7 @@ async function main() {
         siteName: "پیشتاک",
         tagline: "جامعه مهندسان رباتیک، هوش مصنوعی و فناوری",
         description:
-          "پیشتاک رویداد ماهانه رباتیک، هوش مصنوعی و مهندسی نرم‌افزار است که توسط پژوهشکده رباتیک پیشنام برگزار می‌شود.",
+          "پیشتاک رویداد ماهانه رباتیک، هوش مصنوعی و مهندسی نرم‌افزار است که توسط باشگاه رباتیک پیشنام برگزار می‌شود.",
         contactEmail: "info@pishtalk.ir",
         instagram: "https://instagram.com/pishtalk",
         telegram: "https://t.me/pishtalk",
@@ -23,7 +23,9 @@ async function main() {
 
   // --- Admin user ---
   const adminEmail = "admin@pishtalk.ir";
-  const existingAdmin = await prisma.admin.findUnique({ where: { email: adminEmail } });
+  const existingAdmin = await prisma.admin.findUnique({
+    where: { email: adminEmail },
+  });
   if (!existingAdmin) {
     await prisma.admin.create({
       data: {
@@ -33,7 +35,9 @@ async function main() {
         role: "SUPER_ADMIN",
       },
     });
-    console.log(`Seeded admin: ${adminEmail} / ChangeMe123! (change this immediately)`);
+    console.log(
+      `Seeded admin: ${adminEmail} / ChangeMe123! (change this immediately)`,
+    );
   }
 
   // --- Next event ---
@@ -54,7 +58,7 @@ async function main() {
       endTime: "20:30",
       location: "تهران، دانشگاه علم و صنعت ایران، دانشکده کامپیوتر",
       speakerName: "مهندس علی رضایی",
-      speakerBio: "پژوهشگر رباتیک و یادگیری ماشین، پژوهشکده رباتیک پیشنام.",
+      speakerBio: "پژوهشگر رباتیک و یادگیری ماشین، باشگاه رباتیک پیشنام.",
       capacity: 80,
       status: "PUBLISHED",
       timeline: {
@@ -120,7 +124,8 @@ async function main() {
     },
     {
       question: "چه کسانی می‌توانند شرکت کنند؟",
-      answer: "هر علاقه‌مند به رباتیک، هوش مصنوعی و فناوری، از دانشجو تا مهندس شاغل.",
+      answer:
+        "هر علاقه‌مند به رباتیک، هوش مصنوعی و فناوری، از دانشجو تا مهندس شاغل.",
     },
     {
       question: "آیا نیاز به دانش تخصصی دارم؟",
@@ -128,7 +133,9 @@ async function main() {
     },
   ];
   for (const [index, faq] of faqItems.entries()) {
-    const existing = await prisma.faq.findFirst({ where: { question: faq.question } });
+    const existing = await prisma.faq.findFirst({
+      where: { question: faq.question },
+    });
     if (!existing) {
       await prisma.faq.create({ data: { ...faq, sortOrder: index } });
     }
@@ -153,7 +160,9 @@ async function main() {
     },
   ];
   for (const [index, rule] of ruleItems.entries()) {
-    const existing = await prisma.rule.findFirst({ where: { title: rule.title } });
+    const existing = await prisma.rule.findFirst({
+      where: { title: rule.title },
+    });
     if (!existing) {
       await prisma.rule.create({ data: { ...rule, sortOrder: index } });
     }

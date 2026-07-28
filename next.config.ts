@@ -36,8 +36,9 @@ const nextConfig: NextConfig = {
   output: "standalone",
   images: {
     // Media (event covers, gallery, blog covers, logo/favicon/OG image) is
-    // uploaded through the admin panel by URL from any host, so remote
-    // images are optimized from any https source.
+    // uploaded through the admin panel via /api/admin/upload and served as a
+    // local /uploads/... path. Pasting a full https URL is still accepted as
+    // a fallback, so remote images from any host are allowed here too.
     unoptimized: true,
     remotePatterns: [{ protocol: "https", hostname: "**" }],
   },

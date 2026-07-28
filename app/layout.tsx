@@ -18,7 +18,7 @@ const vazirmatn = Vazirmatn({
 
 const DEFAULT_TITLE = "پیشتاک | جامعه مهندسان رباتیک";
 const DEFAULT_DESCRIPTION =
-  "پیشتاک رویداد ماهانه رباتیک، هوش مصنوعی و مهندسی نرم‌افزار، برگزار شده توسط پژوهشکده رباتیک پیشنام.";
+  "پیشتاک رویداد ماهانه رباتیک، هوش مصنوعی و مهندسی نرم‌افزار، برگزار شده توسط باشگاه رباتیک پیشنام.";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();

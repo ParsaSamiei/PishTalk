@@ -65,6 +65,7 @@ export default async function HomePage() {
       <ContactSection
         contactEmail={settings.contactEmail}
         phone={settings.phone}
+        phone2={settings.phone2}
         address={settings.address}
         instagram={settings.instagram}
         telegram={settings.telegram}
