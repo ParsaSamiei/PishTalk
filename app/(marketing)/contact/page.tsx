@@ -57,6 +57,19 @@ export default async function ContactPage() {
                 </a>
               </li>
             ) : null}
+            {settings.phone2 ? (
+              <li>
+                <a
+                  href={`tel:${settings.phone2}`}
+                  className="group flex items-center gap-3 transition-colors hover:text-text-primary"
+                >
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border transition-colors duration-150 group-hover:border-accent group-hover:text-accent-hover">
+                    <Phone className="size-4" aria-hidden="true" />
+                  </span>
+                  <span dir="ltr">{settings.phone2}</span>
+                </a>
+              </li>
+            ) : null}
             {settings.address ? (
               <li className="flex items-center gap-3">
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border">

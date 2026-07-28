@@ -20,6 +20,7 @@ export default async function MarketingLayout({
         tagline={settings.tagline}
         contactEmail={settings.contactEmail}
         phone={settings.phone}
+        phone2={settings.phone2}
         instagram={settings.instagram}
         telegram={settings.telegram}
         pishnamUrl={settings.pishnamUrl}

@@ -64,7 +64,7 @@ function ContactForm() {
       className="flex flex-col gap-5"
     >
       <div className="flex flex-col gap-2">
-        <Label htmlFor="name">نام</Label>
+        <Label htmlFor="name">نام و نام خانوادگی</Label>
         <Input
           id="name"
           autoComplete="name"

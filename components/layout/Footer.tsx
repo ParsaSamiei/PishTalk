@@ -14,6 +14,7 @@ interface FooterProps {
   readonly tagline?: string;
   readonly contactEmail?: string | null;
   readonly phone?: string | null;
+  readonly phone2?: string | null;
   readonly address?: string | null;
   readonly instagram?: string | null;
   readonly telegram?: string | null;
@@ -28,6 +29,7 @@ async function Footer({
   tagline = "جامعه مهندسان رباتیک، هوش مصنوعی و فناوری",
   contactEmail,
   phone,
+  phone2,
   address,
   instagram,
   telegram,
@@ -37,6 +39,7 @@ async function Footer({
   const settings = await getSiteSettings();
   const email = contactEmail ?? settings.contactEmail;
   const phoneNumber = phone ?? settings.phone ?? CONTACT_PHONE;
+  const phoneNumber2 = phone2 ?? settings.phone2;
   const streetAddress = address ?? settings.address;
   const instagramUrl = instagram ?? settings.instagram;
   const telegramUrl = telegram ?? settings.telegram;
@@ -67,14 +70,14 @@ async function Footer({
                     target="_blank"
                     rel="noreferrer noopener"
                     aria-label={sponsor.name}
-                    className="opacity-70 grayscale transition-all duration-150 hover:opacity-100 hover:grayscale-0"
+                    className="opacity-60  transition-all duration-150 hover:opacity-100 hover:grayscale-0"
                   >
                     <Image
                       src={sponsor.logo}
                       alt={sponsor.name}
                       width={200}
                       height={80}
-                      className="h-12 w-auto object-contain"
+                      className="h-20 w-auto object-contain"
                     />
                   </a>
                 ))}
@@ -132,6 +135,20 @@ async function Footer({
                     <Phone className="size-3.5" aria-hidden="true" />
                   </span>
                   <span dir="ltr">{phoneNumber}</span>
+                </a>
+              </li>
+            ) : null}
+
+            {phoneNumber2 ? (
+              <li>
+                <a
+                  href={`tel:${phoneNumber2}`}
+                  className="group flex items-center gap-3 transition-colors hover:text-text-primary"
+                >
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-border transition-colors duration-150 group-hover:border-accent group-hover:text-accent-hover">
+                    <Phone className="size-3.5" aria-hidden="true" />
+                  </span>
+                  <span dir="ltr">{phoneNumber2}</span>
                 </a>
               </li>
             ) : null}

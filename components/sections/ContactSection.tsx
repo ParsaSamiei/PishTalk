@@ -12,6 +12,7 @@ import { CONTACT_PHONE } from "@/lib/constants";
 interface ContactSectionProps {
   readonly contactEmail?: string | null;
   readonly phone?: string | null;
+  readonly phone2?: string | null;
   readonly address?: string | null;
   readonly instagram?: string | null;
   readonly telegram?: string | null;
@@ -24,11 +25,13 @@ interface ContactSectionProps {
 function ContactSection({
   contactEmail,
   phone,
+  phone2,
   address,
   instagram,
   telegram,
 }: ContactSectionProps) {
   const phoneNumber = phone ?? CONTACT_PHONE;
+  const phoneNumber2 = phone2;
 
   return (
     <Section id="contact" circuit>
@@ -70,6 +73,19 @@ function ContactSection({
                     <Phone className="size-4" aria-hidden="true" />
                   </span>
                   <span dir="ltr">{phoneNumber}</span>
+                </a>
+              </li>
+            ) : null}
+            {phoneNumber2 ? (
+              <li>
+                <a
+                  href={`tel:${phoneNumber2}`}
+                  className="group flex items-center gap-3 transition-colors hover:text-text-primary"
+                >
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border transition-colors duration-150 group-hover:border-accent group-hover:text-accent-hover">
+                    <Phone className="size-4" aria-hidden="true" />
+                  </span>
+                  <span dir="ltr">{phoneNumber2}</span>
                 </a>
               </li>
             ) : null}

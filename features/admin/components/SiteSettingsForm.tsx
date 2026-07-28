@@ -108,6 +108,10 @@ function SiteSettingsForm({ defaultValues }: SiteSettingsFormProps) {
             <Label htmlFor="phone">تلفن</Label>
             <Input id="phone" dir="ltr" {...register("phone")} />
           </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="phone2">تلفن دوم (اختیاری)</Label>
+            <Input id="phone2" dir="ltr" {...register("phone2")} />
+          </div>
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="address">آدرس</Label>
