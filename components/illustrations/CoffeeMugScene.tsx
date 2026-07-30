@@ -2,8 +2,9 @@
 
 import * as React from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float } from "@react-three/drei";
+import { Environment, Float } from "@react-three/drei";
 import * as THREE from "three";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { useReducedMotion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
@@ -21,6 +22,7 @@ interface CoffeeMugSceneProps {
 const NAVY = "#1e3a6b";
 const GOLD = "#f4b942";
 const COFFEE = "#2b1810";
+const CREMA = "#c9a26a";
 
 /**
  * Draws the "TP" monogram onto an offscreen canvas at runtime, so the
@@ -47,8 +49,8 @@ function useLogoTexture() {
     ctx.textBaseline = "middle";
     // Wide spacing so the two glyphs never touch — they were overlapping
     // into an unreadable blob at the old 175/340 positions.
-    ctx.fillText("T", 150, 270);
-    ctx.fillText("P", 362, 270);
+    ctx.fillText("P", 150, 270);
+    ctx.fillText("T", 362, 270);
 
     const tex = new THREE.CanvasTexture(canvas);
     tex.colorSpace = THREE.SRGBColorSpace;
@@ -137,7 +139,7 @@ function Steam({ reduced }: { reduced: boolean }) {
           <spriteMaterial
             map={texture}
             transparent
-            opacity={reduced ? 0.12 : 0}
+            opacity={reduced ? 0.2 : 0}
             depthWrite={false}
             blending={THREE.AdditiveBlending}
           />
@@ -161,7 +163,7 @@ function Mug({ reduced }: { reduced: boolean }) {
   });
 
   return (
-    <group ref={groupRef} rotation={[0.1, -0.4, 0]}>
+    <group ref={groupRef} position={[0, -0.6, 0]} rotation={[0.1, -0.4, 0]}>
       {/* Body wall — open top and bottom, so the coffee disc and the
           bottom cap can be dropped in as separate flat pieces. */}
       <mesh castShadow>
@@ -205,6 +207,19 @@ function Mug({ reduced }: { reduced: boolean }) {
         />
       </mesh>
 
+      {/* Foot ring — small raised base most ceramic mugs actually have,
+          instead of the body wall meeting the bottom cap as a hard edge. */}
+      <mesh position={[0, -0.83, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.8, 0.025, 12, 40]} />
+        <meshPhysicalMaterial
+          color={NAVY}
+          roughness={0.3}
+          metalness={0.05}
+          clearcoat={0.5}
+          clearcoatRoughness={0.25}
+        />
+      </mesh>
+
       {/* Rim lip */}
       <mesh position={[0, 0.85, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[1, 0.035, 16, 48]} />
@@ -228,9 +243,24 @@ function Mug({ reduced }: { reduced: boolean }) {
         />
       </mesh>
 
-      {/* Handle */}
-      <mesh position={[1.15, 0.05, 0]} rotation={[0, Math.PI / 2, 0]}>
-        <torusGeometry args={[0.45, 0.1, 16, 32, Math.PI * 1.5]} />
+      {/* Crema ring — thin lighter-toned ring at the coffee's edge, like
+          the highlight visible in the reference photo. */}
+      <mesh position={[0, 0.782, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[0.88, 0.94, 48]} />
+        <meshBasicMaterial color={CREMA} transparent opacity={0.55} />
+      </mesh>
+
+      {/* Handle — rotated around Z, not Y. Rotating a torus around Y
+          reorients its whole ring into a plane with no X variation, so it
+          can never actually reach the surface no matter where it's
+          positioned (that was the floating-handle bug). Rotating around Z
+          instead just spins the open ends of the "C" to face the mug,
+          keeping the ring's natural bulge-in-X shape. Position is nudged
+          slightly further in than the tangent point so the tips overlap
+          into the wall — a small intentional overlap reads as "attached";
+          an exact tangent risks a visible hairline gap. */}
+      <mesh position={[1.3, 0.05, 0]} rotation={[0, 0, (-3 * Math.PI) / 4]}>
+        <torusGeometry args={[0.42, 0.11, 16, 32, Math.PI * 1.5]} />
         <meshPhysicalMaterial
           color={NAVY}
           roughness={0.25}
@@ -247,7 +277,7 @@ function Mug({ reduced }: { reduced: boolean }) {
 
 function Saucer() {
   return (
-    <group position={[0, -1.05, 0]}>
+    <group position={[0, -1.65, 0]} scale={0.8}>
       <mesh receiveShadow>
         <cylinderGeometry args={[1.9, 1.9, 0.12, 48]} />
         <meshPhysicalMaterial
@@ -280,12 +310,23 @@ function Saucer() {
 
 function Scene() {
   const reduced = Boolean(useReducedMotion());
+  // Built from primitives in the three package itself — no network
+  // fetch, unlike drei's HDR presets (which failed to load for you,
+  // likely a CDN reachability issue rather than anything wrong with the
+  // scene setup). Same PMREM-reflection technique, just generated
+  // on-device instead of downloaded.
+  const roomEnvironment = React.useMemo(() => new RoomEnvironment(), []);
+
   return (
     <>
-      <ambientLight intensity={1.0} />
-      <directionalLight position={[3, 4, 2]} intensity={2.0} />
-      <directionalLight position={[-3, 1, -2]} intensity={0.7} />
-      <pointLight position={[-2.5, 1, -1.5]} intensity={1.2} color={GOLD} />
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[3, 4, 2]} intensity={1.6} />
+      <directionalLight position={[-3, 1, -2]} intensity={0.5} />
+      <pointLight position={[-2.5, 1, -1.5]} intensity={1.1} color={GOLD} />
+      <pointLight position={[2.5, 0.5, -2]} intensity={0.6} color="#7dd3fc" />
+      <Environment environmentIntensity={0.6}>
+        <primitive object={roomEnvironment} />
+      </Environment>
       <Float
         enabled={!reduced}
         speed={1.4}
@@ -314,7 +355,7 @@ function CoffeeMugScene({ className }: CoffeeMugSceneProps) {
         flat
         dpr={[1, 1.75]}
         gl={{ antialias: true, alpha: true }}
-        camera={{ position: [0, 0.6, 5], fov: 32 }}
+        camera={{ position: [0, 0, 7.2], fov: 36 }}
       >
         <Scene />
       </Canvas>
