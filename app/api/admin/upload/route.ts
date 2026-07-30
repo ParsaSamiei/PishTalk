@@ -49,22 +49,36 @@ export async function POST(request: NextRequest) {
     ? (folderInput as (typeof ALLOWED_FOLDERS)[number])
     : "misc";
 
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const uploadDir = path.join(process.cwd(), "public", "uploads", folder);
-  await mkdir(uploadDir, { recursive: true });
+  // Everything below was previously unguarded: any failure here (a corrupt
+  // buffer Jimp can't decode, a permissions error on mkdir/write, a full
+  // disk, ...) crashed the route handler with no JSON body at all. The
+  // client's `await res.json()` in ImageUploadField then threw its own,
+  // unrelated parse error on top, masking whatever actually went wrong and
+  // leaving nothing in the server logs to diagnose it from.
+  try {
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const uploadDir = path.join(process.cwd(), "public", "uploads", folder);
+    await mkdir(uploadDir, { recursive: true });
 
-  // UUID filename per docs/05_DATABASE.md — never trust uploaded filenames
-  const filename = `${randomUUID()}.jpg`;
-  const filepath = path.join(uploadDir, filename);
+    // UUID filename per docs/05_DATABASE.md — never trust uploaded filenames
+    const filename = `${randomUUID()}.jpg`;
+    const filepath = path.join(uploadDir, filename);
 
-  const image = await Jimp.read(buffer);
-  const { width, height } = image.bitmap;
+    const image = await Jimp.read(buffer);
+    const { width, height } = image.bitmap;
 
-  // Only downscale, never upscale a small source image
-  if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
-    image.scaleToFit({ w: MAX_DIMENSION, h: MAX_DIMENSION });
+    // Only downscale, never upscale a small source image
+    if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
+      image.scaleToFit({ w: MAX_DIMENSION, h: MAX_DIMENSION });
+    }
+    await image.write(filepath as `${string}.jpg`, { quality: 82 });
+
+    return NextResponse.json({ url: `/uploads/${folder}/${filename}` });
+  } catch (err) {
+    console.error("Image upload failed:", err);
+    return NextResponse.json(
+      { error: "پردازش تصویر با خطا مواجه شد." },
+      { status: 500 },
+    );
   }
-  await image.write(filepath as `${string}.jpg`, { quality: 82 });
-
-  return NextResponse.json({ url: `/uploads/${folder}/${filename}` });
 }
