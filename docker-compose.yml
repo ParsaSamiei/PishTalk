@@ -47,7 +47,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - pishtalk_uploads:/app/public/uploads
+      - uploads:/app/public/uploads
     environment:
       DATABASE_URL: ${DATABASE_URL}
       AUTH_SECRET: ${AUTH_SECRET:?set AUTH_SECRET in .env, generate with: npx auth secret}
@@ -58,4 +58,4 @@ services:
 
 volumes:
   pishtalk_db:
-  pishtalk_uploads:
+  uploads:
