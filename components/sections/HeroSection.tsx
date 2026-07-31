@@ -12,7 +12,6 @@ import {
   type Variants,
 } from "framer-motion";
 import {
-  ArrowLeft,
   Bot,
   ChevronDown,
   Cpu,
@@ -24,10 +23,12 @@ import {
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
 import { Countdown } from "@/components/shared/Countdown";
+import { ForwardArrow } from "@/components/shared/DirectionalIcon";
 import { GlowOrb } from "@/components/illustrations/GlowOrb";
 import { CircuitBackground } from "@/components/illustrations/CircuitBackground";
 import { FloatingIcon } from "@/components/illustrations/FloatingIcon";
 import type { EventDetail } from "@/features/events/types/event";
+import { useLocale } from "@/lib/i18n/client";
 import { formatEventDate } from "@/utils/formatDate";
 
 // three.js is client/WebGL-only, so it's loaded on demand instead of in
@@ -59,6 +60,7 @@ interface HeroSectionProps {
  * in both modes.
  */
 function HeroSection({ nextEvent }: HeroSectionProps) {
+  const { locale, dictionary: d } = useLocale();
   const shouldReduceMotion = useReducedMotion();
 
   const mouseX = useMotionValue(0);
@@ -154,14 +156,14 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
             className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-secondary px-4 py-1.5 text-sm text-text-secondary dark:border-white/15 dark:bg-white/5 dark:text-white/80"
           >
             <Bot className="size-4 text-accent" aria-hidden="true" />
-            باشگاه رباتیک پیشنام
+            {d.hero.club}
           </motion.span>
 
           <motion.h1
             variants={itemVariants}
             className="max-w-xl text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl"
           >
-            جامعه‌ای برای مهندسان{" "}
+            {d.hero.titleLead}{" "}
             <span
               className="
                 text-gradient-accent
@@ -169,17 +171,16 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
                 dark:drop-shadow-[0_0_8px_rgba(250,204,21,0.4)]
                 "
             >
-              رباتیک
+              {d.hero.titleHighlight}
             </span>
-            ، هوش مصنوعی و فناوری
+            {d.hero.titleTail}
           </motion.h1>
 
           <motion.p
             variants={itemVariants}
             className="max-w-xl text-lg text-text-secondary"
           >
-            هر ماه گرد هم می‌آییم تا یاد بگیریم، گفتگو کنیم و شبکه‌سازی کنیم؛ در
-            کنار مهندسان و علاقه‌مندانی که مسیر مشابهی را دنبال می‌کنند.
+            {d.hero.subtitle}
           </motion.p>
 
           {nextEvent ? (
@@ -188,7 +189,7 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
               className="flex flex-col items-center gap-4 lg:items-start"
             >
               <p className="text-sm text-text-secondary">
-                رویداد بعدی · {formatEventDate(nextEvent.date)}
+                {d.hero.nextEventPrefix} · {formatEventDate(nextEvent.date, locale)}
               </p>
               <Countdown target={nextEvent.date} variant="auto" />
             </motion.div>
@@ -205,13 +206,13 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
               className="transition-shadow duration-300 hover:shadow-[0_0_32px_rgba(244,185,66,0.35)]"
             >
               <Link href={nextEvent ? `/events/${nextEvent.slug}` : "/events"}>
-                ثبت نام رویداد
+                {d.nav.registerCta}
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg">
               <Link href="/about">
-                درباره پیشتاک
-                <ArrowLeft className="size-4" aria-hidden="true" />
+                {d.hero.aboutCta}
+                <ForwardArrow className="size-4" aria-hidden="true" />
               </Link>
             </Button>
           </motion.div>
@@ -230,7 +231,7 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
 
       <motion.a
         href="#next-event"
-        aria-label="پیمایش به بخش بعدی"
+        aria-label={d.hero.scrollLabel}
         className="absolute inset-x-0 bottom-6 mx-auto flex size-10 items-center justify-center rounded-full border border-border text-text-secondary transition-colors hover:text-text-primary dark:border-white/15 dark:text-white/60 dark:hover:text-white"
         animate={shouldReduceMotion ? undefined : { y: [0, 6, 0] }}
         transition={

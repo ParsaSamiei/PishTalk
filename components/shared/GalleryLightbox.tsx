@@ -5,6 +5,8 @@ import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import { X, ChevronRight, ChevronLeft } from "lucide-react";
 
+import { useLocale } from "@/lib/i18n/client";
+
 export interface LightboxImage {
   readonly id: string;
   readonly url: string;
@@ -24,30 +26,49 @@ interface GalleryLightboxProps {
  * docs/04_DESIGN_SYSTEM.md's "Lightbox, Keyboard Navigation, Swipe Support".
  */
 function GalleryLightbox({ images, startIndex, onClose }: GalleryLightboxProps) {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ startIndex, direction: "rtl", loop: true });
+  const { dir, dictionary } = useLocale();
+  const isRtl = dir === "rtl";
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    startIndex,
+    direction: dir,
+    loop: true,
+  });
 
   React.useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") onClose();
-      if (event.key === "ArrowLeft") emblaApi?.scrollNext();
-      if (event.key === "ArrowRight") emblaApi?.scrollPrev();
+      // "Next" is whichever arrow points along the reading direction: left in
+      // RTL, right in LTR.
+      if (event.key === "ArrowLeft") {
+        if (isRtl) emblaApi?.scrollNext();
+        else emblaApi?.scrollPrev();
+      }
+      if (event.key === "ArrowRight") {
+        if (isRtl) emblaApi?.scrollPrev();
+        else emblaApi?.scrollNext();
+      }
     }
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [emblaApi, onClose]);
+  }, [emblaApi, onClose, isRtl]);
+
+  // The chevrons sit at logical start/end, so they must point outward in
+  // whichever direction the document actually flows.
+  const PrevIcon = isRtl ? ChevronRight : ChevronLeft;
+  const NextIcon = isRtl ? ChevronLeft : ChevronRight;
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-primary/95 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
-      aria-label="نمایش تصاویر گالری"
+      aria-label={dictionary.gallery.lightboxLabel}
     >
       <button
         type="button"
         onClick={onClose}
-        aria-label="بستن"
+        aria-label={dictionary.common.close}
         className="absolute top-4 end-4 z-10 flex size-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
       >
         <X className="size-5" aria-hidden="true" />
@@ -56,18 +77,18 @@ function GalleryLightbox({ images, startIndex, onClose }: GalleryLightboxProps) 
       <button
         type="button"
         onClick={() => emblaApi?.scrollPrev()}
-        aria-label="تصویر قبلی"
+        aria-label={dictionary.gallery.prevImage}
         className="absolute start-4 z-10 flex size-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
       >
-        <ChevronRight className="size-5" aria-hidden="true" />
+        <PrevIcon className="size-5" aria-hidden="true" />
       </button>
       <button
         type="button"
         onClick={() => emblaApi?.scrollNext()}
-        aria-label="تصویر بعدی"
+        aria-label={dictionary.gallery.nextImage}
         className="absolute end-4 z-10 flex size-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
       >
-        <ChevronLeft className="size-5" aria-hidden="true" />
+        <NextIcon className="size-5" aria-hidden="true" />
       </button>
 
       <div className="h-full w-full overflow-hidden" ref={emblaRef}>

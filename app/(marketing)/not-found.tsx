@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 
 import { NotFoundContent } from "@/components/shared/NotFoundContent";
+import { getDictionary } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-  title: "صفحه پیدا نشد",
-  description:
-    "این صفحه پیدا نشد. ممکن است لینک اشتباه باشد یا صفحه جابه‌جا شده باشد.",
-  robots: { index: false, follow: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const d = await getDictionary();
+
+  return {
+    title: d.notFound.metaTitle,
+    description: d.notFound.metaDescription,
+    robots: { index: false, follow: true },
+  };
+}
 
 /**
  * Renders when notFound() is called from a page inside the (marketing)

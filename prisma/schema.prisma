@@ -74,9 +74,22 @@ model Event {
   capacity    Int?
   status      EventStatus @default(DRAFT)
 
+  /// English translations. All nullable: content is authored Persian-first and
+  /// the site falls back to the Persian column when these are empty
+  /// (see lib/i18n/content.ts).
+  titleEn       String? @map("title_en")
+  subtitleEn    String? @map("subtitle_en")
+  descriptionEn String? @map("description_en")
+  locationEn    String? @map("location_en")
+  speakerNameEn String? @map("speaker_name_en")
+  speakerBioEn  String? @map("speaker_bio_en")
+
   seoTitle       String? @map("seo_title")
   seoDescription String? @map("seo_description")
   ogImage        String? @map("og_image")
+
+  seoTitleEn       String? @map("seo_title_en")
+  seoDescriptionEn String? @map("seo_description_en")
 
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
@@ -100,6 +113,9 @@ model EventTimelineItem {
   title       String
   description String?
   sortOrder   Int    @default(0) @map("sort_order")
+
+  titleEn       String? @map("title_en")
+  descriptionEn String? @map("description_en")
 
   event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
@@ -135,6 +151,9 @@ model Category {
   slug        String  @unique
   description String?
 
+  nameEn        String? @map("name_en")
+  descriptionEn String? @map("description_en")
+
   blogs Blog[]
 
   @@map("categories")
@@ -155,6 +174,13 @@ model Blog {
   seoTitle       String? @map("seo_title")
   seoDescription String? @map("seo_description")
 
+  /// English translations; nullable with Persian fallback.
+  titleEn          String? @map("title_en")
+  excerptEn        String? @map("excerpt_en")
+  contentEn        String? @map("content_en")
+  seoTitleEn       String? @map("seo_title_en")
+  seoDescriptionEn String? @map("seo_description_en")
+
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
@@ -174,6 +200,9 @@ model Gallery {
   title       String
   description String?
   coverImage  String?  @map("cover_image")
+
+  titleEn       String? @map("title_en")
+  descriptionEn String? @map("description_en")
   createdAt   DateTime @default(now()) @map("created_at")
   deletedAt   DateTime? @map("deleted_at")
 
@@ -192,6 +221,8 @@ model GalleryMedia {
   caption   String?
   sortOrder Int              @default(0) @map("sort_order")
 
+  captionEn String? @map("caption_en")
+
   gallery Gallery @relation(fields: [galleryId], references: [id], onDelete: Cascade)
 
   @@index([galleryId])
@@ -204,6 +235,9 @@ model Resource {
   title        String
   description  String?
   resourceType ResourceType @map("resource_type")
+
+  titleEn       String? @map("title_en")
+  descriptionEn String? @map("description_en")
   fileUrl      String?      @map("file_url")
   externalUrl  String?      @map("external_url")
   createdAt    DateTime     @default(now()) @map("created_at")
@@ -222,6 +256,9 @@ model Faq {
   sortOrder Int     @default(0) @map("sort_order")
   published Boolean @default(true)
 
+  questionEn String? @map("question_en")
+  answerEn   String? @map("answer_en")
+
   @@map("faqs")
 }
 
@@ -232,6 +269,9 @@ model Rule {
   icon        String?
   sortOrder   Int     @default(0) @map("sort_order")
   published   Boolean @default(true)
+
+  titleEn       String? @map("title_en")
+  descriptionEn String? @map("description_en")
 
   @@map("rules")
 }
@@ -257,6 +297,19 @@ model SiteSettings {
   siteName         String  @default("پیشتاک") @map("site_name")
   tagline          String  @default("جامعه مهندسان رباتیک، هوش مصنوعی و فناوری")
   description      String?
+
+  /// English translations of the visitor-facing settings. Nullable, with
+  /// Persian fallback (lib/i18n/content.ts). Non-textual settings (URLs,
+  /// analytics ID, maintenance flag) are locale-independent and not duplicated.
+  siteNameEn         String? @map("site_name_en")
+  taglineEn          String? @map("tagline_en")
+  descriptionEn      String? @map("description_en")
+  heroTitleEn        String? @map("hero_title_en")
+  heroSubtitleEn     String? @map("hero_subtitle_en")
+  addressEn          String? @map("address_en")
+  copyrightEn        String? @map("copyright_en")
+  seoTitleEn         String? @map("seo_title_en")
+  seoDescriptionEn   String? @map("seo_description_en")
   logo             String?
   favicon          String?
   heroTitle        String? @map("hero_title")

@@ -5,18 +5,25 @@ import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { SocialLinks } from "@/components/shared/SocialLinks";
 import { ContactForm } from "@/features/contact/components/ContactForm";
+import { getDictionary, getLocaleContext } from "@/lib/i18n/server";
+import { pick } from "@/lib/i18n/content";
 import { CONTACT_PHONE } from "@/lib/constants";
 import { getSiteSettings } from "@/lib/site-settings";
 
-export const metadata: Metadata = {
-  title: "تماس با ما",
-  description:
-    "برای همکاری، سخنرانی یا هر سوال دیگری با تیم پیشتاک در ارتباط باشید.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const d = await getDictionary();
+
+  return {
+    title: d.contact.pageTitle,
+    description: d.contact.metaDescription,
+  };
+}
 
 export default async function ContactPage() {
+  const { locale, dictionary: d } = await getLocaleContext();
   const settings = await getSiteSettings();
   const phoneNumber = settings.phone ?? CONTACT_PHONE;
+  const address = pick(locale, settings.address, settings.addressEn);
 
   return (
     <Section className="pt-12" circuit>
@@ -24,10 +31,10 @@ export default async function ContactPage() {
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3">
             <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">
-              تماس با ما
+              {d.contact.pageTitle}
             </h1>
             <p className="text-lg text-text-secondary">
-              برای همکاری، سخنرانی یا هر سوال دیگری، پیام بگذارید.
+              {d.contact.description}
             </p>
           </div>
           <ul className="flex flex-col gap-4 text-text-secondary">
@@ -70,7 +77,7 @@ export default async function ContactPage() {
                 </a>
               </li>
             ) : null}
-            {settings.address ? (
+            {address ? (
               <li className="flex items-center gap-3">
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border">
                   <MapPin
@@ -78,7 +85,7 @@ export default async function ContactPage() {
                     aria-hidden="true"
                   />
                 </span>
-                <span>{settings.address}</span>
+                <span>{address}</span>
               </li>
             ) : null}
           </ul>

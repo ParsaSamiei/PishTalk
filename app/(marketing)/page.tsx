@@ -78,6 +78,7 @@ export default async function HomePage() {
         phone={settings.phone}
         phone2={settings.phone2}
         address={settings.address}
+        addressEn={settings.addressEn}
         instagram={settings.instagram}
         telegram={settings.telegram}
       />

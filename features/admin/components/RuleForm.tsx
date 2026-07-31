@@ -29,6 +29,10 @@ function RuleForm({ defaultValues, onSubmit, submitLabel }: RuleFormProps) {
     defaultValues?.description ?? "",
   );
   const [icon, setIcon] = React.useState(defaultValues?.icon ?? "");
+  const [titleEn, setTitleEn] = React.useState(defaultValues?.titleEn ?? "");
+  const [descriptionEn, setDescriptionEn] = React.useState(
+    defaultValues?.descriptionEn ?? "",
+  );
   const [sortOrder, setSortOrder] = React.useState(
     defaultValues?.sortOrder ?? 0,
   );
@@ -46,6 +50,8 @@ function RuleForm({ defaultValues, onSubmit, submitLabel }: RuleFormProps) {
     const result = await onSubmit({
       title,
       description,
+      titleEn,
+      descriptionEn,
       icon: icon as RuleFormValues["icon"],
       sortOrder,
       published,
@@ -74,6 +80,34 @@ function RuleForm({ defaultValues, onSubmit, submitLabel }: RuleFormProps) {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
+        />
+      </div>
+
+      {/* English translation. Optional — the public site shows the Persian
+          text to English visitors when these are left empty. */}
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="titleEn">
+          عنوان (انگلیسی){" "}
+          <span className="font-normal text-text-secondary">(اختیاری)</span>
+        </Label>
+        <Input
+          id="titleEn"
+          dir="ltr"
+          value={titleEn}
+          onChange={(e) => setTitleEn(e.target.value)}
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="descriptionEn">
+          توضیحات (انگلیسی){" "}
+          <span className="font-normal text-text-secondary">(اختیاری)</span>
+        </Label>
+        <Textarea
+          id="descriptionEn"
+          rows={3}
+          dir="ltr"
+          value={descriptionEn}
+          onChange={(e) => setDescriptionEn(e.target.value)}
         />
       </div>
       <div className="grid gap-5 sm:grid-cols-3">

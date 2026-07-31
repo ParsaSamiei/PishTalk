@@ -12,7 +12,9 @@ export async function getRules(limit?: number): Promise<RuleItem[]> {
     return rules.map((rule) => ({
       id: rule.id,
       title: rule.title,
+      titleEn: rule.titleEn,
       description: rule.description,
+      descriptionEn: rule.descriptionEn,
       icon: rule.icon,
     }));
   } catch {

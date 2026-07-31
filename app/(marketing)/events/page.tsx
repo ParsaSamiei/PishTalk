@@ -12,16 +12,21 @@ import {
   getUpcomingEvents,
   getPastEvents,
 } from "@/features/events/actions/getEvents";
+import { getDictionary } from "@/lib/i18n/server";
 import { SITE_URL } from "@/lib/constants";
 
 // Prevents this page from being statically prerendered at Docker build time (when the DB may be empty/unreachable) and cached forever.
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "رویدادها",
-  description: "تمام رویدادهای پیشتاک، پیش رو و گذشته، در یک صفحه.",
-  alternates: { canonical: `${SITE_URL}/events` },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const d = await getDictionary();
+
+  return {
+    title: d.events.pageTitle,
+    description: d.events.metaDescription,
+    alternates: { canonical: `${SITE_URL}/events` },
+  };
+}
 
 interface EventsPageProps {
   readonly searchParams: Promise<{ filter?: string; q?: string }>;
@@ -30,6 +35,7 @@ interface EventsPageProps {
 export default async function EventsPage({ searchParams }: EventsPageProps) {
   const { filter, q } = await searchParams;
   const isPast = filter === "past";
+  const d = await getDictionary();
 
   const events = isPast
     ? await getPastEvents(100, q)
@@ -44,11 +50,10 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
       <Container className="relative flex flex-col gap-10">
         <div className="flex flex-col gap-3">
           <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">
-            رویدادها
+            {d.events.pageTitle}
           </h1>
           <p className="max-w-2xl text-lg text-text-secondary">
-            رویداد پیش رو را از دست ندهید و آرشیو رویدادهای گذشته پیشتاک را مرور
-            کنید.
+            {d.events.lead}
           </p>
         </div>
 
@@ -75,16 +80,12 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
             icon={CalendarDays}
             title={
               q
-                ? "رویدادی با این مشخصات پیدا نشد"
+                ? d.events.notFoundSearch
                 : isPast
-                  ? "هنوز رویداد گذشته‌ای ثبت نشده است"
-                  : "رویداد پیش رویی ثبت نشده است"
+                  ? d.events.emptyPast
+                  : d.events.emptyUpcoming
             }
-            description={
-              q
-                ? "عبارت دیگری را امتحان کنید یا فیلتر را تغییر دهید."
-                : "رویدادهای پیشتاک به‌محض قطعی شدن اینجا اعلام می‌شوند."
-            }
+            description={q ? d.events.searchHint : d.events.announceHint}
           />
         )}
       </Container>

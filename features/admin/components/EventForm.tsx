@@ -81,6 +81,28 @@ function EventForm({ defaultValues, onSubmit, submitLabel }: EventFormProps) {
           <Input id="subtitle" {...register("subtitle")} />
         </div>
 
+        {/* English translations. Optional — the public site shows the Persian
+            text to English visitors when these are left empty. */}
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="titleEn">
+              عنوان (انگلیسی){" "}
+              <span className="font-normal text-text-secondary">(اختیاری)</span>
+            </Label>
+            <Input id="titleEn" dir="ltr" {...register("titleEn")} />
+            {errors.titleEn ? (
+              <p className="text-sm text-danger">{errors.titleEn.message}</p>
+            ) : null}
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="subtitleEn">
+              زیرعنوان (انگلیسی){" "}
+              <span className="font-normal text-text-secondary">(اختیاری)</span>
+            </Label>
+            <Input id="subtitleEn" dir="ltr" {...register("subtitleEn")} />
+          </div>
+        </div>
+
         <div className="flex flex-col gap-2">
           <Label htmlFor="description">توضیحات</Label>
           <Textarea
@@ -92,6 +114,14 @@ function EventForm({ defaultValues, onSubmit, submitLabel }: EventFormProps) {
           {errors.description ? (
             <p className="text-sm text-danger">{errors.description.message}</p>
           ) : null}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="descriptionEn">
+            توضیحات (انگلیسی){" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Textarea id="descriptionEn" rows={5} dir="ltr" {...register("descriptionEn")} />
         </div>
 
         <Controller
@@ -142,6 +172,13 @@ function EventForm({ defaultValues, onSubmit, submitLabel }: EventFormProps) {
             <p className="text-sm text-danger">{errors.location.message}</p>
           ) : null}
         </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="locationEn">
+            مکان (انگلیسی){" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Input id="locationEn" dir="ltr" {...register("locationEn")} />
+        </div>
       </Card>
 
       <Card className="flex flex-col gap-5">
@@ -157,8 +194,22 @@ function EventForm({ defaultValues, onSubmit, submitLabel }: EventFormProps) {
           </div>
         </div>
         <div className="flex flex-col gap-2">
+          <Label htmlFor="speakerNameEn">
+            نام سخنران (انگلیسی){" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Input id="speakerNameEn" dir="ltr" {...register("speakerNameEn")} />
+        </div>
+        <div className="flex flex-col gap-2">
           <Label htmlFor="speakerBio">بیوگرافی سخنران (اختیاری)</Label>
           <Textarea id="speakerBio" rows={3} {...register("speakerBio")} />
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="speakerBioEn">
+            بیوگرافی سخنران (انگلیسی){" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Textarea id="speakerBioEn" rows={3} dir="ltr" {...register("speakerBioEn")} />
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="status">وضعیت</Label>
@@ -183,7 +234,9 @@ function EventForm({ defaultValues, onSubmit, submitLabel }: EventFormProps) {
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => append({ time: "", title: "", description: "" })}
+            onClick={() =>
+              append({ time: "", title: "", description: "", titleEn: "", descriptionEn: "" })
+            }
           >
             <Plus className="size-4" aria-hidden="true" />
             افزودن مرحله
@@ -197,44 +250,99 @@ function EventForm({ defaultValues, onSubmit, submitLabel }: EventFormProps) {
             {fields.map((field, index) => (
               <div
                 key={field.id}
-                className="grid gap-3 rounded-[var(--radius-input)] border border-border p-4 sm:grid-cols-[120px_1fr_1fr_auto] sm:items-start"
+                className="flex flex-col gap-3 rounded-[var(--radius-input)] border border-border p-4"
               >
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor={`timeline.${index}.time`}>زمان</Label>
-                  <Input
-                    id={`timeline.${index}.time`}
-                    placeholder="18:00"
-                    {...register(`timeline.${index}.time` as const)}
-                  />
+                <div className="grid gap-3 sm:grid-cols-[120px_1fr_1fr_auto] sm:items-start">
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor={`timeline.${index}.time`}>زمان</Label>
+                    <Input
+                      id={`timeline.${index}.time`}
+                      placeholder="18:00"
+                      {...register(`timeline.${index}.time` as const)}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor={`timeline.${index}.title`}>عنوان</Label>
+                    <Input
+                      id={`timeline.${index}.title`}
+                      {...register(`timeline.${index}.title` as const)}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor={`timeline.${index}.description`}>توضیح (اختیاری)</Label>
+                    <Input
+                      id={`timeline.${index}.description`}
+                      {...register(`timeline.${index}.description` as const)}
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="mt-7 text-danger hover:bg-danger/10"
+                    aria-label="حذف مرحله"
+                    onClick={() => remove(index)}
+                  >
+                    <Trash2 className="size-4" aria-hidden="true" />
+                  </Button>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor={`timeline.${index}.title`}>عنوان</Label>
-                  <Input
-                    id={`timeline.${index}.title`}
-                    {...register(`timeline.${index}.title` as const)}
-                  />
+                {/* English translation of this timeline step. Optional, same
+                    Persian-fallback rule as the rest of the form. */}
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor={`timeline.${index}.titleEn`}>
+                      عنوان (انگلیسی){" "}
+                      <span className="font-normal text-text-secondary">(اختیاری)</span>
+                    </Label>
+                    <Input
+                      id={`timeline.${index}.titleEn`}
+                      dir="ltr"
+                      {...register(`timeline.${index}.titleEn` as const)}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor={`timeline.${index}.descriptionEn`}>
+                      توضیح (انگلیسی){" "}
+                      <span className="font-normal text-text-secondary">(اختیاری)</span>
+                    </Label>
+                    <Input
+                      id={`timeline.${index}.descriptionEn`}
+                      dir="ltr"
+                      {...register(`timeline.${index}.descriptionEn` as const)}
+                    />
+                  </div>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor={`timeline.${index}.description`}>توضیح (اختیاری)</Label>
-                  <Input
-                    id={`timeline.${index}.description`}
-                    {...register(`timeline.${index}.description` as const)}
-                  />
-                </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="mt-7 text-danger hover:bg-danger/10"
-                  aria-label="حذف مرحله"
-                  onClick={() => remove(index)}
-                >
-                  <Trash2 className="size-4" aria-hidden="true" />
-                </Button>
               </div>
             ))}
           </div>
         )}
+      </Card>
+
+      <Card className="flex flex-col gap-5">
+        <h2 className="text-lg font-semibold text-text-primary">سئو (انگلیسی)</h2>
+        {/* The Persian seoTitle/seoDescription columns exist in the database but
+            have never had inputs on this form; only the English counterparts are
+            editable here. */}
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="seoTitleEn">
+            عنوان سئو (انگلیسی){" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Input id="seoTitleEn" dir="ltr" {...register("seoTitleEn")} />
+          {errors.seoTitleEn ? (
+            <p className="text-sm text-danger">{errors.seoTitleEn.message}</p>
+          ) : null}
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="seoDescriptionEn">
+            توضیحات سئو (انگلیسی){" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Textarea id="seoDescriptionEn" rows={2} dir="ltr" {...register("seoDescriptionEn")} />
+          {errors.seoDescriptionEn ? (
+            <p className="text-sm text-danger">{errors.seoDescriptionEn.message}</p>
+          ) : null}
+        </div>
       </Card>
 
       {serverError ? <p className="text-sm text-danger">{serverError}</p> : null}

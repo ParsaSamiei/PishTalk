@@ -1,6 +1,7 @@
 import { Send } from "lucide-react";
 
 import { InstagramIcon } from "@/components/icons/InstagramIcon";
+import { getDictionary } from "@/lib/i18n/server";
 import { cn } from "@/lib/utils";
 
 interface SocialLinksProps {
@@ -13,10 +14,11 @@ interface SocialLinksProps {
  * Renders the community's social links. Reads from site settings so
  * updating a handle in the admin panel never requires a code change.
  */
-function SocialLinks({ instagram, telegram, className }: SocialLinksProps) {
+async function SocialLinks({ instagram, telegram, className }: SocialLinksProps) {
+  const d = await getDictionary();
   const links = [
-    { href: instagram, label: "اینستاگرام پیشتاک", Icon: InstagramIcon },
-    { href: telegram, label: "تلگرام پیشتاک", Icon: Send },
+    { href: instagram, label: d.footer.instagram, Icon: InstagramIcon },
+    { href: telegram, label: d.footer.telegram, Icon: Send },
   ].filter((link): link is { href: string; label: string; Icon: typeof Send } =>
     Boolean(link.href)
   );

@@ -11,6 +11,8 @@ import { Countdown } from "@/components/shared/Countdown";
 import { Reveal } from "@/components/animations/Reveal";
 import { GlowOrb } from "@/components/illustrations/GlowOrb";
 import type { EventDetail } from "@/features/events/types/event";
+import { pick } from "@/lib/i18n/content";
+import { getLocaleContext } from "@/lib/i18n/server";
 import { formatEventDate, formatWeekday } from "@/utils/formatDate";
 
 interface NextEventSectionProps {
@@ -29,14 +31,17 @@ interface NextEventSectionProps {
  * grid directly behind a panel that already carries its own denser one
  * was what looked misaligned; one circuit treatment per area reads clean.
  */
-function NextEventSection({ event }: NextEventSectionProps) {
+async function NextEventSection({ event }: NextEventSectionProps) {
+  const { locale, dictionary: d } = await getLocaleContext();
+  const subtitle = event ? pick(locale, event.subtitle, event.subtitleEn) : null;
+
   return (
     <Section id="next-event" className="scroll-mt-24" circuit>
       <Container className="flex flex-col gap-10">
         <Reveal>
           <SectionTitle
-            eyebrow="رویداد بعدی"
-            title="در رویداد پیش رو ما را همراهی کنید"
+            eyebrow={d.nextEvent.eyebrow}
+            title={d.nextEvent.title}
           />
         </Reveal>
 
@@ -45,10 +50,10 @@ function NextEventSection({ event }: NextEventSectionProps) {
             <Card className="grid gap-8 p-8 lg:grid-cols-[1.2fr_1fr] lg:p-10">
               <div className="flex flex-col gap-5">
                 <h3 className="text-2xl font-bold text-text-primary sm:text-3xl">
-                  {event.title}
+                  {pick(locale, event.title, event.titleEn)}
                 </h3>
-                {event.subtitle ? (
-                  <p className="text-text-secondary">{event.subtitle}</p>
+                {subtitle ? (
+                  <p className="text-text-secondary">{subtitle}</p>
                 ) : null}
 
                 <div className="flex flex-col gap-3 text-sm text-text-secondary sm:flex-row sm:gap-8">
@@ -57,24 +62,30 @@ function NextEventSection({ event }: NextEventSectionProps) {
                       className="size-4 text-accent-hover"
                       aria-hidden="true"
                     />
-                    {formatWeekday(event.date)}، {formatEventDate(event.date)} —{" "}
-                    {event.startTime}
+                    {/* Persian separates the weekday with an Arabic comma. */}
+                    {formatWeekday(event.date, locale)}
+                    {locale === "fa" ? "،" : ","}{" "}
+                    {formatEventDate(event.date, locale)} — {event.startTime}
                   </span>
                   <span className="flex items-center gap-2">
                     <MapPin
                       className="size-4 text-accent-hover"
                       aria-hidden="true"
                     />
-                    {event.location}
+                    {pick(locale, event.location, event.locationEn)}
                   </span>
                 </div>
 
                 <div className="mt-2 flex flex-col gap-3 sm:flex-row">
                   <Button asChild size="lg">
-                    <Link href={`/events/${event.slug}#register`}>ثبت نام</Link>
+                    <Link href={`/events/${event.slug}#register`}>
+                      {d.common.register}
+                    </Link>
                   </Button>
                   <Button asChild variant="outline" size="lg">
-                    <Link href={`/events/${event.slug}`}>مشاهده جزئیات</Link>
+                    <Link href={`/events/${event.slug}`}>
+                      {d.common.details}
+                    </Link>
                   </Button>
                 </div>
               </div>
@@ -100,11 +111,11 @@ function NextEventSection({ event }: NextEventSectionProps) {
           <Reveal delay={0.1}>
             <EmptyState
               icon={Calendar}
-              title="رویداد بعدی به‌زودی معرفی خواهد شد"
-              description="برای اطلاع از تاریخ رویداد بعدی، صفحه رویدادها را دنبال کنید."
+              title={d.nextEvent.emptyTitle}
+              description={d.nextEvent.emptyDescription}
               action={
                 <Button asChild variant="outline">
-                  <Link href="/events">مشاهده رویدادهای گذشته</Link>
+                  <Link href="/events">{d.nextEvent.seePast}</Link>
                 </Button>
               }
             />

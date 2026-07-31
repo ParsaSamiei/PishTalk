@@ -5,24 +5,53 @@ function toSummary(event: {
   id: string;
   slug: string;
   title: string;
+  titleEn: string | null;
   subtitle: string | null;
+  subtitleEn: string | null;
   coverImage: string | null;
   date: Date;
   startTime: string;
   location: string;
+  locationEn: string | null;
   status: string;
 }): EventSummary {
   return {
     id: event.id,
     slug: event.slug,
     title: event.title,
+    titleEn: event.titleEn,
     subtitle: event.subtitle,
+    subtitleEn: event.subtitleEn,
     coverImage: event.coverImage,
     date: event.date,
     startTime: event.startTime,
     location: event.location,
+    locationEn: event.locationEn,
     status: event.status as EventSummary["status"],
   };
+}
+
+/** Shared mapper for an event's schedule rows, Persian plus English. */
+function toTimeline(
+  timeline: ReadonlyArray<{
+    id: string;
+    time: string;
+    title: string;
+    titleEn: string | null;
+    description: string | null;
+    descriptionEn: string | null;
+    sortOrder: number;
+  }>,
+) {
+  return timeline.map((item) => ({
+    id: item.id,
+    time: item.time,
+    title: item.title,
+    titleEn: item.titleEn,
+    description: item.description,
+    descriptionEn: item.descriptionEn,
+    sortOrder: item.sortOrder,
+  }));
 }
 
 /**
@@ -46,16 +75,13 @@ export async function getNextEvent(): Promise<EventDetail | null> {
     return {
       ...toSummary(event),
       description: event.description,
+      descriptionEn: event.descriptionEn,
       endTime: event.endTime,
       speakerName: event.speakerName,
+      speakerNameEn: event.speakerNameEn,
       speakerBio: event.speakerBio,
-      timeline: event.timeline.map((item) => ({
-        id: item.id,
-        time: item.time,
-        title: item.title,
-        description: item.description,
-        sortOrder: item.sortOrder,
-      })),
+      speakerBioEn: event.speakerBioEn,
+      timeline: toTimeline(event.timeline),
     };
   } catch {
     return null;
@@ -135,16 +161,13 @@ export async function getEventBySlug(slug: string): Promise<EventDetail | null> 
     return {
       ...toSummary(event),
       description: event.description,
+      descriptionEn: event.descriptionEn,
       endTime: event.endTime,
       speakerName: event.speakerName,
+      speakerNameEn: event.speakerNameEn,
       speakerBio: event.speakerBio,
-      timeline: event.timeline.map((item) => ({
-        id: item.id,
-        time: item.time,
-        title: item.title,
-        description: item.description,
-        sortOrder: item.sortOrder,
-      })),
+      speakerBioEn: event.speakerBioEn,
+      timeline: toTimeline(event.timeline),
     };
   } catch {
     return null;

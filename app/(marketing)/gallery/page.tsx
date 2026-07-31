@@ -8,16 +8,23 @@ import { Section } from "@/components/layout/Section";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { prisma } from "@/lib/prisma";
+import { getDictionary, getLocaleContext } from "@/lib/i18n/server";
+import { pick } from "@/lib/i18n/content";
+import type { Locale } from "@/lib/i18n/config";
 import { SITE_URL } from "@/lib/constants";
 
 // Prevents this page from being statically prerendered at Docker build time (when the DB may be empty/unreachable) and cached forever.
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "گالری",
-  description: "مجموعه تصاویر رویدادهای پیشتاک.",
-  alternates: { canonical: `${SITE_URL}/gallery` },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const d = await getDictionary();
+
+  return {
+    title: d.gallery.pageTitle,
+    description: d.gallery.metaDescription,
+    alternates: { canonical: `${SITE_URL}/gallery` },
+  };
+}
 
 interface GalleryGroup {
   readonly id: string;
@@ -28,7 +35,7 @@ interface GalleryGroup {
   readonly videoCount: number;
 }
 
-async function getGalleries(): Promise<GalleryGroup[]> {
+async function getGalleries(locale: Locale): Promise<GalleryGroup[]> {
   try {
     const galleries = await prisma.gallery.findMany({
       where: { deletedAt: null },
@@ -44,7 +51,7 @@ async function getGalleries(): Promise<GalleryGroup[]> {
       .map((gallery) => ({
         id: gallery.id,
         eventSlug: gallery.event.slug,
-        title: gallery.title,
+        title: pick(locale, gallery.title, gallery.titleEn),
         coverImage:
           gallery.coverImage ??
           gallery.media.find((m) => m.type === "IMAGE")?.url ??
@@ -58,18 +65,19 @@ async function getGalleries(): Promise<GalleryGroup[]> {
 }
 
 export default async function GalleryPage() {
-  const galleries = await getGalleries();
+  const { locale, dictionary: d } = await getLocaleContext();
+  const galleries = await getGalleries(locale);
 
   return (
     <Section className="pt-12" circuit>
       <Container className="flex flex-col gap-10">
-        <Breadcrumbs items={[{ label: "گالری" }]} />
+        <Breadcrumbs items={[{ label: d.gallery.pageTitle }]} />
         <div className="flex flex-col gap-3">
           <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">
-            گالری
+            {d.gallery.pageTitle}
           </h1>
           <p className="max-w-2xl text-lg text-text-secondary">
-            لحظاتی از رویدادهای برگزار شده پیشتاک را مرور کنید.
+            {d.gallery.lead}
           </p>
         </div>
 
@@ -101,9 +109,9 @@ export default async function GalleryPage() {
                     {gallery.title}
                   </h2>
                   <p className="text-sm text-text-secondary">
-                    {gallery.imageCount} تصویر
+                    {gallery.imageCount} {d.gallery.images}
                     {gallery.videoCount > 0
-                      ? ` · ${gallery.videoCount} ویدیو`
+                      ? ` · ${gallery.videoCount} ${d.gallery.videos}`
                       : ""}
                   </p>
                 </div>
@@ -113,8 +121,8 @@ export default async function GalleryPage() {
         ) : (
           <EmptyState
             icon={Images}
-            title="گالری هنوز خالی است"
-            description="پس از برگزاری اولین رویداد، تصاویر آن اینجا نمایش داده می‌شود."
+            title={d.gallery.emptyTitle}
+            description={d.gallery.emptyDescription}
           />
         )}
       </Container>

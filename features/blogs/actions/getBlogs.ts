@@ -17,9 +17,12 @@ export async function getLatestBlogs(limit = 3): Promise<BlogSummary[]> {
       id: blog.id,
       slug: blog.slug,
       title: blog.title,
+      titleEn: blog.titleEn,
       excerpt: blog.excerpt,
+      excerptEn: blog.excerptEn,
       coverImage: blog.coverImage,
       categoryName: blog.category?.name ?? null,
+      categoryNameEn: blog.category?.nameEn ?? null,
       readingTime: blog.readingTime,
       publishedAt: blog.publishedAt,
     }));

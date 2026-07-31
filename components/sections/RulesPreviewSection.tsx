@@ -1,17 +1,12 @@
 import Link from "next/link";
-import {
-  ShieldCheck,
-  ArrowLeft,
-  Heart,
-  Users,
-  MessageCircle,
-} from "lucide-react";
+import { ShieldCheck, Heart, Users, MessageCircle } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { SectionTitle } from "@/components/shared/SectionTitle";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { ForwardArrow } from "@/components/shared/DirectionalIcon";
 import {
   Card,
   CardHeader,
@@ -21,6 +16,8 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/animations/Reveal";
 import type { RuleItem } from "@/types/rule";
+import { pick } from "@/lib/i18n/content";
+import { getLocaleContext } from "@/lib/i18n/server";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   respect: Heart,
@@ -32,12 +29,17 @@ interface RulesPreviewSectionProps {
   readonly rules: readonly RuleItem[];
 }
 
-function RulesPreviewSection({ rules }: RulesPreviewSectionProps) {
+async function RulesPreviewSection({ rules }: RulesPreviewSectionProps) {
+  const { locale, dictionary: d } = await getLocaleContext();
+
   return (
     <Section id="rules" circuit>
       <Container className="flex flex-col gap-10">
         <Reveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
-          <SectionTitle eyebrow="قوانین" title="قوانین حضور در پیشتاک" />
+          <SectionTitle
+            eyebrow={d.rules.pageTitle}
+            title={d.rules.previewTitle}
+          />
           {rules.length > 0 ? (
             <Button
               asChild
@@ -45,8 +47,8 @@ function RulesPreviewSection({ rules }: RulesPreviewSectionProps) {
               className="border border-border-primary hover:border-accent hover:bg-accent/5"
             >
               <Link href="/rules">
-                مشاهده کامل قوانین
-                <ArrowLeft className="size-4" aria-hidden="true" />
+                {d.rules.viewFull}
+                <ForwardArrow className="size-4" aria-hidden="true" />
               </Link>
             </Button>
           ) : null}
@@ -64,9 +66,13 @@ function RulesPreviewSection({ rules }: RulesPreviewSectionProps) {
                       <div className="mb-2 flex size-11 items-center justify-center rounded-xl bg-accent/15 text-accent-hover transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110">
                         <Icon className="size-5" aria-hidden="true" />
                       </div>
-                      <CardTitle>{rule.title}</CardTitle>
+                      <CardTitle>
+                        {pick(locale, rule.title, rule.titleEn)}
+                      </CardTitle>
                     </CardHeader>
-                    <CardDescription>{rule.description}</CardDescription>
+                    <CardDescription>
+                      {pick(locale, rule.description, rule.descriptionEn)}
+                    </CardDescription>
                   </Card>
                 </Reveal>
               );
@@ -76,8 +82,8 @@ function RulesPreviewSection({ rules }: RulesPreviewSectionProps) {
           <Reveal delay={0.1}>
             <EmptyState
               icon={ShieldCheck}
-              title="قوانین به‌زودی منتشر می‌شود"
-              description="قوانین حضور در رویدادهای پیشتاک به‌زودی اینجا نمایش داده خواهد شد."
+              title={d.rules.emptyTitle}
+              description={d.rules.emptyDescription}
             />
           </Reveal>
         )}

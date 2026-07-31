@@ -6,8 +6,10 @@ import { Container } from "@/components/layout/Container";
 import { Logo } from "@/components/shared/Logo";
 import { SocialLinks } from "@/components/shared/SocialLinks";
 import { CONTACT_PHONE } from "@/lib/constants";
-import { MAIN_NAV_ITEMS } from "@/lib/navigation";
+import { getMainNavItems } from "@/lib/navigation";
 import { getSiteSettings } from "@/lib/site-settings";
+import { getLocaleContext } from "@/lib/i18n/server";
+import { pick } from "@/lib/i18n/content";
 import { SPONSORS } from "@/lib/sponsors";
 
 interface FooterProps {
@@ -26,25 +28,39 @@ interface FooterProps {
  * social links, Pishnam website, and copyright. Kept deliberately uncrowded.
  */
 async function Footer({
-  tagline = "جامعه مهندسان رباتیک، هوش مصنوعی و فناوری",
+  tagline,
   contactEmail,
   phone,
   phone2,
   address,
   instagram,
   telegram,
-  pishnamUrl = "https://pishnam.org",
+  pishnamUrl,
 }: FooterProps) {
   const year = new Date().getFullYear();
-  const settings = await getSiteSettings();
+  const [settings, { locale, dictionary: d }] = await Promise.all([
+    getSiteSettings(),
+    getLocaleContext(),
+  ]);
+  const navItems = getMainNavItems(d);
   const email = contactEmail ?? settings.contactEmail;
   const phoneNumber = phone ?? settings.phone ?? CONTACT_PHONE;
   const phoneNumber2 = phone2 ?? settings.phone2;
-  const streetAddress = address ?? settings.address;
+  // An address is prose, so it gets a translation; the caller's explicit prop
+  // wins when provided.
+  const streetAddress =
+    address ?? pick(locale, settings.address, settings.addressEn);
   const instagramUrl = instagram ?? settings.instagram;
   const telegramUrl = telegram ?? settings.telegram;
   const pishnamWebsite =
     pishnamUrl ?? settings.pishnamUrl ?? "https://pishnam.com";
+  // Prop wins, then the admin-set translation, then the dictionary default.
+  const taglineText =
+    tagline ?? pick(locale, settings.tagline, settings.taglineEn) ?? d.footer.tagline;
+  const siteName = pick(locale, settings.siteName, settings.siteNameEn);
+  const copyright =
+    pick(locale, settings.copyright, settings.copyrightEn) ??
+    `${siteName}. ${d.footer.rights}`;
 
   return (
     <footer className="border-t border-border bg-surface-secondary">
@@ -52,14 +68,14 @@ async function Footer({
         <div className="flex flex-col gap-3 lg:col-span-2">
           <Logo />
           <p className="max-w-sm text-sm leading-relaxed text-text-secondary">
-            {tagline}
+            {taglineText}
           </p>
           <SocialLinks instagram={instagramUrl} telegram={telegramUrl} />
 
           {SPONSORS.length > 0 ? (
             <div className="mt-1 flex flex-col gap-2">
               <h3 className="text-sm font-semibold text-text-primary">
-                حامیان و اسپانسرها
+                {d.footer.sponsors}
               </h3>
 
               <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
@@ -86,13 +102,13 @@ async function Footer({
           ) : null}
         </div>
 
-        <nav aria-label="لینک‌های سریع" className="flex flex-col gap-2">
+        <nav aria-label={d.footer.quickLinksLabel} className="flex flex-col gap-2">
           <h3 className="text-sm font-semibold text-text-primary">
-            لینک‌های سریع
+            {d.footer.quickLinks}
           </h3>
 
           <ul className="flex flex-col gap-1.5">
-            {MAIN_NAV_ITEMS.slice(0, 6).map((item) => (
+            {navItems.slice(0, 6).map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
@@ -107,7 +123,7 @@ async function Footer({
 
         <div className="flex flex-col gap-2">
           <h3 className="text-sm font-semibold text-text-primary">
-            ارتباط با ما
+            {d.footer.contactUs}
           </h3>
 
           <ul className="flex flex-col gap-2 text-sm text-text-secondary">
@@ -175,7 +191,7 @@ async function Footer({
                 <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-border transition-colors duration-150 group-hover:border-accent group-hover:text-accent-hover">
                   <Globe className="size-3.5" aria-hidden="true" />
                 </span>
-                وب‌سایت پیشنام
+                {d.footer.pishnamSite}
               </a>
             </li>
           </ul>
@@ -194,7 +210,7 @@ async function Footer({
 
       <div className="border-t border-border">
         <Container className="py-4 text-center text-sm text-text-secondary">
-          © {year} پیشتاک. تمامی حقوق محفوظ است.
+          © {year} {copyright}
         </Container>
       </div>
     </footer>

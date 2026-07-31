@@ -23,7 +23,8 @@ import { GlowOrb } from "@/components/illustrations/GlowOrb";
 import { CircuitBackground } from "@/components/illustrations/CircuitBackground";
 import { FloatingIcon } from "@/components/illustrations/FloatingIcon";
 import { RobotMascot } from "@/components/illustrations/RobotMascot";
-import { MAIN_NAV_ITEMS } from "@/lib/navigation";
+import { getMainNavItems } from "@/lib/navigation";
+import { useDictionary } from "@/lib/i18n/client";
 
 // Icons for the "helpful navigation" grid, keyed to lib/navigation.ts so
 // the links themselves stay single-sourced there; "/" is dropped since
@@ -38,8 +39,6 @@ const QUICK_LINK_ICONS: Record<string, LucideIcon> = {
   "/about": Users,
   "/contact": Mail,
 };
-
-const quickLinks = MAIN_NAV_ITEMS.filter((item) => item.href !== "/");
 
 /**
  * Shared 404 body, per docs/03_Information_Architecture.md ("Friendly
@@ -57,6 +56,9 @@ const quickLinks = MAIN_NAV_ITEMS.filter((item) => item.href !== "/");
  */
 function NotFoundContent() {
   const shouldReduceMotion = useReducedMotion();
+  const d = useDictionary();
+  // "/" is dropped: it's already the primary CTA below.
+  const quickLinks = getMainNavItems(d).filter((item) => item.href !== "/");
 
   const containerVariants: Variants = {
     hidden: {},
@@ -121,15 +123,14 @@ function NotFoundContent() {
             variants={itemVariants}
             className="max-w-lg text-2xl font-bold leading-tight sm:text-3xl"
           >
-            این صفحه پیدا نشد
+            {d.notFound.heading}
           </motion.h1>
 
           <motion.p
             variants={itemVariants}
             className="max-w-md text-text-secondary"
           >
-            ممکن است لینک اشتباه باشد یا این صفحه جابه‌جا یا حذف شده باشد. نگران
-            نباشید؛ از این‌جا می‌توانید مسیر درست را پیدا کنید.
+            {d.notFound.body}
           </motion.p>
 
           <motion.div
@@ -139,13 +140,13 @@ function NotFoundContent() {
             <Button asChild variant="accent" size="lg">
               <Link href="/">
                 <Home className="size-4" aria-hidden="true" />
-                بازگشت به صفحه اصلی
+                {d.common.backHome}
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg">
               <Link href="/contact">
                 <Mail className="size-4" aria-hidden="true" />
-                گزارش لینک خراب
+                {d.notFound.reportLink}
               </Link>
             </Button>
           </motion.div>
@@ -190,7 +191,7 @@ function NotFoundContent() {
             }}
             className="absolute -top-2 end-2 z-10 rounded-2xl border border-border bg-surface px-3 py-2 text-xs font-medium text-text-secondary shadow-md dark:border-white/15 dark:bg-white/10 dark:text-white/80 sm:-top-4 sm:end-6"
           >
-            این‌جا رو نمی‌شناسم!
+            {d.notFound.mascot}
           </motion.div>
           <RobotMascot className="w-full" />
         </motion.div>

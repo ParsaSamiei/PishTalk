@@ -5,7 +5,10 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/requireAdmin";
 import { ruleFormSchema, type RuleFormValues } from "@/features/admin/types/ruleForm";
+import { blankToNull } from "@/features/admin/actions/normalize";
 import type { ActionResult } from "@/features/admin/actions/eventActions";
+
+const TRANSLATABLE = ["titleEn", "descriptionEn"] as const;
 
 export async function createRule(values: RuleFormValues): Promise<ActionResult> {
   await requireAdmin();
@@ -13,7 +16,9 @@ export async function createRule(values: RuleFormValues): Promise<ActionResult> 
   if (!parsed.success) return { success: false, error: "اطلاعات وارد شده معتبر نیست." };
 
   try {
-    await prisma.rule.create({ data: { ...parsed.data, icon: parsed.data.icon || null } });
+    await prisma.rule.create({
+      data: blankToNull({ ...parsed.data, icon: parsed.data.icon || null }, TRANSLATABLE),
+    });
     revalidatePath("/admin/rules");
     revalidatePath("/rules");
     revalidatePath("/");
@@ -31,7 +36,7 @@ export async function updateRule(id: string, values: RuleFormValues): Promise<Ac
   try {
     await prisma.rule.update({
       where: { id },
-      data: { ...parsed.data, icon: parsed.data.icon || null },
+      data: blankToNull({ ...parsed.data, icon: parsed.data.icon || null }, TRANSLATABLE),
     });
     revalidatePath("/admin/rules");
     revalidatePath("/rules");

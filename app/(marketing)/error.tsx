@@ -6,6 +6,7 @@ import { AlertTriangle } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Button } from "@/components/ui/Button";
+import { useDictionary } from "@/lib/i18n/client";
 
 /**
  * Route-level error boundary, per docs/06_FRONTEND_ARCHITECTURE.md
@@ -14,6 +15,8 @@ import { Button } from "@/components/ui/Button";
  * technical error message to the visitor.
  */
 export default function MarketingError({ reset }: { error: Error; reset: () => void }) {
+  const d = useDictionary();
+
   React.useEffect(() => {
     // Intentionally no client-side reporting call here yet — wire up
     // Sentry or similar once a provider is chosen.
@@ -23,11 +26,11 @@ export default function MarketingError({ reset }: { error: Error; reset: () => v
     <Section className="flex min-h-[70vh] items-center">
       <Container className="mx-auto flex max-w-md flex-col items-center gap-4 text-center">
         <AlertTriangle className="size-16 text-danger" aria-hidden="true" />
-        <h1 className="text-2xl font-bold text-text-primary">مشکلی پیش آمد</h1>
-        <p className="text-text-secondary">
-          متاسفانه در بارگذاری این صفحه خطایی رخ داد. لطفاً دوباره تلاش کنید.
-        </p>
-        <Button onClick={reset}>تلاش دوباره</Button>
+        <h1 className="text-2xl font-bold text-text-primary">
+          {d.errors.pageTitle}
+        </h1>
+        <p className="text-text-secondary">{d.errors.pageBody}</p>
+        <Button onClick={reset}>{d.common.tryAgain}</Button>
       </Container>
     </Section>
   );

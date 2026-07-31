@@ -9,7 +9,20 @@ import {
   siteSettingsFormSchema,
   type SiteSettingsFormValues,
 } from "@/features/admin/types/siteSettingsForm";
+import { blankToNull } from "@/features/admin/actions/normalize";
 import type { ActionResult } from "@/features/admin/actions/eventActions";
+
+const TRANSLATABLE = [
+  "siteNameEn",
+  "taglineEn",
+  "descriptionEn",
+  "heroTitleEn",
+  "heroSubtitleEn",
+  "addressEn",
+  "copyrightEn",
+  "seoTitleEn",
+  "seoDescriptionEn",
+] as const;
 
 /**
  * `googleMapsEmbed` is rendered with `dangerouslySetInnerHTML` in the
@@ -31,30 +44,42 @@ export async function updateSiteSettings(values: SiteSettingsFormValues): Promis
   const parsed = siteSettingsFormSchema.safeParse(values);
   if (!parsed.success) return { success: false, error: "اطلاعات وارد شده معتبر نیست." };
 
-  const data = {
-    siteName: parsed.data.siteName,
-    tagline: parsed.data.tagline,
-    description: parsed.data.description || null,
-    logo: parsed.data.logo || null,
-    favicon: parsed.data.favicon || null,
-    heroTitle: parsed.data.heroTitle || null,
-    heroSubtitle: parsed.data.heroSubtitle || null,
-    contactEmail: parsed.data.contactEmail || null,
-    phone: parsed.data.phone || null,
-    phone2: parsed.data.phone2 || null,
-    address: parsed.data.address || null,
-    instagram: parsed.data.instagram || null,
-    telegram: parsed.data.telegram || null,
-    pishnamUrl: parsed.data.pishnamUrl || null,
-    googleMapsEmbed: parsed.data.googleMapsEmbed
-      ? sanitizeMapsEmbed(parsed.data.googleMapsEmbed)
-      : null,
-    seoTitle: parsed.data.seoTitle || null,
-    seoDescription: parsed.data.seoDescription || null,
-    defaultOgImage: parsed.data.defaultOgImage || null,
-    googleAnalyticsId: parsed.data.googleAnalyticsId || null,
-    maintenanceMode: parsed.data.maintenanceMode,
-  };
+  const data = blankToNull(
+    {
+      siteName: parsed.data.siteName,
+      tagline: parsed.data.tagline,
+      description: parsed.data.description || null,
+      logo: parsed.data.logo || null,
+      favicon: parsed.data.favicon || null,
+      heroTitle: parsed.data.heroTitle || null,
+      heroSubtitle: parsed.data.heroSubtitle || null,
+      contactEmail: parsed.data.contactEmail || null,
+      phone: parsed.data.phone || null,
+      phone2: parsed.data.phone2 || null,
+      address: parsed.data.address || null,
+      instagram: parsed.data.instagram || null,
+      telegram: parsed.data.telegram || null,
+      pishnamUrl: parsed.data.pishnamUrl || null,
+      googleMapsEmbed: parsed.data.googleMapsEmbed
+        ? sanitizeMapsEmbed(parsed.data.googleMapsEmbed)
+        : null,
+      seoTitle: parsed.data.seoTitle || null,
+      seoDescription: parsed.data.seoDescription || null,
+      defaultOgImage: parsed.data.defaultOgImage || null,
+      googleAnalyticsId: parsed.data.googleAnalyticsId || null,
+      maintenanceMode: parsed.data.maintenanceMode,
+      siteNameEn: parsed.data.siteNameEn,
+      taglineEn: parsed.data.taglineEn,
+      descriptionEn: parsed.data.descriptionEn,
+      heroTitleEn: parsed.data.heroTitleEn,
+      heroSubtitleEn: parsed.data.heroSubtitleEn,
+      addressEn: parsed.data.addressEn,
+      copyrightEn: parsed.data.copyrightEn,
+      seoTitleEn: parsed.data.seoTitleEn,
+      seoDescriptionEn: parsed.data.seoDescriptionEn,
+    },
+    TRANSLATABLE,
+  );
 
   try {
     const existing = await prisma.siteSettings.findFirst();

@@ -9,7 +9,13 @@ export async function getFaqs(limit?: number): Promise<FaqItem[]> {
       take: limit,
     });
 
-    return faqs.map((faq) => ({ id: faq.id, question: faq.question, answer: faq.answer }));
+    return faqs.map((faq) => ({
+      id: faq.id,
+      question: faq.question,
+      questionEn: faq.questionEn,
+      answer: faq.answer,
+      answerEn: faq.answerEn,
+    }));
   } catch {
     return [];
   }

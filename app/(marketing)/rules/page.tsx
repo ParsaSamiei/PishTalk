@@ -14,16 +14,22 @@ import {
 } from "@/components/ui/Card";
 import { Reveal } from "@/components/animations/Reveal";
 import { getRules } from "@/lib/rules";
+import { getDictionary, getLocaleContext } from "@/lib/i18n/server";
+import { pick } from "@/lib/i18n/content";
 import { SITE_URL } from "@/lib/constants";
 
 // Prevents this page from being statically prerendered at Docker build time (when the DB may be empty/unreachable) and cached forever.
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "قوانین",
-  description: "قوانین حضور در رویدادهای پیشتاک.",
-  alternates: { canonical: `${SITE_URL}/rules` },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const d = await getDictionary();
+
+  return {
+    title: d.rules.pageTitle,
+    description: d.rules.metaDescription,
+    alternates: { canonical: `${SITE_URL}/rules` },
+  };
+}
 
 const ICON_MAP: Record<string, LucideIcon> = {
   respect: Heart,
@@ -32,19 +38,19 @@ const ICON_MAP: Record<string, LucideIcon> = {
 };
 
 export default async function RulesPage() {
+  const { locale, dictionary: d } = await getLocaleContext();
   const rules = await getRules();
 
   return (
     <Section className="pt-12" circuit>
       <Container className="flex flex-col gap-10">
-        <Breadcrumbs items={[{ label: "قوانین" }]} />
+        <Breadcrumbs items={[{ label: d.rules.pageTitle }]} />
         <div className="flex flex-col gap-3">
           <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">
-            قوانین
+            {d.rules.pageTitle}
           </h1>
           <p className="max-w-2xl text-lg text-text-secondary">
-            برای اینکه پیشتاک فضایی امن و مفید برای همه باشد، لطفاً این قوانین
-            را رعایت کنید.
+            {d.rules.lead}
           </p>
         </div>
 
@@ -60,9 +66,13 @@ export default async function RulesPage() {
                       <div className="mb-2 flex size-11 items-center justify-center rounded-xl bg-accent/15 text-accent-hover transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110">
                         <Icon className="size-5" aria-hidden="true" />
                       </div>
-                      <CardTitle>{rule.title}</CardTitle>
+                      <CardTitle>
+                        {pick(locale, rule.title, rule.titleEn)}
+                      </CardTitle>
                     </CardHeader>
-                    <CardDescription>{rule.description}</CardDescription>
+                    <CardDescription>
+                      {pick(locale, rule.description, rule.descriptionEn)}
+                    </CardDescription>
                   </Card>
                 </Reveal>
               );
@@ -71,8 +81,8 @@ export default async function RulesPage() {
         ) : (
           <EmptyState
             icon={ShieldCheck}
-            title="قوانین به‌زودی منتشر می‌شود"
-            description="قوانین حضور در رویدادهای پیشتاک به‌زودی اینجا نمایش داده خواهد شد."
+            title={d.rules.emptyTitle}
+            description={d.rules.emptyDescription}
           />
         )}
       </Container>

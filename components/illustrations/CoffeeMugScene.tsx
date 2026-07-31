@@ -66,32 +66,35 @@ const CREMA = "#c9a26a";
 import { useTexture } from "@react-three/drei";
 
 function useLogoTexture() {
-  const texture = useTexture("/logo.png");
-
-  React.useEffect(() => {
-    texture.colorSpace = THREE.SRGBColorSpace;
-    texture.needsUpdate = true;
-
-    return () => {
-      texture.dispose();
-    };
-  }, [texture]);
-
-  return texture;
+  // Configure the texture in `onLoad` rather than an effect: the value comes
+  // back from drei's cache, so mutating it after render is both a lint error
+  // (`react-hooks/immutability`) and a race with the first frame.
+  //
+  // Deliberately no `dispose()` on unmount either — `useTexture` caches by
+  // URL and hands the same instance to every consumer, so disposing it here
+  // would blank the logo for any later mount (navigate away and back).
+  return useTexture("/logo.png", (texture) => {
+    const map = Array.isArray(texture) ? texture[0] : texture;
+    map.colorSpace = THREE.SRGBColorSpace;
+    map.needsUpdate = true;
+  });
 }
 
 /** Soft radial-gradient sprite used for the steam wisps. */
 function useSteamTexture() {
-  const [texture, setTexture] = React.useState<THREE.CanvasTexture | null>(
-    null,
-  );
-
-  React.useEffect(() => {
+  // Built with `useMemo`, not state-in-an-effect: this is a pure computation
+  // from no inputs, so there is nothing to synchronise with and the old
+  // effect just forced a second render (`react-hooks/set-state-in-effect`).
+  //
+  // `document` is safe to touch here because the whole scene is loaded with
+  // `dynamic(..., { ssr: false })` from HeroSection, so this only ever runs
+  // in the browser.
+  const texture = React.useMemo(() => {
     const canvas = document.createElement("canvas");
     canvas.width = 128;
     canvas.height = 128;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!ctx) return null;
     const gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
     gradient.addColorStop(0, "rgba(255,255,255,0.55)");
     gradient.addColorStop(0.6, "rgba(255,255,255,0.18)");
@@ -101,10 +104,14 @@ function useSteamTexture() {
 
     const tex = new THREE.CanvasTexture(canvas);
     tex.needsUpdate = true;
-    setTexture(tex);
-
-    return () => tex.dispose();
+    return tex;
   }, []);
+
+  // This texture is created here rather than shared from a cache, so this
+  // component owns it and must release its GPU memory on unmount.
+  React.useEffect(() => {
+    return () => texture?.dispose();
+  }, [texture]);
 
   return texture;
 }

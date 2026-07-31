@@ -12,25 +12,38 @@ import {
   AccordionContent,
 } from "@/components/ui/Accordion";
 import { getFaqs } from "@/features/faq/actions/getFaqs";
+import { getDictionary, getLocaleContext } from "@/lib/i18n/server";
+import { pick } from "@/lib/i18n/content";
 import { SITE_URL } from "@/lib/constants";
 
 // Prevents this page from being statically prerendered at Docker build time (when the DB may be empty/unreachable) and cached forever.
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "سوالات متداول",
-  description: "پاسخ سوالات پرتکرار درباره پیشتاک.",
-  alternates: { canonical: `${SITE_URL}/faq` },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const d = await getDictionary();
+
+  return {
+    title: d.faq.pageTitle,
+    description: d.faq.metaDescription,
+    alternates: { canonical: `${SITE_URL}/faq` },
+  };
+}
 
 export default async function FaqPage() {
+  const { locale, dictionary: d } = await getLocaleContext();
   const faqs = await getFaqs();
 
-  const jsonLd = faqs.length
+  const localized = faqs.map((faq) => ({
+    id: faq.id,
+    question: pick(locale, faq.question, faq.questionEn),
+    answer: pick(locale, faq.answer, faq.answerEn),
+  }));
+
+  const jsonLd = localized.length
     ? {
         "@context": "https://schema.org",
         "@type": "FAQPage",
-        mainEntity: faqs.map((faq) => ({
+        mainEntity: localized.map((faq) => ({
           "@type": "Question",
           name: faq.question,
           acceptedAnswer: { "@type": "Answer", text: faq.answer },
@@ -47,23 +60,21 @@ export default async function FaqPage() {
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
           />
         ) : null}
-        <Breadcrumbs items={[{ label: "سوالات متداول" }]} />
+        <Breadcrumbs items={[{ label: d.faq.pageTitle }]} />
         <div className="flex flex-col gap-3">
           <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">
-            سوالات متداول
+            {d.faq.pageTitle}
           </h1>
-          <p className="text-lg text-text-secondary">
-            پاسخ سوالات پرتکرار درباره پیشتاک.
-          </p>
+          <p className="text-lg text-text-secondary">{d.faq.lead}</p>
         </div>
 
-        {faqs.length > 0 ? (
+        {localized.length > 0 ? (
           <Accordion
             type="single"
             collapsible
             className="rounded-[var(--radius-card)] border border-border bg-surface px-6"
           >
-            {faqs.map((faq) => (
+            {localized.map((faq) => (
               <AccordionItem key={faq.id} value={faq.id}>
                 <AccordionTrigger>{faq.question}</AccordionTrigger>
                 <AccordionContent>{faq.answer}</AccordionContent>
@@ -73,8 +84,8 @@ export default async function FaqPage() {
         ) : (
           <EmptyState
             icon={HelpCircle}
-            title="سوالی ثبت نشده است"
-            description="پرتکرارترین سوالات شرکت‌کنندگان به‌زودی اینجا پاسخ داده می‌شود."
+            title={d.faq.emptyTitle}
+            description={d.faq.emptyDescription}
           />
         )}
       </Container>

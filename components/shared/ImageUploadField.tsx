@@ -5,6 +5,7 @@ import Image from "next/image";
 import { UploadCloud, X } from "lucide-react";
 
 import { Label } from "@/components/ui/Label";
+import { useDictionary } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 
 interface ImageUploadFieldProps {
@@ -17,6 +18,7 @@ interface ImageUploadFieldProps {
 }
 
 function ImageUploadField({ id, label, value, onChange, folder, error }: ImageUploadFieldProps) {
+  const d = useDictionary();
   const [isDragging, setIsDragging] = React.useState(false);
   const [isUploading, setIsUploading] = React.useState(false);
   const [localError, setLocalError] = React.useState<string | null>(null);
@@ -32,10 +34,10 @@ function ImageUploadField({ id, label, value, onChange, folder, error }: ImageUp
 
       const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "آپلود با خطا مواجه شد.");
+      if (!res.ok) throw new Error(data.error ?? d.errors.uploadFailed);
       onChange(data.url);
     } catch (err) {
-      setLocalError(err instanceof Error ? err.message : "آپلود با خطا مواجه شد.");
+      setLocalError(err instanceof Error ? err.message : d.errors.uploadFailed);
     } finally {
       setIsUploading(false);
     }
@@ -57,8 +59,8 @@ function ImageUploadField({ id, label, value, onChange, folder, error }: ImageUp
           <button
             type="button"
             onClick={() => onChange("")}
-            className="absolute -top-2 -right-2 flex size-7 items-center justify-center rounded-full bg-danger text-white shadow-md"
-            aria-label="حذف تصویر"
+            className="absolute -top-2 -end-2 flex size-7 items-center justify-center rounded-full bg-danger text-white shadow-md"
+            aria-label={d.upload.remove}
           >
             <X className="size-4" aria-hidden="true" />
           </button>
@@ -83,9 +85,7 @@ function ImageUploadField({ id, label, value, onChange, folder, error }: ImageUp
           )}
         >
           <UploadCloud className="size-8 text-text-secondary" aria-hidden="true" />
-          <p className="text-sm text-text-secondary">
-            تصویر را بکشید و رها کنید یا کلیک کنید (حداکثر ۱۰ مگابایت)
-          </p>
+          <p className="text-sm text-text-secondary">{d.upload.prompt}</p>
           <input
             ref={inputRef}
             id={id}
@@ -100,7 +100,7 @@ function ImageUploadField({ id, label, value, onChange, folder, error }: ImageUp
         </div>
       )}
 
-      {isUploading ? <p className="text-sm text-text-secondary">در حال آپلود...</p> : null}
+      {isUploading ? <p className="text-sm text-text-secondary">{d.upload.uploading}</p> : null}
       {localError || error ? <p className="text-sm text-danger">{localError ?? error}</p> : null}
     </div>
   );

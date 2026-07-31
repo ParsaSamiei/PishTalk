@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Bot, Cpu, Sparkles } from "lucide-react";
+import { Bot, Cpu, Sparkles } from "lucide-react";
 
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/animations/Reveal";
 import { CircuitBackground } from "@/components/illustrations/CircuitBackground";
 import { FloatingIcon } from "@/components/illustrations/FloatingIcon";
+import { ForwardArrow } from "@/components/shared/DirectionalIcon";
+import { getDictionary } from "@/lib/i18n/server";
 
 /**
  * "Why does Pishtalk exist?" homepage section. The text column carries the
@@ -19,33 +21,25 @@ import { FloatingIcon } from "@/components/illustrations/FloatingIcon";
  * pattern, and layering a second, differently-phased grid right behind it
  * is what made the two look misaligned rather than like one cohesive motif.
  */
-function AboutSection() {
+async function AboutSection() {
+  const d = await getDictionary();
+
   return (
     <Section id="about" className="bg-surface-secondary">
       <Container className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <Reveal className="flex flex-col gap-6">
           <SectionTitle
-            eyebrow="درباره پیشتاک"
-            title="جایی که ایده‌ها به گفتگو تبدیل می‌شوند"
-            description="پیشتاک رویداد ماهانه‌ای است که توسط باشگاه رباتیک پیشنام برگزار می‌شود؛ فضایی برای مهندسان، دانشجویان و علاقه‌مندان رباتیک و هوش مصنوعی تا یاد بگیرند، تجربه‌هایشان را به اشتراک بگذارند و با یکدیگر آشنا شوند."
+            eyebrow={d.about.eyebrow}
+            title={d.about.title}
+            description={d.about.description}
           />
-          <p
-            className="text-text-secondary leading-relaxed"
-            style={{
-              textAlign: "justify",
-              direction: "rtl",
-              width: "100%",
-            }}
-          >
-            {" "}
-            هر رویداد پیشتاک میزبان یک سخنرانی تخصصی، بحث آزاد و فرصتی برای
-            شبکه‌سازی میان اعضای جامعه است. تمرکز ما بر کیفیت محتوا و ارتباط
-            واقعی میان شرکت‌کنندگان است، نه صرفاً برگزاری یک رویداد بزرگ.
+          <p className="w-full text-justify leading-relaxed text-text-secondary">
+            {d.about.body}
           </p>
           <Button asChild variant="outline" className="self-start">
             <Link href="/about">
-              بیشتر بدانید
-              <ArrowLeft className="size-4" aria-hidden="true" />
+              {d.common.viewMore}
+              <ForwardArrow className="size-4" aria-hidden="true" />
             </Link>
           </Button>
         </Reveal>

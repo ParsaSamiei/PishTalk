@@ -17,6 +17,7 @@ export async function getLatestGalleryImages(limit = 8): Promise<GalleryPreviewI
       id: item.id,
       url: item.url,
       caption: item.caption,
+      captionEn: item.captionEn,
     }));
   } catch {
     return [];

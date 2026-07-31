@@ -18,7 +18,17 @@ export default async function EditFaqPage({ params }: EditFaqPageProps) {
       <div>
         <h1 className="text-2xl font-bold text-text-primary">ویرایش سوال</h1>
       </div>
-      <EditFaqForm faqId={faq.id} defaultValues={faq} />
+      {/* Prisma returns the optional English columns as `null`, while the
+          form's schema types them as optional strings — coalesce at the
+          boundary so an untranslated FAQ renders empty inputs. */}
+      <EditFaqForm
+        faqId={faq.id}
+        defaultValues={{
+          ...faq,
+          questionEn: faq.questionEn ?? "",
+          answerEn: faq.answerEn ?? "",
+        }}
+      />
     </div>
   );
 }

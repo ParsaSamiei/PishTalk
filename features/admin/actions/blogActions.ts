@@ -9,30 +9,62 @@ import {
   blogFormSchema,
   type BlogFormValues,
 } from "@/features/admin/types/blogForm";
+import { blankToNull } from "@/features/admin/actions/normalize";
 import type { ActionResult } from "@/features/admin/actions/eventActions";
 
 export interface CreateBlogResult extends ActionResult {
   readonly blogId?: string;
 }
 
+const TRANSLATABLE = [
+  "titleEn",
+  "excerptEn",
+  "contentEn",
+  "seoTitleEn",
+  "seoDescriptionEn",
+] as const;
+
+/**
+ * Tiptap serializes a cleared editor as `<p></p>` rather than "", which would
+ * otherwise be stored as real content and beat the Persian fallback in
+ * `pick()`. Treated as blank so `blankToNull` can turn it into NULL.
+ */
+function richTextOrBlank(html: string | undefined): string | undefined {
+  if (html === undefined) return undefined;
+  const sanitized = DOMPurify.sanitize(html);
+  return sanitized.replace(/<p>\s*(<br\s*\/?>)?\s*<\/p>/g, "").trim() === ""
+    ? ""
+    : sanitized;
+}
+
 function toBlogData(values: BlogFormValues) {
-  return {
-    title: values.title,
-    slug: values.slug,
-    excerpt: values.excerpt,
-    // Sanitized here rather than trusting the rich-text editor's output —
-    // this action is callable directly regardless of which UI produced
-    // the value (docs/05_DATABASE.md: never trust client input).
-    content: DOMPurify.sanitize(values.content),
-    coverImage: values.coverImage || null,
-    categoryId: values.categoryId || null,
-    readingTime:
-      values.readingTime === "" || values.readingTime === undefined
-        ? null
-        : values.readingTime,
-    published: values.published,
-    publishedAt: values.published ? new Date() : null,
-  };
+  return blankToNull(
+    {
+      title: values.title,
+      slug: values.slug,
+      excerpt: values.excerpt,
+      // Sanitized here rather than trusting the rich-text editor's output —
+      // this action is callable directly regardless of which UI produced
+      // the value (docs/05_DATABASE.md: never trust client input).
+      content: DOMPurify.sanitize(values.content),
+      coverImage: values.coverImage || null,
+      categoryId: values.categoryId || null,
+      readingTime:
+        values.readingTime === "" || values.readingTime === undefined
+          ? null
+          : values.readingTime,
+      published: values.published,
+      publishedAt: values.published ? new Date() : null,
+      titleEn: values.titleEn,
+      excerptEn: values.excerptEn,
+      // Same sanitization as the Persian body: this is rich text that gets
+      // rendered as HTML.
+      contentEn: richTextOrBlank(values.contentEn),
+      seoTitleEn: values.seoTitleEn,
+      seoDescriptionEn: values.seoDescriptionEn,
+    },
+    TRANSLATABLE,
+  );
 }
 
 export async function createBlog(

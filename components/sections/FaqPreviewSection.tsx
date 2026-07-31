@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { HelpCircle, ArrowLeft } from "lucide-react";
+import { HelpCircle } from "lucide-react";
 
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { SectionTitle } from "@/components/shared/SectionTitle";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { ForwardArrow } from "@/components/shared/DirectionalIcon";
 import {
   Accordion,
   AccordionItem,
@@ -14,6 +15,8 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/animations/Reveal";
 import type { FaqItem } from "@/features/faq/types/faq";
+import { pick } from "@/lib/i18n/content";
+import { getLocaleContext } from "@/lib/i18n/server";
 
 interface FaqPreviewSectionProps {
   readonly faqs: readonly FaqItem[];
@@ -23,14 +26,16 @@ interface FaqPreviewSectionProps {
  * Five-item FAQ accordion on the homepage, per
  * docs/03_Information_Architecture.md ("FAQ Preview: Accordion, Five Items").
  */
-function FaqPreviewSection({ faqs }: FaqPreviewSectionProps) {
+async function FaqPreviewSection({ faqs }: FaqPreviewSectionProps) {
+  const { locale, dictionary: d } = await getLocaleContext();
+
   return (
     <Section id="faq" className="bg-surface-secondary" circuit>
       <Container className="mx-auto flex max-w-3xl flex-col gap-10">
         <Reveal className="mx-auto">
           <SectionTitle
-            eyebrow="سوالات متداول"
-            title="سوالات پرتکرار"
+            eyebrow={d.faq.previewEyebrow}
+            title={d.faq.previewTitle}
             align="center"
           />
         </Reveal>
@@ -53,10 +58,12 @@ function FaqPreviewSection({ faqs }: FaqPreviewSectionProps) {
                       className="size-5 shrink-0 text-accent-hover"
                       aria-hidden="true"
                     />
-                    <span className="flex-1">{faq.question}</span>
+                    <span className="flex-1">
+                      {pick(locale, faq.question, faq.questionEn)}
+                    </span>
                   </AccordionTrigger>
                   <AccordionContent className="pb-5 ps-9 text-text-secondary">
-                    {faq.answer}
+                    {pick(locale, faq.answer, faq.answerEn)}
                   </AccordionContent>
                 </AccordionItem>
               ))}
@@ -66,8 +73,8 @@ function FaqPreviewSection({ faqs }: FaqPreviewSectionProps) {
           <Reveal delay={0.1}>
             <EmptyState
               icon={HelpCircle}
-              title="سوالی ثبت نشده است"
-              description="پرتکرارترین سوالات شرکت‌کنندگان به‌زودی اینجا پاسخ داده می‌شود."
+              title={d.faq.emptyTitle}
+              description={d.faq.emptyDescription}
             />
           </Reveal>
         )}
@@ -79,8 +86,8 @@ function FaqPreviewSection({ faqs }: FaqPreviewSectionProps) {
             className="mx-auto border border-border-primary hover:border-accent hover:bg-accent/5"
           >
             <Link href="/faq">
-              مشاهده همه سوالات
-              <ArrowLeft className="size-4" aria-hidden="true" />
+              {d.faq.viewAllQuestions}
+              <ForwardArrow className="size-4" aria-hidden="true" />
             </Link>
           </Button>
         ) : null}

@@ -4,6 +4,7 @@ import * as React from "react";
 import { Share2, Check } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
+import { useDictionary } from "@/lib/i18n/client";
 
 interface ShareButtonProps {
   readonly title: string;
@@ -16,6 +17,7 @@ interface ShareButtonProps {
  * API where available, falling back to copying the link to the clipboard.
  */
 function ShareButton({ title, url }: ShareButtonProps) {
+  const d = useDictionary();
   const [copied, setCopied] = React.useState(false);
 
   async function handleShare() {
@@ -42,12 +44,12 @@ function ShareButton({ title, url }: ShareButtonProps) {
       {copied ? (
         <>
           <Check className="size-4" aria-hidden="true" />
-          لینک کپی شد
+          {d.common.linkCopied}
         </>
       ) : (
         <>
           <Share2 className="size-4" aria-hidden="true" />
-          اشتراک‌گذاری
+          {d.common.share}
         </>
       )}
     </Button>

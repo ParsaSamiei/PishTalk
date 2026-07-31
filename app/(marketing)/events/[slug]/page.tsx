@@ -15,6 +15,8 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
 import { RegistrationForm } from "@/features/registration/components/RegistrationForm";
 import { getEventBySlug } from "@/features/events/actions/getEvents";
 import { prisma } from "@/lib/prisma";
+import { getLocaleContext } from "@/lib/i18n/server";
+import { pick } from "@/lib/i18n/content";
 import { formatEventDate, formatWeekday } from "@/utils/formatDate";
 import { SITE_URL } from "@/lib/constants";
 
@@ -26,19 +28,23 @@ export async function generateMetadata({
   params,
 }: EventPageProps): Promise<Metadata> {
   const { slug } = await params;
+  const { locale, dictionary: d } = await getLocaleContext();
   const event = await getEventBySlug(slug);
 
-  if (!event) return { title: "رویداد یافت نشد" };
+  if (!event) return { title: d.events.notFound };
 
-  const description = event.subtitle ?? event.description.slice(0, 155);
+  const title = pick(locale, event.title, event.titleEn);
+  const description =
+    pick(locale, event.subtitle, event.subtitleEn) ??
+    pick(locale, event.description, event.descriptionEn).slice(0, 155);
 
   return {
-    title: event.title,
+    title,
     description,
     alternates: { canonical: `${SITE_URL}/events/${event.slug}` },
     openGraph: event.coverImage
-      ? { images: [{ url: event.coverImage }], title: event.title, description }
-      : { title: event.title, description },
+      ? { images: [{ url: event.coverImage }], title, description }
+      : { title, description },
   };
 }
 
@@ -68,6 +74,7 @@ async function getEventExtras(eventId: string) {
 
 export default async function EventPage({ params }: EventPageProps) {
   const { slug } = await params;
+  const { locale, dictionary: d } = await getLocaleContext();
   const event = await getEventBySlug(slug);
 
   if (!event || event.status === "DRAFT") {
@@ -79,22 +86,35 @@ export default async function EventPage({ params }: EventPageProps) {
     event.date.getTime() < new Date(new Date().toDateString()).getTime();
   const eventUrl = `${SITE_URL}/events/${event.slug}`;
 
+  const title = pick(locale, event.title, event.titleEn);
+  const subtitle = pick(locale, event.subtitle, event.subtitleEn);
+  const description = pick(locale, event.description, event.descriptionEn);
+  const location = pick(locale, event.location, event.locationEn);
+  const speakerName = pick(locale, event.speakerName, event.speakerNameEn);
+  const speakerBio = pick(locale, event.speakerBio, event.speakerBioEn);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
-    name: event.title,
-    description: event.description,
+    name: title,
+    description,
     startDate: event.date.toISOString(),
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
     eventStatus: isPast
       ? "https://schema.org/EventScheduled"
       : "https://schema.org/EventScheduled",
-    location: { "@type": "Place", name: event.location },
+    location: { "@type": "Place", name: location },
     image: event.coverImage ? [event.coverImage] : undefined,
-    performer: event.speakerName
-      ? { "@type": "Person", name: event.speakerName }
+    performer: speakerName
+      ? { "@type": "Person", name: speakerName }
       : undefined,
-    organizer: { "@type": "Organization", name: "پیشتاک", url: SITE_URL },
+    // The site name is a brand wordmark rather than a translatable string, so
+    // it comes from the logo keys ("پیشتاک" / "Pishtalk") to stay localized.
+    organizer: {
+      "@type": "Organization",
+      name: `${d.logo.first}${d.logo.second}`,
+      url: SITE_URL,
+    },
   };
 
   return (
@@ -127,36 +147,36 @@ export default async function EventPage({ params }: EventPageProps) {
           <Breadcrumbs
             variant="default"
             items={[
-              { label: "رویدادها", href: "/events" },
-              { label: event.title },
+              { label: d.events.pageTitle, href: "/events" },
+              { label: title },
             ]}
           />
 
           <h1 className="max-w-3xl text-3xl font-bold text-text-primary sm:text-5xl">
-            {event.title}
+            {title}
           </h1>
 
-          {event.subtitle ? (
-            <p className="max-w-2xl text-lg text-text-secondary">
-              {event.subtitle}
-            </p>
+          {subtitle ? (
+            <p className="max-w-2xl text-lg text-text-secondary">{subtitle}</p>
           ) : null}
 
           <div className="flex flex-col gap-3 text-sm text-text-secondary sm:flex-row sm:gap-8">
             <span className="flex items-center gap-2">
               <Calendar className="size-4 text-accent" aria-hidden="true" />
-              {formatWeekday(event.date)}، {formatEventDate(event.date)}
+              {formatWeekday(event.date, locale)}
+              {locale === "fa" ? "،" : ","}{" "}
+              {formatEventDate(event.date, locale)}
             </span>
 
             <span className="flex items-center gap-2">
               <Clock className="size-4 text-accent" aria-hidden="true" />
               {event.startTime}
-              {event.endTime ? ` تا ${event.endTime}` : ""}
+              {event.endTime ? ` ${d.events.to} ${event.endTime}` : ""}
             </span>
 
             <span className="flex items-center gap-2">
               <MapPin className="size-4 text-accent" aria-hidden="true" />
-              {event.location}
+              {location}
             </span>
           </div>
         </Container>
@@ -168,15 +188,10 @@ export default async function EventPage({ params }: EventPageProps) {
           <div id="register" className="scroll-mt-24 lg:order-1">
             <Card className="p-8">
               <h2 className="mb-6 text-xl font-bold text-text-primary">
-                {isPast
-                  ? "ثبت‌نام این رویداد بسته شده است"
-                  : "ثبت‌نام در رویداد"}
+                {isPast ? d.events.registerClosed : d.events.registerOpen}
               </h2>
               {isPast ? (
-                <p className="text-text-secondary">
-                  این رویداد برگزار شده است. رویداد بعدی را در صفحه رویدادها
-                  دنبال کنید.
-                </p>
+                <p className="text-text-secondary">{d.events.pastNotice}</p>
               ) : (
                 <RegistrationForm eventId={event.id} />
               )}
@@ -186,24 +201,24 @@ export default async function EventPage({ params }: EventPageProps) {
           <div className="flex flex-col gap-12 lg:order-2">
             <div className="flex flex-col gap-4">
               <h2 className="text-2xl font-bold text-text-primary">
-                درباره این رویداد
+                {d.events.aboutEvent}
               </h2>
               <p className="whitespace-pre-line leading-relaxed text-text-secondary">
-                {event.description}
+                {description}
               </p>
             </div>
 
-            {event.speakerName ? (
+            {speakerName ? (
               <Card>
                 <CardHeader>
                   <span className="text-sm font-semibold text-accent-hover">
-                    سخنران
+                    {d.events.speaker}
                   </span>
-                  <CardTitle>{event.speakerName}</CardTitle>
+                  <CardTitle>{speakerName}</CardTitle>
                 </CardHeader>
-                {event.speakerBio ? (
+                {speakerBio ? (
                   <p className="text-text-secondary leading-relaxed">
-                    {event.speakerBio}
+                    {speakerBio}
                   </p>
                 ) : null}
               </Card>
@@ -212,7 +227,7 @@ export default async function EventPage({ params }: EventPageProps) {
             {event.timeline.length > 0 ? (
               <div className="flex flex-col gap-6">
                 <h2 className="text-2xl font-bold text-text-primary">
-                  برنامه زمانی
+                  {d.events.schedule}
                 </h2>
                 <Timeline items={event.timeline} />
               </div>
@@ -225,7 +240,7 @@ export default async function EventPage({ params }: EventPageProps) {
                     className="size-6 text-accent-hover"
                     aria-hidden="true"
                   />
-                  منابع این رویداد
+                  {d.events.eventResources}
                 </h2>
                 <div className="grid gap-6 sm:grid-cols-2">
                   {resources.map((resource) => (
@@ -234,7 +249,9 @@ export default async function EventPage({ params }: EventPageProps) {
                       resource={{
                         id: resource.id,
                         title: resource.title,
+                        titleEn: resource.titleEn,
                         description: resource.description,
+                        descriptionEn: resource.descriptionEn,
                         resourceType: resource.resourceType,
                         fileUrl: resource.fileUrl,
                         externalUrl: resource.externalUrl,
@@ -252,7 +269,7 @@ export default async function EventPage({ params }: EventPageProps) {
                     className="size-6 text-accent-hover"
                     aria-hidden="true"
                   />
-                  گالری این رویداد
+                  {d.events.eventGallery}
                 </h2>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                   {galleryImages.map((image) => (
@@ -262,7 +279,7 @@ export default async function EventPage({ params }: EventPageProps) {
                     >
                       <Image
                         src={image.url}
-                        alt={image.caption ?? event.title}
+                        alt={pick(locale, image.caption, image.captionEn) ?? title}
                         fill
                         className="object-cover"
                         loading="lazy"
@@ -274,13 +291,13 @@ export default async function EventPage({ params }: EventPageProps) {
                   href="/gallery"
                   className="self-start text-sm font-medium text-accent-hover hover:underline"
                 >
-                  مشاهده گالری کامل
+                  {d.events.viewFullGallery}
                 </Link>
               </div>
             ) : null}
 
             <div>
-              <ShareButton title={event.title} url={eventUrl} />
+              <ShareButton title={title} url={eventUrl} />
             </div>
           </div>
         </Container>

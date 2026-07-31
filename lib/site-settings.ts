@@ -16,11 +16,23 @@ export interface SiteSettingsData {
   telegram: string | null;
   pishnamUrl: string | null;
   googleMapsEmbed: string | null;
+  copyright: string | null;
   seoTitle: string | null;
   seoDescription: string | null;
   defaultOgImage: string | null;
   googleAnalyticsId: string | null;
   maintenanceMode: boolean;
+
+  /** English translations; null or blank falls back to the Persian field. */
+  siteNameEn: string | null;
+  taglineEn: string | null;
+  descriptionEn: string | null;
+  heroTitleEn: string | null;
+  heroSubtitleEn: string | null;
+  addressEn: string | null;
+  copyrightEn: string | null;
+  seoTitleEn: string | null;
+  seoDescriptionEn: string | null;
 }
 
 const FALLBACK_SETTINGS: SiteSettingsData = {
@@ -40,11 +52,23 @@ const FALLBACK_SETTINGS: SiteSettingsData = {
   telegram: null,
   pishnamUrl: "https://pishnam.org",
   googleMapsEmbed: null,
+  copyright: null,
   seoTitle: null,
   seoDescription: null,
   defaultOgImage: null,
   googleAnalyticsId: null,
   maintenanceMode: false,
+
+  siteNameEn: "Pishtalk",
+  taglineEn: "A community of robotics, AI and technology engineers",
+  descriptionEn:
+    "Pishtalk is a monthly event on robotics, AI and software engineering, hosted by the Pishnam Robotics Club.",
+  heroTitleEn: null,
+  heroSubtitleEn: null,
+  addressEn: null,
+  copyrightEn: null,
+  seoTitleEn: null,
+  seoDescriptionEn: null,
 };
 
 /**
@@ -75,11 +99,22 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
       telegram: settings.telegram,
       pishnamUrl: settings.pishnamUrl,
       googleMapsEmbed: settings.googleMapsEmbed,
+      copyright: settings.copyright,
       seoTitle: settings.seoTitle,
       seoDescription: settings.seoDescription,
       defaultOgImage: settings.defaultOgImage,
       googleAnalyticsId: settings.googleAnalyticsId,
       maintenanceMode: settings.maintenanceMode,
+
+      siteNameEn: settings.siteNameEn,
+      taglineEn: settings.taglineEn,
+      descriptionEn: settings.descriptionEn,
+      heroTitleEn: settings.heroTitleEn,
+      heroSubtitleEn: settings.heroSubtitleEn,
+      addressEn: settings.addressEn,
+      copyrightEn: settings.copyrightEn,
+      seoTitleEn: settings.seoTitleEn,
+      seoDescriptionEn: settings.seoDescriptionEn,
     };
   } catch {
     return FALLBACK_SETTINGS;

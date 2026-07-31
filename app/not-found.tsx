@@ -3,14 +3,17 @@ import type { Metadata } from "next";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { NotFoundContent } from "@/components/shared/NotFoundContent";
-import { getSiteSettings } from "@/lib/site-settings";
+import { getDictionary } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-  title: "صفحه پیدا نشد",
-  description:
-    "این صفحه پیدا نشد. ممکن است لینک اشتباه باشد یا صفحه جابه‌جا شده باشد.",
-  robots: { index: false, follow: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const d = await getDictionary();
+
+  return {
+    title: d.notFound.metaTitle,
+    description: d.notFound.metaDescription,
+    robots: { index: false, follow: true },
+  };
+}
 
 /**
  * Root 404 boundary — this is the file Next.js actually renders for a URL
@@ -27,23 +30,15 @@ export const metadata: Metadata = {
  * NotFoundContent for the shared visual.
  */
 export default async function NotFound() {
-  const settings = await getSiteSettings();
-
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
       <main className="flex-1">
         <NotFoundContent />
       </main>
-      <Footer
-        tagline={settings.tagline}
-        contactEmail={settings.contactEmail}
-        phone={settings.phone}
-        phone2={settings.phone2}
-        instagram={settings.instagram}
-        telegram={settings.telegram}
-        pishnamUrl={settings.pishnamUrl}
-      />
+      {/* Footer reads site settings itself and localizes them, so passing the
+          raw Persian columns here would pin it to Persian. */}
+      <Footer />
     </div>
   );
 }

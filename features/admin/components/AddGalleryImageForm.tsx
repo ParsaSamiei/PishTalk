@@ -18,6 +18,7 @@ function AddGalleryImageForm({ eventId }: AddGalleryImageFormProps) {
   const router = useRouter();
   const [url, setUrl] = React.useState("");
   const [caption, setCaption] = React.useState("");
+  const [captionEn, setCaptionEn] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -31,12 +32,13 @@ function AddGalleryImageForm({ eventId }: AddGalleryImageFormProps) {
     }
 
     setIsSubmitting(true);
-    const result = await addGalleryImage(eventId, { url, caption });
+    const result = await addGalleryImage(eventId, { url, caption, captionEn });
 
     setIsSubmitting(false);
     if (result.success) {
       setUrl("");
       setCaption("");
+      setCaptionEn("");
       router.refresh();
     } else {
       setError(result.error ?? "خطایی رخ داد.");
@@ -57,6 +59,20 @@ function AddGalleryImageForm({ eventId }: AddGalleryImageFormProps) {
       <div className="flex flex-1 flex-col gap-2">
         <Label htmlFor="caption">توضیح (اختیاری)</Label>
         <Input id="caption" value={caption} onChange={(e) => setCaption(e.target.value)} />
+      </div>
+      {/* English caption. Optional — the public site shows the Persian caption
+          to English visitors when this is left empty. */}
+      <div className="flex flex-1 flex-col gap-2">
+        <Label htmlFor="captionEn">
+          توضیح (انگلیسی){" "}
+          <span className="font-normal text-text-secondary">(اختیاری)</span>
+        </Label>
+        <Input
+          id="captionEn"
+          dir="ltr"
+          value={captionEn}
+          onChange={(e) => setCaptionEn(e.target.value)}
+        />
       </div>
       <Button type="submit" isLoading={isSubmitting}>
         <Plus className="size-4" aria-hidden="true" />

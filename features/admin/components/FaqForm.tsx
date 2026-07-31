@@ -17,6 +17,8 @@ interface FaqFormProps {
 function FaqForm({ defaultValues, onSubmit, submitLabel }: FaqFormProps) {
   const [question, setQuestion] = React.useState(defaultValues?.question ?? "");
   const [answer, setAnswer] = React.useState(defaultValues?.answer ?? "");
+  const [questionEn, setQuestionEn] = React.useState(defaultValues?.questionEn ?? "");
+  const [answerEn, setAnswerEn] = React.useState(defaultValues?.answerEn ?? "");
   const [sortOrder, setSortOrder] = React.useState(defaultValues?.sortOrder ?? 0);
   const [published, setPublished] = React.useState(defaultValues?.published ?? true);
   const [error, setError] = React.useState<string | null>(null);
@@ -27,7 +29,14 @@ function FaqForm({ defaultValues, onSubmit, submitLabel }: FaqFormProps) {
     setError(null);
     setIsSubmitting(true);
 
-    const result = await onSubmit({ question, answer, sortOrder, published });
+    const result = await onSubmit({
+      question,
+      answer,
+      questionEn,
+      answerEn,
+      sortOrder,
+      published,
+    });
 
     setIsSubmitting(false);
     if (!result.success) setError(result.error ?? "خطایی رخ داد.");
@@ -47,6 +56,34 @@ function FaqForm({ defaultValues, onSubmit, submitLabel }: FaqFormProps) {
           value={answer}
           onChange={(e) => setAnswer(e.target.value)}
           required
+        />
+      </div>
+
+      {/* English translation. Optional — the public site shows the Persian
+          text to English visitors when these are left empty. */}
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="questionEn">
+          سوال (انگلیسی){" "}
+          <span className="font-normal text-text-secondary">(اختیاری)</span>
+        </Label>
+        <Input
+          id="questionEn"
+          dir="ltr"
+          value={questionEn}
+          onChange={(e) => setQuestionEn(e.target.value)}
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="answerEn">
+          پاسخ (انگلیسی){" "}
+          <span className="font-normal text-text-secondary">(اختیاری)</span>
+        </Label>
+        <Textarea
+          id="answerEn"
+          rows={4}
+          dir="ltr"
+          value={answerEn}
+          onChange={(e) => setAnswerEn(e.target.value)}
         />
       </div>
       <div className="grid gap-5 sm:grid-cols-2">

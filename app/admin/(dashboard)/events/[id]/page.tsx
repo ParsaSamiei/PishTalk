@@ -38,10 +38,20 @@ export default async function EditEventPage({ params }: EditEventPageProps) {
           speakerBio: event.speakerBio ?? "",
           capacity: event.capacity ?? "",
           status: event.status,
+          titleEn: event.titleEn ?? "",
+          subtitleEn: event.subtitleEn ?? "",
+          descriptionEn: event.descriptionEn ?? "",
+          locationEn: event.locationEn ?? "",
+          speakerNameEn: event.speakerNameEn ?? "",
+          speakerBioEn: event.speakerBioEn ?? "",
+          seoTitleEn: event.seoTitleEn ?? "",
+          seoDescriptionEn: event.seoDescriptionEn ?? "",
           timeline: event.timeline.map((item) => ({
             time: item.time,
             title: item.title,
             description: item.description ?? "",
+            titleEn: item.titleEn ?? "",
+            descriptionEn: item.descriptionEn ?? "",
           })),
         }}
       />
