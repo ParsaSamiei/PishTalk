@@ -5,13 +5,19 @@ import { Clock, Newspaper } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import type { BlogSummary } from "@/features/blogs/types/blog";
+import { pick } from "@/lib/i18n/content";
+import { getLocaleContext } from "@/lib/i18n/server";
 import { formatEventDate } from "@/utils/formatDate";
 
 interface BlogCardProps {
   readonly blog: BlogSummary;
 }
 
-function BlogCard({ blog }: BlogCardProps) {
+async function BlogCard({ blog }: BlogCardProps) {
+  const { locale, dictionary: d } = await getLocaleContext();
+  const title = pick(locale, blog.title, blog.titleEn);
+  const categoryName = pick(locale, blog.categoryName, blog.categoryNameEn);
+
   return (
     <Card
       asChild
@@ -23,7 +29,7 @@ function BlogCard({ blog }: BlogCardProps) {
           {blog.coverImage ? (
             <Image
               src={blog.coverImage}
-              alt={blog.title}
+              alt={title}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
               sizes="(min-width: 1024px) 33vw, 100vw"
@@ -33,24 +39,24 @@ function BlogCard({ blog }: BlogCardProps) {
               <Newspaper className="size-10" aria-hidden="true" />
             </div>
           )}
-          {blog.categoryName ? (
+          {categoryName ? (
             <Badge variant="accent" className="absolute top-4 inset-e-4">
-              {blog.categoryName}
+              {categoryName}
             </Badge>
           ) : null}
         </div>
         <div className="flex flex-1 flex-col gap-3 p-6">
           <h3 className="line-clamp-2 text-lg font-semibold text-text-primary">
-            {blog.title}
+            {title}
           </h3>
           <div className="mt-auto flex items-center gap-4 pt-2 text-sm text-text-secondary">
             {blog.publishedAt ? (
-              <span>{formatEventDate(blog.publishedAt)}</span>
+              <span>{formatEventDate(blog.publishedAt, locale)}</span>
             ) : null}
             {blog.readingTime ? (
               <span className="flex items-center gap-1.5">
                 <Clock className="size-4" aria-hidden="true" />
-                {blog.readingTime} دقیقه مطالعه
+                {blog.readingTime} {d.common.minutesRead}
               </span>
             ) : null}
           </div>

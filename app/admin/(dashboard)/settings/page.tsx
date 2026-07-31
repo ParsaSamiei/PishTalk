@@ -34,6 +34,15 @@ export default async function AdminSettingsPage() {
           defaultOgImage: settings?.defaultOgImage ?? "",
           googleAnalyticsId: settings?.googleAnalyticsId ?? "",
           maintenanceMode: settings?.maintenanceMode ?? false,
+          siteNameEn: settings?.siteNameEn ?? "",
+          taglineEn: settings?.taglineEn ?? "",
+          descriptionEn: settings?.descriptionEn ?? "",
+          heroTitleEn: settings?.heroTitleEn ?? "",
+          heroSubtitleEn: settings?.heroSubtitleEn ?? "",
+          addressEn: settings?.addressEn ?? "",
+          copyrightEn: settings?.copyrightEn ?? "",
+          seoTitleEn: settings?.seoTitleEn ?? "",
+          seoDescriptionEn: settings?.seoDescriptionEn ?? "",
         }}
       />
     </div>

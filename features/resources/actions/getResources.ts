@@ -17,7 +17,9 @@ export async function getLatestResources(limit = 6): Promise<ResourceSummary[]> 
     return resources.map((resource) => ({
       id: resource.id,
       title: resource.title,
+      titleEn: resource.titleEn,
       description: resource.description,
+      descriptionEn: resource.descriptionEn,
       resourceType: resource.resourceType as ResourceSummary["resourceType"],
       fileUrl: resource.fileUrl,
       externalUrl: resource.externalUrl,

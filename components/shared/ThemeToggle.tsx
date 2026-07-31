@@ -5,6 +5,7 @@ import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/Button";
+import { useDictionary } from "@/lib/i18n/client";
 
 /**
  * Toggles between light and dark theme. Renders a stable placeholder until
@@ -12,6 +13,7 @@ import { Button } from "@/components/ui/Button";
  */
 function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
+  const d = useDictionary();
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -30,7 +32,7 @@ function ThemeToggle() {
       type="button"
       variant="ghost"
       size="icon"
-      aria-label={isDark ? "فعال‌سازی حالت روشن" : "فعال‌سازی حالت تاریک"}
+      aria-label={isDark ? d.theme.toLight : d.theme.toDark}
       onClick={() => setTheme(isDark ? "light" : "dark")}
     >
       {isDark ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}

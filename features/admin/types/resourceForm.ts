@@ -4,6 +4,10 @@ export const resourceFormSchema = z
   .object({
     title: z.string().trim().min(3, "عنوان باید حداقل ۳ حرف باشد").max(200),
     description: z.string().trim().max(500).optional().or(z.literal("")),
+    // Optional English translations. Blank means "not translated yet" and the
+    // public site falls back to the Persian text (lib/i18n/content.ts).
+    titleEn: z.string().trim().max(200).optional().or(z.literal("")),
+    descriptionEn: z.string().trim().max(500).optional().or(z.literal("")),
     resourceType: z.enum([
       "PDF",
       "PRESENTATION",

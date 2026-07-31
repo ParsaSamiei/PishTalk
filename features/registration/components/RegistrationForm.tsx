@@ -9,8 +9,9 @@ import { Label } from "@/components/ui/Label";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
+import { useDictionary } from "@/lib/i18n/client";
 import {
-  registrationFormSchema,
+  createRegistrationFormSchema,
   type RegistrationFormValues,
 } from "@/features/registration/types/registration";
 import { createRegistration } from "@/features/registration/actions/createRegistration";
@@ -20,15 +21,18 @@ interface RegistrationFormProps {
 }
 
 function RegistrationForm({ eventId }: RegistrationFormProps) {
+  const d = useDictionary();
   const router = useRouter();
   const [serverError, setServerError] = React.useState<string | null>(null);
+
+  const schema = React.useMemo(() => createRegistrationFormSchema(d), [d]);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<RegistrationFormValues>({
-    resolver: zodResolver(registrationFormSchema),
+    resolver: zodResolver(schema),
   });
 
   async function onSubmit(values: RegistrationFormValues) {
@@ -38,7 +42,7 @@ function RegistrationForm({ eventId }: RegistrationFormProps) {
     if (result.success) {
       router.push("/register-success");
     } else {
-      setServerError(result.error ?? "خطایی رخ داد. لطفاً دوباره تلاش کنید.");
+      setServerError(result.error ?? d.errors.generic);
     }
   }
 
@@ -50,7 +54,7 @@ function RegistrationForm({ eventId }: RegistrationFormProps) {
     >
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="flex flex-col gap-2">
-          <Label htmlFor="firstName">نام</Label>
+          <Label htmlFor="firstName">{d.registration.firstName}</Label>
           <Input
             id="firstName"
             aria-invalid={Boolean(errors.firstName)}
@@ -61,7 +65,7 @@ function RegistrationForm({ eventId }: RegistrationFormProps) {
           ) : null}
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="lastName">نام خانوادگی</Label>
+          <Label htmlFor="lastName">{d.registration.lastName}</Label>
           <Input
             id="lastName"
             aria-invalid={Boolean(errors.lastName)}
@@ -74,7 +78,7 @@ function RegistrationForm({ eventId }: RegistrationFormProps) {
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="phone">شماره موبایل</Label>
+        <Label htmlFor="phone">{d.registration.phone}</Label>
         <Input
           id="phone"
           dir="ltr"
@@ -89,7 +93,7 @@ function RegistrationForm({ eventId }: RegistrationFormProps) {
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="email">ایمیل (اختیاری)</Label>
+        <Label htmlFor="email">{d.registration.email}</Label>
         <Input id="email" type="email" dir="ltr" {...register("email")} />
         {errors.email ? (
           <p className="text-sm text-danger">{errors.email.message}</p>
@@ -98,22 +102,22 @@ function RegistrationForm({ eventId }: RegistrationFormProps) {
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="flex flex-col gap-2">
-          <Label htmlFor="university">دانشگاه (اختیاری)</Label>
+          <Label htmlFor="university">{d.registration.university}</Label>
           <Input id="university" {...register("university")} />
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="company">شرکت (اختیاری)</Label>
+          <Label htmlFor="company">{d.registration.company}</Label>
           <Input id="company" {...register("company")} />
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="profession">حرفه (اختیاری)</Label>
+        <Label htmlFor="profession">{d.registration.profession}</Label>
         <Input id="profession" {...register("profession")} />
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="notes">توضیحات (اختیاری)</Label>
+        <Label htmlFor="notes">{d.registration.notes}</Label>
         <Textarea id="notes" rows={3} {...register("notes")} />
       </div>
 
@@ -122,7 +126,7 @@ function RegistrationForm({ eventId }: RegistrationFormProps) {
       ) : null}
 
       <Button type="submit" size="lg" isLoading={isSubmitting}>
-        ثبت‌نام در رویداد
+        {d.registration.submit}
       </Button>
     </form>
   );

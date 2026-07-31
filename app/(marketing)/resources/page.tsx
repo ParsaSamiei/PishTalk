@@ -7,17 +7,24 @@ import { EmptyState } from "@/components/shared/EmptyState";
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { ResourceCard } from "@/components/cards/ResourceCard";
 import { prisma } from "@/lib/prisma";
+import { getDictionary, getLocaleContext } from "@/lib/i18n/server";
+import { pick } from "@/lib/i18n/content";
+import type { Locale } from "@/lib/i18n/config";
 import { SITE_URL } from "@/lib/constants";
 import type { ResourceSummary } from "@/features/resources/types/resource";
 
 // Prevents this page from being statically prerendered at Docker build time (when the DB may be empty/unreachable) and cached forever.
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "منابع آموزشی",
-  description: "اسلایدها، مقالات و لینک‌های آموزشی رویدادهای پیشتاک.",
-  alternates: { canonical: `${SITE_URL}/resources` },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const d = await getDictionary();
+
+  return {
+    title: d.resources.pageTitle,
+    description: d.resources.metaDescription,
+    alternates: { canonical: `${SITE_URL}/resources` },
+  };
+}
 
 /**
  * Resources are sorted alphabetically per docs/05_DATABASE.md ("Sorting:
@@ -25,12 +32,12 @@ export const metadata: Metadata = {
  * docs/03_Information_Architecture.md ("Grouped by Event / General
  * Resources").
  */
-async function getGroupedResources() {
+async function getGroupedResources(locale: Locale) {
   try {
     const resources = await prisma.resource.findMany({
       where: { deletedAt: null },
       orderBy: { title: "asc" },
-      include: { event: { select: { title: true } } },
+      include: { event: { select: { title: true, titleEn: true } } },
     });
 
     const general: ResourceSummary[] = [];
@@ -43,7 +50,9 @@ async function getGroupedResources() {
       const summary: ResourceSummary = {
         id: resource.id,
         title: resource.title,
+        titleEn: resource.titleEn,
         description: resource.description,
+        descriptionEn: resource.descriptionEn,
         resourceType: resource.resourceType,
         fileUrl: resource.fileUrl,
         externalUrl: resource.externalUrl,
@@ -51,7 +60,11 @@ async function getGroupedResources() {
 
       if (resource.eventId && resource.event) {
         const group = byEvent.get(resource.eventId) ?? {
-          eventTitle: resource.event.title,
+          eventTitle: pick(
+            locale,
+            resource.event.title,
+            resource.event.titleEn,
+          ),
           resources: [] as ResourceSummary[],
         };
         group.resources.push(summary);
@@ -68,34 +81,35 @@ async function getGroupedResources() {
 }
 
 export default async function ResourcesPage() {
-  const { general, eventGroups } = await getGroupedResources();
+  const { locale, dictionary: d } = await getLocaleContext();
+  const { general, eventGroups } = await getGroupedResources(locale);
   const isEmpty = general.length === 0 && eventGroups.length === 0;
 
   return (
     <Section className="pt-12" circuit>
       <Container className="flex flex-col gap-14">
-        <Breadcrumbs items={[{ label: "منابع آموزشی" }]} />
+        <Breadcrumbs items={[{ label: d.resources.pageTitle }]} />
         <div className="flex flex-col gap-3">
           <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">
-            منابع آموزشی
+            {d.resources.pageTitle}
           </h1>
           <p className="max-w-2xl text-lg text-text-secondary">
-            اسلایدها، مقالات و لینک‌های به‌جامانده از رویدادهای پیشتاک.
+            {d.resources.lead}
           </p>
         </div>
 
         {isEmpty ? (
           <EmptyState
             icon={BookOpen}
-            title="هنوز منبعی منتشر نشده است"
-            description="منابع رویدادها پس از انتشار اینجا در دسترس خواهند بود."
+            title={d.resources.emptyTitle}
+            description={d.resources.emptyDescription}
           />
         ) : (
           <>
             {general.length > 0 ? (
               <div className="flex flex-col gap-6">
                 <h2 className="text-xl font-bold text-text-primary">
-                  منابع عمومی
+                  {d.resources.general}
                 </h2>
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {general.map((resource) => (

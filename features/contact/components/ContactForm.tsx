@@ -9,15 +9,19 @@ import { Label } from "@/components/ui/Label";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
+import { useDictionary } from "@/lib/i18n/client";
 import {
-  contactFormSchema,
+  createContactFormSchema,
   type ContactFormValues,
 } from "@/features/contact/types/contact";
 import { sendContactMessage } from "@/features/contact/actions/sendContactMessage";
 
 function ContactForm() {
+  const d = useDictionary();
   const [submitted, setSubmitted] = React.useState(false);
   const [serverError, setServerError] = React.useState<string | null>(null);
+
+  const schema = React.useMemo(() => createContactFormSchema(d), [d]);
 
   const {
     register,
@@ -25,7 +29,7 @@ function ContactForm() {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<ContactFormValues>({
-    resolver: zodResolver(contactFormSchema),
+    resolver: zodResolver(schema),
   });
 
   async function onSubmit(values: ContactFormValues) {
@@ -36,7 +40,7 @@ function ContactForm() {
       setSubmitted(true);
       reset();
     } else {
-      setServerError(result.error ?? "خطایی رخ داد. لطفاً دوباره تلاش کنید.");
+      setServerError(result.error ?? d.errors.generic);
     }
   }
 
@@ -45,13 +49,11 @@ function ContactForm() {
       <div className="flex flex-col items-center gap-3 rounded-card border border-border bg-surface p-10 text-center">
         <CheckCircle2 className="size-10 text-success" aria-hidden="true" />
         <h3 className="text-lg font-semibold text-text-primary">
-          پیام شما ارسال شد
+          {d.contact.successTitle}
         </h3>
-        <p className="text-sm text-text-secondary">
-          به‌زودی با شما تماس خواهیم گرفت. متشکریم!
-        </p>
+        <p className="text-sm text-text-secondary">{d.contact.successBody}</p>
         <Button variant="outline" onClick={() => setSubmitted(false)}>
-          ارسال پیام دیگر
+          {d.contact.sendAnother}
         </Button>
       </div>
     );
@@ -64,7 +66,7 @@ function ContactForm() {
       className="flex flex-col gap-5"
     >
       <div className="flex flex-col gap-2">
-        <Label htmlFor="name">نام و نام خانوادگی</Label>
+        <Label htmlFor="name">{d.contact.name}</Label>
         <Input
           id="name"
           autoComplete="name"
@@ -77,7 +79,7 @@ function ContactForm() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="email">ایمیل</Label>
+        <Label htmlFor="email">{d.contact.email}</Label>
         <Input
           id="email"
           type="email"
@@ -93,8 +95,10 @@ function ContactForm() {
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="phone">
-          تلفن{" "}
-          <span className="font-normal text-text-secondary">(اختیاری)</span>
+          {d.contact.phone}{" "}
+          <span className="font-normal text-text-secondary">
+            ({d.common.optional})
+          </span>
         </Label>
         <Input
           id="phone"
@@ -107,14 +111,12 @@ function ContactForm() {
         {errors.phone ? (
           <p className="text-sm text-danger">{errors.phone.message}</p>
         ) : (
-          <p className="text-sm text-text-secondary">
-            اگر ترجیح می‌دهید با تماس تلفنی پاسخ بگیرید وارد کنید.
-          </p>
+          <p className="text-sm text-text-secondary">{d.contact.phoneHint}</p>
         )}
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="message">پیام</Label>
+        <Label htmlFor="message">{d.contact.message}</Label>
         <Textarea
           id="message"
           rows={5}
@@ -131,7 +133,7 @@ function ContactForm() {
       ) : null}
 
       <Button type="submit" size="lg" isLoading={isSubmitting}>
-        ارسال پیام
+        {d.contact.submit}
       </Button>
     </form>
   );

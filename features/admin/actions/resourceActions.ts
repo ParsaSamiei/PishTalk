@@ -5,17 +5,25 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/requireAdmin";
 import { resourceFormSchema, type ResourceFormValues } from "@/features/admin/types/resourceForm";
+import { blankToNull } from "@/features/admin/actions/normalize";
 import type { ActionResult } from "@/features/admin/actions/eventActions";
 
+const TRANSLATABLE = ["titleEn", "descriptionEn"] as const;
+
 function toResourceData(values: ResourceFormValues) {
-  return {
-    title: values.title,
-    description: values.description || null,
-    resourceType: values.resourceType,
-    fileUrl: values.fileUrl || null,
-    externalUrl: values.externalUrl || null,
-    eventId: values.eventId || null,
-  };
+  return blankToNull(
+    {
+      title: values.title,
+      description: values.description || null,
+      resourceType: values.resourceType,
+      fileUrl: values.fileUrl || null,
+      externalUrl: values.externalUrl || null,
+      eventId: values.eventId || null,
+      titleEn: values.titleEn,
+      descriptionEn: values.descriptionEn,
+    },
+    TRANSLATABLE,
+  );
 }
 
 export async function createResource(values: ResourceFormValues): Promise<ActionResult> {

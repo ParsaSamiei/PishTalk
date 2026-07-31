@@ -21,6 +21,8 @@ export default async function EditRulePage({ params }: EditRulePageProps) {
         defaultValues={{
           title: rule.title,
           description: rule.description,
+          titleEn: rule.titleEn ?? "",
+          descriptionEn: rule.descriptionEn ?? "",
           icon: (rule.icon as "respect" | "community" | "discussion" | "") ?? "",
           sortOrder: rule.sortOrder,
           published: rule.published,

@@ -19,6 +19,18 @@ export const blogFormSchema = z.object({
     .or(z.literal("")),
   categoryId: z.string().trim().optional().or(z.literal("")),
   readingTime: z.coerce.number().int().positive().optional().or(z.literal("")),
+  // Optional English translations. Blank means "not translated yet" and the
+  // public site falls back to the Persian text (lib/i18n/content.ts).
+  titleEn: z.string().trim().max(200).optional().or(z.literal("")),
+  excerptEn: z.string().trim().max(300).optional().or(z.literal("")),
+  contentEn: z.string().trim().optional().or(z.literal("")),
+  seoTitleEn: z.string().trim().max(70, "عنوان سئو بهتر است حداکثر ۷۰ حرف باشد").optional().or(z.literal("")),
+  seoDescriptionEn: z
+    .string()
+    .trim()
+    .max(160, "توضیحات سئو بهتر است حداکثر ۱۶۰ حرف باشد")
+    .optional()
+    .or(z.literal("")),
   published: z.boolean().default(false),
 });
 

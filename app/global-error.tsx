@@ -1,6 +1,13 @@
 "use client";
 
+import { useOptionalLocale } from "@/lib/i18n/client";
+
 export default function GlobalError({ reset }: { error: Error; reset: () => void }) {
+  // This boundary renders its own <html> and sits above LocaleProvider, so
+  // the locale context is unavailable here — useOptionalLocale falls back to
+  // Persian, which matches the hardcoded lang/dir below.
+  const { dictionary: d } = useOptionalLocale();
+
   return (
     <html lang="fa" dir="rtl">
       <body>
@@ -17,8 +24,10 @@ export default function GlobalError({ reset }: { error: Error; reset: () => void
             padding: "1rem",
           }}
         >
-          <h1 style={{ fontSize: "1.5rem", fontWeight: 700 }}>مشکلی پیش آمد</h1>
-          <p>متاسفانه خطایی در سایت رخ داد. لطفاً دوباره تلاش کنید.</p>
+          <h1 style={{ fontSize: "1.5rem", fontWeight: 700 }}>
+            {d.errors.pageTitle}
+          </h1>
+          <p>{d.errors.globalBody}</p>
           <button
             onClick={reset}
             style={{
@@ -30,7 +39,7 @@ export default function GlobalError({ reset }: { error: Error; reset: () => void
               cursor: "pointer",
             }}
           >
-            تلاش دوباره
+            {d.common.tryAgain}
           </button>
         </div>
       </body>

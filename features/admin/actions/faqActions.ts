@@ -5,7 +5,10 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/requireAdmin";
 import { faqFormSchema, type FaqFormValues } from "@/features/admin/types/faqForm";
+import { blankToNull } from "@/features/admin/actions/normalize";
 import type { ActionResult } from "@/features/admin/actions/eventActions";
+
+const TRANSLATABLE = ["questionEn", "answerEn"] as const;
 
 export async function createFaq(values: FaqFormValues): Promise<ActionResult> {
   await requireAdmin();
@@ -13,7 +16,7 @@ export async function createFaq(values: FaqFormValues): Promise<ActionResult> {
   if (!parsed.success) return { success: false, error: "اطلاعات وارد شده معتبر نیست." };
 
   try {
-    await prisma.faq.create({ data: parsed.data });
+    await prisma.faq.create({ data: blankToNull(parsed.data, TRANSLATABLE) });
     revalidatePath("/admin/faq");
     revalidatePath("/faq");
     revalidatePath("/");
@@ -29,7 +32,10 @@ export async function updateFaq(id: string, values: FaqFormValues): Promise<Acti
   if (!parsed.success) return { success: false, error: "اطلاعات وارد شده معتبر نیست." };
 
   try {
-    await prisma.faq.update({ where: { id }, data: parsed.data });
+    await prisma.faq.update({
+      where: { id },
+      data: blankToNull(parsed.data, TRANSLATABLE),
+    });
     revalidatePath("/admin/faq");
     revalidatePath("/faq");
     revalidatePath("/");

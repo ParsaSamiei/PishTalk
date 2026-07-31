@@ -66,6 +66,35 @@ function SiteSettingsForm({ defaultValues }: SiteSettingsFormProps) {
           <Label htmlFor="description">توضیحات (برای سئو)</Label>
           <Textarea id="description" rows={3} {...register("description")} />
         </div>
+
+        {/* English translations. Optional — the public site shows the Persian
+            value to English visitors when these are left empty. */}
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="siteNameEn">
+              نام سایت (انگلیسی){" "}
+              <span className="font-normal text-text-secondary">(اختیاری)</span>
+            </Label>
+            <Input id="siteNameEn" dir="ltr" {...register("siteNameEn")} />
+            {errors.siteNameEn ? (
+              <p className="text-sm text-danger">{errors.siteNameEn.message}</p>
+            ) : null}
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="taglineEn">
+              شعار سایت (انگلیسی){" "}
+              <span className="font-normal text-text-secondary">(اختیاری)</span>
+            </Label>
+            <Input id="taglineEn" dir="ltr" {...register("taglineEn")} />
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="descriptionEn">
+            توضیحات (انگلیسی){" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Textarea id="descriptionEn" rows={3} dir="ltr" {...register("descriptionEn")} />
+        </div>
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="flex flex-col gap-2">
             <Label htmlFor="logo">آدرس لوگو (اختیاری)</Label>
@@ -92,6 +121,20 @@ function SiteSettingsForm({ defaultValues }: SiteSettingsFormProps) {
           <Label htmlFor="heroSubtitle">زیرعنوان (اختیاری)</Label>
           <Textarea id="heroSubtitle" rows={2} {...register("heroSubtitle")} />
         </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="heroTitleEn">
+            عنوان (انگلیسی){" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Input id="heroTitleEn" dir="ltr" {...register("heroTitleEn")} />
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="heroSubtitleEn">
+            زیرعنوان (انگلیسی){" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Textarea id="heroSubtitleEn" rows={2} dir="ltr" {...register("heroSubtitleEn")} />
+        </div>
       </Card>
 
       <Card className="flex flex-col gap-5">
@@ -116,6 +159,13 @@ function SiteSettingsForm({ defaultValues }: SiteSettingsFormProps) {
         <div className="flex flex-col gap-2">
           <Label htmlFor="address">آدرس</Label>
           <Input id="address" {...register("address")} />
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="addressEn">
+            آدرس (انگلیسی){" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Input id="addressEn" dir="ltr" {...register("addressEn")} />
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="googleMapsEmbed">کد embed نقشه گوگل (اختیاری)</Label>
@@ -172,6 +222,35 @@ function SiteSettingsForm({ defaultValues }: SiteSettingsFormProps) {
           {errors.seoDescription ? (
             <p className="text-sm text-danger">{errors.seoDescription.message}</p>
           ) : null}
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="seoTitleEn">
+            عنوان پیش‌فرض سئو (انگلیسی){" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Input id="seoTitleEn" dir="ltr" {...register("seoTitleEn")} />
+          {errors.seoTitleEn ? (
+            <p className="text-sm text-danger">{errors.seoTitleEn.message}</p>
+          ) : null}
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="seoDescriptionEn">
+            توضیحات پیش‌فرض سئو (انگلیسی){" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Textarea id="seoDescriptionEn" rows={2} dir="ltr" {...register("seoDescriptionEn")} />
+          {errors.seoDescriptionEn ? (
+            <p className="text-sm text-danger">{errors.seoDescriptionEn.message}</p>
+          ) : null}
+        </div>
+        {/* The Persian `copyright` column has never had an input on this form;
+            only its English counterpart is editable here. */}
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="copyrightEn">
+            متن کپی‌رایت فوتر (انگلیسی){" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Input id="copyrightEn" dir="ltr" {...register("copyrightEn")} />
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="defaultOgImage">تصویر پیش‌فرض OG (اختیاری)</Label>

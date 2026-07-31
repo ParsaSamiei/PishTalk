@@ -6,28 +6,73 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/requireAdmin";
 import { eventFormSchema, type EventFormValues } from "@/features/admin/types/eventForm";
+import { blankToNull } from "@/features/admin/actions/normalize";
 
 export interface ActionResult {
   readonly success: boolean;
   readonly error?: string;
 }
 
+const TRANSLATABLE = [
+  "titleEn",
+  "subtitleEn",
+  "descriptionEn",
+  "locationEn",
+  "speakerNameEn",
+  "speakerBioEn",
+  "seoTitleEn",
+  "seoDescriptionEn",
+] as const;
+
+const TIMELINE_TRANSLATABLE = ["titleEn", "descriptionEn"] as const;
+
 function toEventData(values: EventFormValues) {
-  return {
-    title: values.title,
-    slug: values.slug,
-    subtitle: values.subtitle || null,
-    description: values.description,
-    coverImage: values.coverImage || null,
-    date: new Date(values.date),
-    startTime: values.startTime,
-    endTime: values.endTime || null,
-    location: values.location,
-    speakerName: values.speakerName || null,
-    speakerBio: values.speakerBio || null,
-    capacity: values.capacity === "" || values.capacity === undefined ? null : values.capacity,
-    status: values.status,
-  };
+  return blankToNull(
+    {
+      title: values.title,
+      slug: values.slug,
+      subtitle: values.subtitle || null,
+      description: values.description,
+      coverImage: values.coverImage || null,
+      date: new Date(values.date),
+      startTime: values.startTime,
+      endTime: values.endTime || null,
+      location: values.location,
+      speakerName: values.speakerName || null,
+      speakerBio: values.speakerBio || null,
+      capacity: values.capacity === "" || values.capacity === undefined ? null : values.capacity,
+      status: values.status,
+      titleEn: values.titleEn,
+      subtitleEn: values.subtitleEn,
+      descriptionEn: values.descriptionEn,
+      locationEn: values.locationEn,
+      speakerNameEn: values.speakerNameEn,
+      speakerBioEn: values.speakerBioEn,
+      seoTitleEn: values.seoTitleEn,
+      seoDescriptionEn: values.seoDescriptionEn,
+    },
+    TRANSLATABLE,
+  );
+}
+
+/**
+ * Timeline rows are recreated from scratch on every save, so the English
+ * columns go through the same blank-to-NULL normalization as the event itself.
+ */
+function toTimelineData(timeline: EventFormValues["timeline"]) {
+  return timeline.map((item, index) => ({
+    ...blankToNull(
+      {
+        time: item.time,
+        title: item.title,
+        description: item.description || null,
+        titleEn: item.titleEn,
+        descriptionEn: item.descriptionEn,
+      },
+      TIMELINE_TRANSLATABLE,
+    ),
+    sortOrder: index,
+  }));
 }
 
 export async function createEvent(values: EventFormValues): Promise<ActionResult> {
@@ -47,12 +92,7 @@ export async function createEvent(values: EventFormValues): Promise<ActionResult
       data: {
         ...toEventData(parsed.data),
         timeline: {
-          create: parsed.data.timeline.map((item, index) => ({
-            time: item.time,
-            title: item.title,
-            description: item.description || null,
-            sortOrder: index,
-          })),
+          create: toTimelineData(parsed.data.timeline),
         },
       },
     });
@@ -91,12 +131,7 @@ export async function updateEvent(
         data: {
           ...toEventData(parsed.data),
           timeline: {
-            create: parsed.data.timeline.map((item, index) => ({
-              time: item.time,
-              title: item.title,
-              description: item.description || null,
-              sortOrder: index,
-            })),
+            create: toTimelineData(parsed.data.timeline),
           },
         },
       }),

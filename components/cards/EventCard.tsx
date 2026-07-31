@@ -5,6 +5,8 @@ import { Calendar, MapPin } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import type { EventSummary } from "@/features/events/types/event";
+import { pick } from "@/lib/i18n/content";
+import { getLocaleContext } from "@/lib/i18n/server";
 import { formatEventDate } from "@/utils/formatDate";
 
 interface EventCardProps {
@@ -14,7 +16,11 @@ interface EventCardProps {
 /**
  * Card used for the "Previous Events" homepage section and the /events archive.
  */
-function EventCard({ event }: EventCardProps) {
+async function EventCard({ event }: EventCardProps) {
+  const { locale, dictionary: d } = await getLocaleContext();
+  const title = pick(locale, event.title, event.titleEn);
+  const subtitle = pick(locale, event.subtitle, event.subtitleEn);
+  const location = pick(locale, event.location, event.locationEn);
   const isUpcoming =
     event.date.getTime() >= new Date(new Date().toDateString()).getTime();
 
@@ -29,7 +35,7 @@ function EventCard({ event }: EventCardProps) {
           {event.coverImage ? (
             <Image
               src={event.coverImage}
-              alt={event.title}
+              alt={title}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
               sizes="(min-width: 1024px) 33vw, 100vw"
@@ -41,24 +47,24 @@ function EventCard({ event }: EventCardProps) {
           )}
           {isUpcoming ? (
             <Badge variant="accent" className="absolute top-4 inset-e-4">
-              رویداد پیش رو
+              {d.events.upcoming}
             </Badge>
           ) : (
             <Badge
               variant="neutral"
               className="absolute top-4 inset-e-4 border-white/10 bg-black/50 text-white backdrop-blur-sm"
             >
-              برگزار شده
+              {d.events.past}
             </Badge>
           )}
         </div>
         <div className="flex flex-1 flex-col gap-3 p-6">
           <h3 className="text-lg font-semibold text-text-primary transition-colors duration-300 group-hover:text-accent">
-            {event.title}
+            {title}
           </h3>
-          {event.subtitle ? (
+          {subtitle ? (
             <p className="line-clamp-2 text-sm text-text-secondary">
-              {event.subtitle}
+              {subtitle}
             </p>
           ) : null}
           <div className="mt-auto flex flex-col gap-2 pt-2 text-sm text-text-secondary">
@@ -67,11 +73,11 @@ function EventCard({ event }: EventCardProps) {
                 className="size-4 text-accent-hover"
                 aria-hidden="true"
               />
-              {formatEventDate(event.date)}
+              {formatEventDate(event.date, locale)}
             </span>
             <span className="flex items-center gap-2">
               <MapPin className="size-4 text-accent-hover" aria-hidden="true" />
-              {event.location}
+              {location}
             </span>
           </div>
         </div>

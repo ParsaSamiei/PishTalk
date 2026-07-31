@@ -5,22 +5,27 @@ import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/comp
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import type { ResourceSummary, ResourceType } from "@/features/resources/types/resource";
+import { pick } from "@/lib/i18n/content";
+import { getLocaleContext } from "@/lib/i18n/server";
 
-const TYPE_META: Record<ResourceType, { label: string; icon: LucideIcon }> = {
-  PDF: { label: "PDF", icon: FileText },
-  PRESENTATION: { label: "اسلاید", icon: FileText },
-  GITHUB: { label: "گیت‌هاب", icon: Code2 },
-  VIDEO: { label: "ویدیو", icon: PlayCircle },
-  RESEARCH_PAPER: { label: "مقاله پژوهشی", icon: BookOpen },
-  EXTERNAL_LINK: { label: "لینک خارجی", icon: ExternalLink },
+const TYPE_ICONS: Record<ResourceType, LucideIcon> = {
+  PDF: FileText,
+  PRESENTATION: FileText,
+  GITHUB: Code2,
+  VIDEO: PlayCircle,
+  RESEARCH_PAPER: BookOpen,
+  EXTERNAL_LINK: ExternalLink,
 };
 
 interface ResourceCardProps {
   readonly resource: ResourceSummary;
 }
 
-function ResourceCard({ resource }: ResourceCardProps) {
-  const { label, icon: Icon } = TYPE_META[resource.resourceType];
+async function ResourceCard({ resource }: ResourceCardProps) {
+  const { locale, dictionary: d } = await getLocaleContext();
+  const Icon = TYPE_ICONS[resource.resourceType];
+  const label = d.resources.types[resource.resourceType];
+  const description = pick(locale, resource.description, resource.descriptionEn);
   const href = resource.fileUrl ?? resource.externalUrl ?? "#";
   const isExternal = Boolean(resource.externalUrl && !resource.fileUrl);
 
@@ -33,9 +38,9 @@ function ResourceCard({ resource }: ResourceCardProps) {
         <Badge variant="neutral" className="w-fit">
           {label}
         </Badge>
-        <CardTitle>{resource.title}</CardTitle>
-        {resource.description ? (
-          <CardDescription>{resource.description}</CardDescription>
+        <CardTitle>{pick(locale, resource.title, resource.titleEn)}</CardTitle>
+        {description ? (
+          <CardDescription>{description}</CardDescription>
         ) : null}
       </CardHeader>
       <CardFooter className="mt-auto">
@@ -44,12 +49,12 @@ function ResourceCard({ resource }: ResourceCardProps) {
             {isExternal ? (
               <>
                 <ExternalLink className="size-4" aria-hidden="true" />
-                مشاهده
+                {d.common.view}
               </>
             ) : (
               <>
                 <Download className="size-4" aria-hidden="true" />
-                دانلود
+                {d.common.download}
               </>
             )}
           </a>

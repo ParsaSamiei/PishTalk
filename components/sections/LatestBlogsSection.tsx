@@ -1,25 +1,32 @@
 import Link from "next/link";
-import { Newspaper, ArrowLeft } from "lucide-react";
+import { Newspaper } from "lucide-react";
 
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { SectionTitle } from "@/components/shared/SectionTitle";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { ForwardArrow } from "@/components/shared/DirectionalIcon";
 import { BlogCard } from "@/components/cards/BlogCard";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/animations/Reveal";
 import type { BlogSummary } from "@/features/blogs/types/blog";
+import { getDictionary } from "@/lib/i18n/server";
 
 interface LatestBlogsSectionProps {
   readonly blogs: readonly BlogSummary[];
 }
 
-function LatestBlogsSection({ blogs }: LatestBlogsSectionProps) {
+async function LatestBlogsSection({ blogs }: LatestBlogsSectionProps) {
+  const d = await getDictionary();
+
   return (
     <Section id="latest-blogs" className="bg-surface-secondary" circuit>
       <Container className="flex flex-col gap-10">
         <Reveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
-          <SectionTitle eyebrow="وبلاگ" title="جدیدترین نوشته‌ها" />
+          <SectionTitle
+            eyebrow={d.blog.latestEyebrow}
+            title={d.blog.latestTitle}
+          />
           {blogs.length > 0 ? (
             <Button
               asChild
@@ -27,8 +34,8 @@ function LatestBlogsSection({ blogs }: LatestBlogsSectionProps) {
               className="border border-border-primary hover:border-accent hover:bg-accent/5"
             >
               <Link href="/blog">
-                مشاهده همه مطالب
-                <ArrowLeft className="size-4" aria-hidden="true" />
+                {d.blog.viewAllPosts}
+                <ForwardArrow className="size-4" aria-hidden="true" />
               </Link>
             </Button>
           ) : null}
@@ -46,8 +53,8 @@ function LatestBlogsSection({ blogs }: LatestBlogsSectionProps) {
           <Reveal delay={0.1}>
             <EmptyState
               icon={Newspaper}
-              title="هنوز مطلبی منتشر نشده است"
-              description="اولین نوشته‌های وبلاگ پیشتاک به‌زودی اینجا منتشر می‌شود."
+              title={d.blog.emptyTitle}
+              description={d.blog.homeEmptyDescription}
             />
           </Reveal>
         )}

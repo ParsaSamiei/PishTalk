@@ -66,6 +66,25 @@ function ResourceForm({ defaultValues, events, onSubmit, submitLabel }: Resource
           <Textarea id="description" rows={3} {...register("description")} />
         </div>
 
+        {/* English translation. Optional — the public site shows the Persian
+            text to English visitors when these are left empty. */}
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="titleEn">
+            عنوان (انگلیسی){" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Input id="titleEn" dir="ltr" {...register("titleEn")} />
+          {errors.titleEn ? <p className="text-sm text-danger">{errors.titleEn.message}</p> : null}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="descriptionEn">
+            توضیحات (انگلیسی){" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Textarea id="descriptionEn" rows={3} dir="ltr" {...register("descriptionEn")} />
+        </div>
+
         <div className="flex flex-col gap-2">
           <Label htmlFor="resourceType">نوع منبع</Label>
           <select

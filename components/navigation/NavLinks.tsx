@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { MAIN_NAV_ITEMS } from "@/lib/navigation";
+import { getMainNavItems } from "@/lib/navigation";
+import { useDictionary } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 
 interface NavLinksProps {
@@ -13,10 +14,12 @@ interface NavLinksProps {
 
 function NavLinks({ className, onNavigate }: NavLinksProps) {
   const pathname = usePathname();
+  const d = useDictionary();
+  const items = getMainNavItems(d);
 
   return (
     <ul className={cn("flex items-center gap-1", className)}>
-      {MAIN_NAV_ITEMS.map((item) => {
+      {items.map((item) => {
         const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
         return (
           <li key={item.href}>

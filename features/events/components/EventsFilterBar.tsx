@@ -7,12 +7,10 @@ import { Search } from "lucide-react";
 
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { useDictionary } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 
-const TABS = [
-  { value: "upcoming", label: "پیش رو" },
-  { value: "past", label: "گذشته" },
-] as const;
+const TAB_VALUES = ["upcoming", "past"] as const;
 
 /**
  * Drives the /events listing via URL search params (?filter=upcoming|past&q=...)
@@ -23,6 +21,12 @@ function EventsFilterBar() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const d = useDictionary();
+
+  const tabs = [
+    { value: TAB_VALUES[0], label: d.events.filterUpcoming },
+    { value: TAB_VALUES[1], label: d.events.filterPast },
+  ];
 
   const activeFilter =
     searchParams.get("filter") === "past" ? "past" : "upcoming";
@@ -46,7 +50,7 @@ function EventsFilterBar() {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="relative flex gap-1 rounded-button border border-border bg-surface-secondary p-1">
-        {TABS.map((tab) => {
+        {tabs.map((tab) => {
           const isActive = activeFilter === tab.value;
           return (
             <button
@@ -81,10 +85,15 @@ function EventsFilterBar() {
         <Input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="جستجوی رویداد..."
-          aria-label="جستجوی رویداد"
+          placeholder={d.events.searchPlaceholder}
+          aria-label={d.events.searchLabel}
         />
-        <Button type="submit" variant="outline" size="icon" aria-label="جستجو">
+        <Button
+          type="submit"
+          variant="outline"
+          size="icon"
+          aria-label={d.events.searchSubmit}
+        >
           <Search className="size-4" aria-hidden="true" />
         </Button>
       </form>

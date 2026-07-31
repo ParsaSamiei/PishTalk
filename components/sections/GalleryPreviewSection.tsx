@@ -1,14 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Images, ArrowLeft } from "lucide-react";
+import { Images } from "lucide-react";
 
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { SectionTitle } from "@/components/shared/SectionTitle";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { ForwardArrow } from "@/components/shared/DirectionalIcon";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/animations/Reveal";
 import type { GalleryPreviewImage } from "@/features/gallery/types/gallery";
+import { pick } from "@/lib/i18n/content";
+import { getLocaleContext } from "@/lib/i18n/server";
 
 interface GalleryPreviewSectionProps {
   readonly images: readonly GalleryPreviewImage[];
@@ -18,17 +21,22 @@ interface GalleryPreviewSectionProps {
  * "What does Pishtalk look like?" homepage section — a masonry preview
  * of recent event photography.
  */
-function GalleryPreviewSection({ images }: GalleryPreviewSectionProps) {
+async function GalleryPreviewSection({ images }: GalleryPreviewSectionProps) {
+  const { locale, dictionary: d } = await getLocaleContext();
+
   return (
     <Section id="gallery-preview" className="bg-surface-secondary" circuit>
       <Container className="flex flex-col gap-10">
         <Reveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
-          <SectionTitle eyebrow="گالری" title="لحظاتی از رویدادهای پیشتاک" />
+          <SectionTitle
+            eyebrow={d.gallery.pageTitle}
+            title={d.gallery.sectionTitle}
+          />
           {images.length > 0 ? (
             <Button asChild variant="ghost">
               <Link href="/gallery">
-                مشاهده گالری کامل
-                <ArrowLeft className="size-4" aria-hidden="true" />
+                {d.gallery.viewFull}
+                <ForwardArrow className="size-4" aria-hidden="true" />
               </Link>
             </Button>
           ) : null}
@@ -41,7 +49,10 @@ function GalleryPreviewSection({ images }: GalleryPreviewSectionProps) {
                 <div className="group relative overflow-hidden rounded-[var(--radius-card)] bg-surface">
                   <Image
                     src={image.url}
-                    alt={image.caption ?? "تصویری از رویداد پیشتاک"}
+                    alt={
+                      pick(locale, image.caption, image.captionEn) ??
+                      d.gallery.imageAlt
+                    }
                     width={480}
                     height={480}
                     className="h-auto w-full object-cover transition-transform duration-500 group-hover:scale-110"
@@ -55,8 +66,8 @@ function GalleryPreviewSection({ images }: GalleryPreviewSectionProps) {
           <Reveal delay={0.1}>
             <EmptyState
               icon={Images}
-              title="گالری هنوز خالی است"
-              description="پس از برگزاری اولین رویداد، تصاویر آن در همین بخش نمایش داده خواهد شد."
+              title={d.gallery.emptyTitle}
+              description={d.gallery.homeEmptyDescription}
             />
           </Reveal>
         )}

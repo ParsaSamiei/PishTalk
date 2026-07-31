@@ -8,6 +8,7 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Logo } from "@/components/shared/Logo";
 import { NavLinks } from "@/components/navigation/NavLinks";
+import { useDictionary } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 
 /**
@@ -15,6 +16,7 @@ import { cn } from "@/lib/utils";
  * docs/03_Information_Architecture.md ("On mobile it becomes a slide-out drawer").
  */
 function MobileNav() {
+  const d = useDictionary();
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -25,7 +27,7 @@ function MobileNav() {
           variant="ghost"
           size="icon"
           className="lg:hidden"
-          aria-label="باز کردن منو"
+          aria-label={d.nav.openMenu}
         >
           <Menu aria-hidden="true" />
         </Button>
@@ -42,7 +44,7 @@ function MobileNav() {
               <Logo />
             </DialogPrimitive.Title>
             <DialogPrimitive.Close asChild>
-              <Button type="button" variant="ghost" size="icon" aria-label="بستن منو">
+              <Button type="button" variant="ghost" size="icon" aria-label={d.nav.closeMenu}>
                 <X aria-hidden="true" />
               </Button>
             </DialogPrimitive.Close>
@@ -50,7 +52,7 @@ function MobileNav() {
           <NavLinks className="flex-col items-stretch gap-1" onNavigate={() => setOpen(false)} />
           <Button asChild size="lg" className="mt-auto">
             <Link href="/events" onClick={() => setOpen(false)}>
-              ثبت نام رویداد
+              {d.nav.registerCta}
             </Link>
           </Button>
         </DialogPrimitive.Content>

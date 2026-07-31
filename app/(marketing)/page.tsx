@@ -11,7 +11,10 @@ import { RulesPreviewSection } from "@/components/sections/RulesPreviewSection";
 import { FaqPreviewSection } from "@/components/sections/FaqPreviewSection";
 import { ContactSection } from "@/components/sections/ContactSection";
 
-import { getNextEvent, getPastEvents } from "@/features/events/actions/getEvents";
+import {
+  getNextEvent,
+  getPastEvents,
+} from "@/features/events/actions/getEvents";
 import { getLatestGalleryImages } from "@/features/gallery/actions/getGallery";
 import { getLatestResources } from "@/features/resources/actions/getResources";
 import { getLatestBlogs } from "@/features/blogs/actions/getBlogs";
@@ -37,17 +40,25 @@ export const dynamic = "force-dynamic";
  * dataset gracefully rather than assuming content exists.
  */
 export default async function HomePage() {
-  const [nextEvent, pastEvents, galleryImages, resources, blogs, faqs, rules, settings] =
-    await Promise.all([
-      getNextEvent(),
-      getPastEvents(6),
-      getLatestGalleryImages(8),
-      getLatestResources(6),
-      getLatestBlogs(3),
-      getFaqs(5),
-      getRules(),
-      getSiteSettings(),
-    ]);
+  const [
+    nextEvent,
+    pastEvents,
+    galleryImages,
+    resources,
+    blogs,
+    faqs,
+    rules,
+    settings,
+  ] = await Promise.all([
+    getNextEvent(),
+    getPastEvents(6),
+    getLatestGalleryImages(8),
+    getLatestResources(6),
+    getLatestBlogs(3),
+    getFaqs(5),
+    getRules(),
+    getSiteSettings(),
+  ]);
 
   return (
     <>
@@ -55,11 +66,11 @@ export default async function HomePage() {
       <NextEventSection event={nextEvent} />
       <AboutSection />
       <WhyAttendSection />
+      <LatestBlogsSection blogs={blogs} />
       <EventTimelineSection event={nextEvent} />
       <PreviousEventsSection events={pastEvents} />
       <GalleryPreviewSection images={galleryImages} />
       <ResourcesSection resources={resources} />
-      <LatestBlogsSection blogs={blogs} />
       <RulesPreviewSection rules={rules} />
       <FaqPreviewSection faqs={faqs} />
       <ContactSection
@@ -67,6 +78,7 @@ export default async function HomePage() {
         phone={settings.phone}
         phone2={settings.phone2}
         address={settings.address}
+        addressEn={settings.addressEn}
         instagram={settings.instagram}
         telegram={settings.telegram}
       />

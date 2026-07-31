@@ -3,8 +3,9 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { ChevronRight, ChevronLeft } from "lucide-react";
 
+import { BackChevron, ForwardChevron } from "@/components/shared/DirectionalIcon";
+import { useDictionary } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 
 interface PaginationProps {
@@ -19,6 +20,7 @@ interface PaginationProps {
  * Component — this only builds links, it doesn't fetch anything.
  */
 function Pagination({ currentPage, totalPages, pageParam = "page" }: PaginationProps) {
+  const d = useDictionary();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -35,7 +37,7 @@ function Pagination({ currentPage, totalPages, pageParam = "page" }: PaginationP
   );
 
   return (
-    <nav aria-label="صفحه‌بندی" className="flex items-center justify-center gap-1">
+    <nav aria-label={d.common.paginationLabel} className="flex items-center justify-center gap-1">
       <Link
         href={hrefForPage(Math.max(1, currentPage - 1))}
         aria-disabled={currentPage === 1}
@@ -44,7 +46,7 @@ function Pagination({ currentPage, totalPages, pageParam = "page" }: PaginationP
           currentPage === 1 && "pointer-events-none opacity-40"
         )}
       >
-        <ChevronRight className="size-4" aria-hidden="true" />
+        <BackChevron className="size-4" aria-hidden="true" />
       </Link>
 
       {pages.map((page, index) => {
@@ -77,7 +79,7 @@ function Pagination({ currentPage, totalPages, pageParam = "page" }: PaginationP
           currentPage === totalPages && "pointer-events-none opacity-40"
         )}
       >
-        <ChevronLeft className="size-4" aria-hidden="true" />
+        <ForwardChevron className="size-4" aria-hidden="true" />
       </Link>
     </nav>
   );

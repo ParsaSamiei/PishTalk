@@ -1,6 +1,7 @@
 "use client";
 
 import { useCountdown } from "@/hooks/useCountdown";
+import { useDictionary } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 
 interface CountdownProps {
@@ -17,14 +18,11 @@ interface CountdownProps {
   readonly variant?: "light" | "dark" | "auto";
 }
 
-const UNITS: ReadonlyArray<{
-  key: "days" | "hours" | "minutes" | "seconds";
-  label: string;
-}> = [
-  { key: "seconds", label: "ثانیه" },
-  { key: "minutes", label: "دقیقه" },
-  { key: "hours", label: "ساعت" },
-  { key: "days", label: "روز" },
+const UNITS: ReadonlyArray<"days" | "hours" | "minutes" | "seconds"> = [
+  "seconds",
+  "minutes",
+  "hours",
+  "days",
 ];
 
 /**
@@ -32,6 +30,7 @@ const UNITS: ReadonlyArray<{
  * ("Rounded", "Large Numbers", "Accent Color", "Updates live").
  */
 function Countdown({ target, className, variant = "light" }: CountdownProps) {
+  const d = useDictionary();
   const countdown = useCountdown(target);
 
   if (countdown.isPast) return null;
@@ -41,11 +40,11 @@ function Countdown({ target, className, variant = "light" }: CountdownProps) {
       className={cn("flex items-center gap-3 sm:gap-4", className)}
       role="timer"
       aria-live="off"
-      aria-label="زمان باقی‌مانده تا رویداد بعدی"
+      aria-label={d.nextEvent.countdownLabel}
     >
       {UNITS.map((unit) => (
         <div
-          key={unit.key}
+          key={unit}
           className={cn(
             "flex w-16 flex-col items-center gap-1 rounded-2xl px-2 py-3 sm:w-20",
             variant === "light" && "bg-white/10 text-white",
@@ -57,9 +56,9 @@ function Countdown({ target, className, variant = "light" }: CountdownProps) {
             className="font-mono text-2xl font-bold text-accent sm:text-3xl"
             aria-hidden="true"
           >
-            {String(countdown[unit.key]).padStart(2, "0")}
+            {String(countdown[unit]).padStart(2, "0")}
           </span>
-          <span className="text-xs text-current/80">{unit.label}</span>
+          <span className="text-xs text-current/80">{d.countdown[unit]}</span>
         </div>
       ))}
     </div>

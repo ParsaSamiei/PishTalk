@@ -8,12 +8,15 @@ import { ContactForm } from "@/features/contact/components/ContactForm";
 import { Reveal } from "@/components/animations/Reveal";
 import { FloatingIcon } from "@/components/illustrations/FloatingIcon";
 import { CONTACT_PHONE } from "@/lib/constants";
+import { pick } from "@/lib/i18n/content";
+import { getLocaleContext } from "@/lib/i18n/server";
 
 interface ContactSectionProps {
   readonly contactEmail?: string | null;
   readonly phone?: string | null;
   readonly phone2?: string | null;
   readonly address?: string | null;
+  readonly addressEn?: string | null;
   readonly instagram?: string | null;
   readonly telegram?: string | null;
 }
@@ -22,16 +25,19 @@ interface ContactSectionProps {
  * "How do I reach the organizers?" homepage section — the last stop on the
  * page, closing with a quiet callback to the Hero's circuit motif.
  */
-function ContactSection({
+async function ContactSection({
   contactEmail,
   phone,
   phone2,
   address,
+  addressEn,
   instagram,
   telegram,
 }: ContactSectionProps) {
+  const { locale, dictionary: d } = await getLocaleContext();
   const phoneNumber = phone ?? CONTACT_PHONE;
   const phoneNumber2 = phone2;
+  const localizedAddress = pick(locale, address, addressEn);
 
   return (
     <Section id="contact" circuit>
@@ -45,9 +51,9 @@ function ContactSection({
       <Container className="relative grid gap-12 lg:grid-cols-2">
         <Reveal className="flex flex-col gap-6">
           <SectionTitle
-            eyebrow="تماس با ما"
-            title="سوالی دارید؟"
-            description="برای همکاری، سخنرانی یا هر سوال دیگری، پیام بگذارید."
+            eyebrow={d.contact.eyebrow}
+            title={d.contact.title}
+            description={d.contact.description}
           />
           <ul className="flex flex-col gap-4 text-text-secondary">
             {contactEmail ? (
@@ -89,7 +95,7 @@ function ContactSection({
                 </a>
               </li>
             ) : null}
-            {address ? (
+            {localizedAddress ? (
               <li className="flex items-center gap-3">
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border">
                   <MapPin
@@ -97,7 +103,7 @@ function ContactSection({
                     aria-hidden="true"
                   />
                 </span>
-                <span>{address}</span>
+                <span>{localizedAddress}</span>
               </li>
             ) : null}
           </ul>

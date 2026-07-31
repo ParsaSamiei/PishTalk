@@ -5,6 +5,7 @@ import * as ToastPrimitive from "@radix-ui/react-toast";
 import { CheckCircle2, AlertTriangle, XCircle, Info, X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { useDictionary } from "@/lib/i18n/client";
 
 export type ToastVariant = "success" | "warning" | "danger" | "info";
 
@@ -30,6 +31,7 @@ const ToastProviderPrimitive = ToastPrimitive.Provider;
  * Right, Auto Dismiss, Success/Warning/Error/Information types").
  */
 function ToastCard({ toast, onOpenChange }: { toast: ToastData; onOpenChange: (open: boolean) => void }) {
+  const d = useDictionary();
   const { icon: Icon, className } = VARIANT_META[toast.variant];
 
   return (
@@ -50,7 +52,7 @@ function ToastCard({ toast, onOpenChange }: { toast: ToastData; onOpenChange: (o
         ) : null}
       </div>
       <ToastPrimitive.Close
-        aria-label="بستن"
+        aria-label={d.common.close}
         className="ms-auto text-text-light hover:text-text-primary"
       >
         <X className="size-4" aria-hidden="true" />

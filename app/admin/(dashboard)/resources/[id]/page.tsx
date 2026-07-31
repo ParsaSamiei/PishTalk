@@ -29,6 +29,8 @@ export default async function EditResourcePage({ params }: EditResourcePageProps
         defaultValues={{
           title: resource.title,
           description: resource.description ?? "",
+          titleEn: resource.titleEn ?? "",
+          descriptionEn: resource.descriptionEn ?? "",
           resourceType: resource.resourceType,
           fileUrl: resource.fileUrl ?? "",
           externalUrl: resource.externalUrl ?? "",

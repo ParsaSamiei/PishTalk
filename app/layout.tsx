@@ -4,8 +4,12 @@ import Script from "next/script";
 
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { ToastProvider } from "@/providers/ToastProvider";
-import { SITE_URL, SITE_NAME } from "@/lib/constants";
+import { SITE_URL } from "@/lib/constants";
 import { getSiteSettings } from "@/lib/site-settings";
+import { getLocaleContext } from "@/lib/i18n/server";
+import { LocaleProvider } from "@/lib/i18n/client";
+import { LOCALE_OG } from "@/lib/i18n/config";
+import { pick } from "@/lib/i18n/content";
 import CustomCursor from "@/components/ui/CustomCursor";
 
 import "./globals.css";
@@ -20,24 +24,43 @@ const DEFAULT_TITLE = "پیشتاک | جامعه مهندسان رباتیک";
 const DEFAULT_DESCRIPTION =
   "پیشتاک رویداد ماهانه رباتیک، هوش مصنوعی و مهندسی نرم‌افزار، برگزار شده توسط باشگاه رباتیک پیشنام.";
 
+const DEFAULT_TITLE_EN = "Pishtalk | A community of robotics engineers";
+const DEFAULT_DESCRIPTION_EN =
+  "Pishtalk is a monthly event on robotics, AI and software engineering, hosted by the Pishnam Robotics Club.";
+
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings();
-  const title = settings.seoTitle || DEFAULT_TITLE;
+  const [settings, { locale }] = await Promise.all([
+    getSiteSettings(),
+    getLocaleContext(),
+  ]);
+
+  const isEnglish = locale === "en";
+  const fallbackTitle = isEnglish ? DEFAULT_TITLE_EN : DEFAULT_TITLE;
+  const fallbackDescription = isEnglish
+    ? DEFAULT_DESCRIPTION_EN
+    : DEFAULT_DESCRIPTION;
+
+  const siteName = pick(locale, settings.siteName, settings.siteNameEn);
+  const title =
+    pick(locale, settings.seoTitle, settings.seoTitleEn) || fallbackTitle;
   const description =
-    settings.seoDescription || settings.description || DEFAULT_DESCRIPTION;
+    pick(locale, settings.seoDescription, settings.seoDescriptionEn) ||
+    pick(locale, settings.description, settings.descriptionEn) ||
+    fallbackDescription;
+
   const ogImages = settings.defaultOgImage
     ? [{ url: settings.defaultOgImage }]
     : undefined;
 
   return {
     metadataBase: new URL(SITE_URL),
-    title: { default: title, template: `%s | ${SITE_NAME}` },
+    title: { default: title, template: `%s | ${siteName}` },
     description,
     alternates: { canonical: SITE_URL },
     openGraph: {
       type: "website",
-      locale: "fa_IR",
-      siteName: SITE_NAME,
+      locale: LOCALE_OG[locale],
+      siteName,
       title,
       description,
       images: ogImages,
@@ -58,15 +81,20 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const settings = await getSiteSettings();
+  const [settings, { locale, lang, dir }] = await Promise.all([
+    getSiteSettings(),
+    getLocaleContext(),
+  ]);
 
   return (
-    <html lang="fa" dir="rtl" suppressHydrationWarning>
+    <html lang={lang} dir={dir} suppressHydrationWarning>
       <body className={`${vazirmatn.variable} antialiased`}>
         <CustomCursor />
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <ToastProvider>{children}</ToastProvider>
-        </ThemeProvider>
+        <LocaleProvider locale={locale}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <ToastProvider>{children}</ToastProvider>
+          </ThemeProvider>
+        </LocaleProvider>
 
         <script
           type="application/ld+json"
@@ -74,9 +102,11 @@ export default async function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Organization",
-              name: SITE_NAME,
+              name: pick(locale, settings.siteName, settings.siteNameEn),
               url: SITE_URL,
-              description: settings.description ?? DEFAULT_DESCRIPTION,
+              description:
+                pick(locale, settings.description, settings.descriptionEn) ??
+                (locale === "en" ? DEFAULT_DESCRIPTION_EN : DEFAULT_DESCRIPTION),
               sameAs: [
                 settings.instagram,
                 settings.telegram,

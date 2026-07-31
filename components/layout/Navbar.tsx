@@ -7,9 +7,11 @@ import { usePathname } from "next/navigation";
 import { Container } from "@/components/layout/Container";
 import { Logo } from "@/components/shared/Logo";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
+import { LanguageToggle } from "@/components/shared/LanguageToggle";
 import { NavLinks } from "@/components/navigation/NavLinks";
 import { MobileNav } from "@/components/navigation/MobileNav";
 import { Button } from "@/components/ui/Button";
+import { useDictionary } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 
 /**
@@ -26,6 +28,7 @@ import { cn } from "@/lib/utils";
  */
 function Navbar() {
   const pathname = usePathname();
+  const d = useDictionary();
   const isHomepage = pathname === "/";
   const [scrolled, setScrolled] = React.useState(false);
 
@@ -59,6 +62,7 @@ function Navbar() {
         <Logo />
         <NavLinks className="hidden lg:flex" />
         <div className="flex items-center gap-2">
+          <LanguageToggle />
           <ThemeToggle />
           <Button
             asChild
@@ -66,7 +70,7 @@ function Navbar() {
             variant={isTransparent ? "accent" : "primary"}
             className="hidden sm:inline-flex"
           >
-            <Link href="/events">ثبت نام رویداد</Link>
+            <Link href="/events">{d.nav.registerCta}</Link>
           </Button>
           <MobileNav />
         </div>

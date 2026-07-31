@@ -4,8 +4,9 @@ import { headers } from "next/headers";
 
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
+import { getDictionary } from "@/lib/i18n/server";
 import {
-  contactFormSchema,
+  createContactFormSchema,
   type ContactFormValues,
 } from "@/features/contact/types/contact";
 
@@ -29,16 +30,19 @@ const SUBMIT_WINDOW_MS = 60 * 60 * 1000;
 export async function sendContactMessage(
   values: ContactFormValues,
 ): Promise<SendContactMessageResult> {
+  const d = await getDictionary();
   const ip = getClientIp(await headers());
   const rateLimit = checkRateLimit(`contact:${ip}`, SUBMIT_LIMIT, SUBMIT_WINDOW_MS);
   if (!rateLimit.allowed) {
-    return { success: false, error: "تعداد درخواست‌ها زیاد است. کمی بعد دوباره تلاش کنید." };
+    return { success: false, error: d.errors.rateLimited };
   }
 
-  const parsed = contactFormSchema.safeParse(values);
+  // Re-validated server-side with the request's locale: the client's own
+  // validation is a convenience, never a guarantee.
+  const parsed = createContactFormSchema(d).safeParse(values);
 
   if (!parsed.success) {
-    return { success: false, error: "اطلاعات وارد شده معتبر نیست." };
+    return { success: false, error: d.errors.invalidInput };
   }
 
   try {
@@ -54,7 +58,7 @@ export async function sendContactMessage(
   } catch {
     return {
       success: false,
-      error: "ارسال پیام با خطا مواجه شد. لطفاً دوباره تلاش کنید.",
+      error: d.errors.contactFailed,
     };
   }
 }

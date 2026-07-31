@@ -125,6 +125,19 @@ function BlogForm({
           </div>
         </div>
 
+        {/* English translation. Optional — the public site shows the Persian
+            text to English visitors when these are left empty. */}
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="titleEn">
+            عنوان (انگلیسی){" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Input id="titleEn" dir="ltr" {...register("titleEn")} />
+          {errors.titleEn ? (
+            <p className="text-sm text-danger">{errors.titleEn.message}</p>
+          ) : null}
+        </div>
+
         <div className="flex flex-col gap-2">
           <Label htmlFor="excerpt">خلاصه</Label>
           <Textarea
@@ -135,6 +148,17 @@ function BlogForm({
           />
           {errors.excerpt ? (
             <p className="text-sm text-danger">{errors.excerpt.message}</p>
+          ) : null}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="excerptEn">
+            خلاصه (انگلیسی){" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Textarea id="excerptEn" rows={2} dir="ltr" {...register("excerptEn")} />
+          {errors.excerptEn ? (
+            <p className="text-sm text-danger">{errors.excerptEn.message}</p>
           ) : null}
         </div>
 
@@ -196,6 +220,62 @@ function BlogForm({
         {errors.content ? (
           <p className="text-sm text-danger">{errors.content.message}</p>
         ) : null}
+      </Card>
+
+      {/* Second editor instance for the English body. Optional — left empty,
+          English visitors see the Persian content. */}
+      <Card className="flex flex-col gap-3">
+        <Label htmlFor="contentEn">
+          محتوا (انگلیسی){" "}
+          <span className="font-normal text-text-secondary">(اختیاری)</span>
+        </Label>
+        <div dir="ltr">
+          <Controller
+            name="contentEn"
+            control={control}
+            render={({ field }) => (
+              <RichTextEditor
+                value={field.value ?? ""}
+                onChange={field.onChange}
+              />
+            )}
+          />
+        </div>
+        {errors.contentEn ? (
+          <p className="text-sm text-danger">{errors.contentEn.message}</p>
+        ) : null}
+      </Card>
+
+      <Card className="flex flex-col gap-5">
+        <h2 className="text-lg font-semibold text-text-primary">سئو (انگلیسی)</h2>
+        {/* The Persian seoTitle/seoDescription columns exist in the database but
+            have never had inputs on this form; only the English counterparts are
+            editable here. */}
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="seoTitleEn">
+            عنوان سئو (انگلیسی){" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Input id="seoTitleEn" dir="ltr" {...register("seoTitleEn")} />
+          {errors.seoTitleEn ? (
+            <p className="text-sm text-danger">{errors.seoTitleEn.message}</p>
+          ) : null}
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="seoDescriptionEn">
+            توضیحات سئو (انگلیسی){" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Textarea
+            id="seoDescriptionEn"
+            rows={2}
+            dir="ltr"
+            {...register("seoDescriptionEn")}
+          />
+          {errors.seoDescriptionEn ? (
+            <p className="text-sm text-danger">{errors.seoDescriptionEn.message}</p>
+          ) : null}
+        </div>
       </Card>
 
       <label className="flex items-center gap-2 text-sm text-text-primary">

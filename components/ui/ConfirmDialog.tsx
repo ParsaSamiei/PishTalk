@@ -4,6 +4,7 @@ import * as React from "react";
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 
 import { Button } from "@/components/ui/Button";
+import { useDictionary } from "@/lib/i18n/client";
 
 interface ConfirmDialogProps {
   readonly trigger: React.ReactNode;
@@ -25,11 +26,12 @@ function ConfirmDialog({
   trigger,
   title,
   description,
-  confirmLabel = "تایید",
-  cancelLabel = "انصراف",
+  confirmLabel,
+  cancelLabel,
   destructive = true,
   onConfirm,
 }: ConfirmDialogProps) {
+  const d = useDictionary();
   const [open, setOpen] = React.useState(false);
   const [isConfirming, setIsConfirming] = React.useState(false);
 
@@ -57,7 +59,7 @@ function ConfirmDialog({
             <div className="mt-6 flex items-center justify-end gap-3">
               <AlertDialogPrimitive.Cancel asChild>
                 <Button type="button" variant="outline" size="sm">
-                  {cancelLabel}
+                  {cancelLabel ?? d.common.cancel}
                 </Button>
               </AlertDialogPrimitive.Cancel>
               <Button
@@ -67,7 +69,7 @@ function ConfirmDialog({
                 isLoading={isConfirming}
                 onClick={handleConfirm}
               >
-                {confirmLabel}
+                {confirmLabel ?? d.common.confirm}
               </Button>
             </div>
           </AlertDialogPrimitive.Content>

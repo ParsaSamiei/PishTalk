@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
 
+import { ForwardChevron } from "@/components/shared/DirectionalIcon";
 import { SITE_URL } from "@/lib/constants";
+import { getDictionary } from "@/lib/i18n/server";
 import { cn } from "@/lib/utils";
 
 export interface BreadcrumbItem {
@@ -18,10 +19,11 @@ interface BreadcrumbsProps {
  * Visual breadcrumb trail + JSON-LD BreadcrumbList, per
  * docs/03_Information_Architecture.md ("Show on Blog, Resources, Gallery,
  * Event Details, About, Rules, FAQ. Never show on homepage.") and
- * docs/08_SEO.md's structured-data requirements. Always prepends "خانه".
+ * docs/08_SEO.md's structured-data requirements. Always prepends the home crumb.
  */
-function Breadcrumbs({ items, variant = "default" }: BreadcrumbsProps) {
-  const allItems: BreadcrumbItem[] = [{ label: "خانه", href: "/" }, ...items];
+async function Breadcrumbs({ items, variant = "default" }: BreadcrumbsProps) {
+  const d = await getDictionary();
+  const allItems: BreadcrumbItem[] = [{ label: d.nav.home, href: "/" }, ...items];
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -41,7 +43,7 @@ function Breadcrumbs({ items, variant = "default" }: BreadcrumbsProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <nav
-        aria-label="مسیر صفحه"
+        aria-label={d.common.breadcrumbLabel}
         className={cn(
           "flex items-center gap-1.5 text-sm",
           variant === "light" ? "text-white/70" : "text-text-secondary"
@@ -51,7 +53,7 @@ function Breadcrumbs({ items, variant = "default" }: BreadcrumbsProps) {
           const isLast = index === allItems.length - 1;
           return (
             <span key={`${item.label}-${index}`} className="flex items-center gap-1.5">
-              {index > 0 ? <ChevronLeft className="size-3.5" aria-hidden="true" /> : null}
+              {index > 0 ? <ForwardChevron className="size-3.5" aria-hidden="true" /> : null}
               {item.href && !isLast ? (
                 <Link
                   href={item.href}
