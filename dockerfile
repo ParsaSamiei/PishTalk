@@ -1,10 +1,16 @@
-FROM node:20-alpine AS deps
+# Node 22, not 20: jsdom@30 -> undici@8.9.0 requires >=22.19.0, and
+# isomorphic-dompurify@3.20 requires ^22.22.2. On Node 20 the build dies in
+# "Collecting page data" with `webidl.util.markAsUncloneable is not a
+# function` — markAsUncloneable landed in Node 22. Applies to the runner
+# stage too, since the standalone bundle ships undici and would otherwise
+# fail at request time rather than at build time.
+FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
 COPY prisma ./prisma
 RUN npm ci
 
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -17,7 +23,7 @@ CMD ["npx", "prisma", "db", "push"]
 FROM builder AS seeder
 CMD ["npx", "prisma", "db", "seed"]
 
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
