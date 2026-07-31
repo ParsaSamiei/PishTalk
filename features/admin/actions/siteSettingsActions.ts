@@ -1,10 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import DOMPurify from "isomorphic-dompurify";
 
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/requireAdmin";
+import { sanitizeHtml } from "@/lib/sanitizeHtml";
 import {
   siteSettingsFormSchema,
   type SiteSettingsFormValues,
@@ -33,7 +33,7 @@ const TRANSLATABLE = [
  * (script tags, event handlers, etc.) is stripped.
  */
 function sanitizeMapsEmbed(html: string): string {
-  return DOMPurify.sanitize(html, {
+  return sanitizeHtml(html, {
     ALLOWED_TAGS: ["iframe"],
     ALLOWED_ATTR: ["src", "width", "height", "style", "allowfullscreen", "loading", "referrerpolicy", "title"],
   });
@@ -92,7 +92,8 @@ export async function updateSiteSettings(values: SiteSettingsFormValues): Promis
 
     revalidatePath("/", "layout");
     return { success: true };
-  } catch {
+  } catch (err) {
+    console.error("updateSiteSettings failed:", err);
     return { success: false, error: "به‌روزرسانی تنظیمات با خطا مواجه شد." };
   }
 }

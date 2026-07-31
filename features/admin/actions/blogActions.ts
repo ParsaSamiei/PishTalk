@@ -1,10 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import DOMPurify from "isomorphic-dompurify";
 
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/requireAdmin";
+import { sanitizeHtml } from "@/lib/sanitizeHtml";
 import {
   blogFormSchema,
   type BlogFormValues,
@@ -92,7 +92,8 @@ export async function createBlog(
     // redirect()'s throw-based control flow with a normal return value made
     // it ambiguous on the client whether create had actually succeeded.
     return { success: true, blogId: blog.id };
-  } catch {
+  } catch (err) {
+    console.error("createBlog failed:", err);
     return { success: false, error: "ثبت مطلب با خطا مواجه شد." };
   }
 }
@@ -130,7 +131,8 @@ export async function updateBlog(
     revalidatePath("/blog");
     revalidatePath("/");
     return { success: true };
-  } catch {
+  } catch (err) {
+    console.error("updateBlog failed:", err);
     return { success: false, error: "به‌روزرسانی مطلب با خطا مواجه شد." };
   }
 }
@@ -146,7 +148,8 @@ export async function deleteBlog(id: string): Promise<ActionResult> {
     revalidatePath("/blog");
     revalidatePath("/");
     return { success: true };
-  } catch {
+  } catch (err) {
+    console.error("deleteBlog failed:", err);
     return { success: false, error: "حذف مطلب با خطا مواجه شد." };
   }
 }
