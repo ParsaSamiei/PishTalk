@@ -25,40 +25,57 @@ const COFFEE = "#2b1810";
 const CREMA = "#c9a26a";
 
 /**
- * Draws the "TP" monogram onto an offscreen canvas at runtime, so the
+ * Draws the "PT" monogram onto an offscreen canvas at runtime, so the
  * scene doesn't need to ship an extra image asset. This is a stylised
- * approximation of the uploaded artwork (bold "T" + "P"), not a pixel copy.
+ * approximation of the uploaded artwork (bold "P" + "T"), not a pixel copy.
  * Swap this out for `useTexture("/images/tp-logo.png")` from drei if you
  * have the real vector logo and want an exact match.
  */
+// function useLogoTexture() {
+//   const [texture, setTexture] = React.useState<THREE.CanvasTexture | null>(
+//     null,
+//   );
+
+//   React.useEffect(() => {
+//     const canvas = document.createElement("canvas");
+//     canvas.width = 512;
+//     canvas.height = 512;
+//     const ctx = canvas.getContext("2d");
+//     if (!ctx) return;
+//     ctx.clearRect(0, 0, 512, 512);
+//     ctx.fillStyle = GOLD;
+//     ctx.font = "900 260px system-ui, sans-serif";
+//     ctx.textAlign = "center";
+//     ctx.textBaseline = "middle";
+//     // Wide spacing so the two glyphs never touch — they were overlapping
+//     // into an unreadable blob at the old 175/340 positions.
+//     ctx.fillText("P", 150, 270);
+//     ctx.fillText("T", 362, 270);
+
+//     const tex = new THREE.CanvasTexture(canvas);
+//     tex.colorSpace = THREE.SRGBColorSpace;
+//     tex.needsUpdate = true;
+//     setTexture(tex);
+
+//     return () => tex.dispose();
+//   }, []);
+
+//   return texture;
+// }
+
+import { useTexture } from "@react-three/drei";
+
 function useLogoTexture() {
-  const [texture, setTexture] = React.useState<THREE.CanvasTexture | null>(
-    null,
-  );
+  const texture = useTexture("/logo.png");
 
   React.useEffect(() => {
-    const canvas = document.createElement("canvas");
-    canvas.width = 512;
-    canvas.height = 512;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    ctx.clearRect(0, 0, 512, 512);
-    ctx.fillStyle = GOLD;
-    ctx.font = "900 260px system-ui, sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    // Wide spacing so the two glyphs never touch — they were overlapping
-    // into an unreadable blob at the old 175/340 positions.
-    ctx.fillText("P", 150, 270);
-    ctx.fillText("T", 362, 270);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.needsUpdate = true;
 
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.colorSpace = THREE.SRGBColorSpace;
-    tex.needsUpdate = true;
-    setTexture(tex);
-
-    return () => tex.dispose();
-  }, []);
+    return () => {
+      texture.dispose();
+    };
+  }, [texture]);
 
   return texture;
 }
@@ -139,7 +156,7 @@ function Steam({ reduced }: { reduced: boolean }) {
           <spriteMaterial
             map={texture}
             transparent
-            opacity={reduced ? 0.2 : 0}
+            opacity={reduced ? 0.12 : 0}
             depthWrite={false}
             blending={THREE.AdditiveBlending}
           />
@@ -183,11 +200,13 @@ function Mug({ reduced }: { reduced: boolean }) {
           // explicit (identity) rotation is boring but reliable — the
           // camera is close to front-on here, so the lack of curvature
           // wrap isn't noticeable.
-          <mesh position={[0, -0.05, 0.94]}>
+          <mesh position={[0, -0.05, 0.99]}>
             <planeGeometry args={[0.8, 0.8]} />
             <meshBasicMaterial
               map={logoTexture}
               transparent
+              alphaTest={0.4}
+              depthWrite
               polygonOffset
               polygonOffsetFactor={-4}
             />
@@ -259,7 +278,7 @@ function Mug({ reduced }: { reduced: boolean }) {
           slightly further in than the tangent point so the tips overlap
           into the wall — a small intentional overlap reads as "attached";
           an exact tangent risks a visible hairline gap. */}
-      <mesh position={[1.3, 0.05, 0]} rotation={[0, 0, (-3 * Math.PI) / 4]}>
+      <mesh position={[1.1, 0.05, 0]} rotation={[0, 0, (-3 * Math.PI) / 4]}>
         <torusGeometry args={[0.42, 0.11, 16, 32, Math.PI * 1.5]} />
         <meshPhysicalMaterial
           color={NAVY}
@@ -277,7 +296,7 @@ function Mug({ reduced }: { reduced: boolean }) {
 
 function Saucer() {
   return (
-    <group position={[0, -1.65, 0]} scale={0.8}>
+    <group position={[0, -1.65, 0]} scale={0.7}>
       <mesh receiveShadow>
         <cylinderGeometry args={[1.9, 1.9, 0.12, 48]} />
         <meshPhysicalMaterial
@@ -342,7 +361,7 @@ function Scene() {
 
 /**
  * Interactive three.js hero centerpiece: a navy-and-gold ceramic mug with
- * a "TP" decal and drifting steam, replacing the flat SVG RobotMascot.
+ * a "PT" decal and drifting steam, replacing the flat SVG RobotMascot.
  * Rotates gently toward the pointer and idles with a soft float — both
  * disabled under prefers-reduced-motion, where it renders as a still
  * scene instead. Mounted client-only via `next/dynamic` (see
