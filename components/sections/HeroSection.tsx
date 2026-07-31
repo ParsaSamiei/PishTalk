@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import {
   motion,
   useMotionValue,
@@ -27,23 +26,9 @@ import { Countdown } from "@/components/shared/Countdown";
 import { GlowOrb } from "@/components/illustrations/GlowOrb";
 import { CircuitBackground } from "@/components/illustrations/CircuitBackground";
 import { FloatingIcon } from "@/components/illustrations/FloatingIcon";
+import { MugIllustration } from "@/components/illustrations/MugIllustration";
 import type { EventDetail } from "@/features/events/types/event";
 import { formatEventDate } from "@/utils/formatDate";
-
-// three.js is client/WebGL-only, so it's loaded on demand instead of in
-// the server-rendered bundle (see CoffeeMugScene.tsx for why).
-const CoffeeMugScene = dynamic(
-  () =>
-    import("@/components/illustrations/CoffeeMugScene").then(
-      (mod) => mod.CoffeeMugScene,
-    ),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="aspect-square w-full animate-pulse rounded-3xl bg-surface-secondary dark:bg-white/5" />
-    ),
-  },
-);
 
 interface HeroSectionProps {
   readonly nextEvent: EventDetail | null;
@@ -224,7 +209,7 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
           transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
           className="relative mx-auto w-full max-w-55 sm:max-w-xs lg:mx-0 lg:max-w-md"
         >
-          <CoffeeMugScene className="w-full" />
+          <MugIllustration className="w-full" />
         </motion.div>
       </Container>
 
