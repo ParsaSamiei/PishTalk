@@ -31,7 +31,7 @@ const TRANSLATABLE = [
  */
 function richTextOrBlank(html: string | undefined): string | undefined {
   if (html === undefined) return undefined;
-  const sanitized = DOMPurify.sanitize(html);
+  const sanitized = sanitizeHtml(html);
   return sanitized.replace(/<p>\s*(<br\s*\/?>)?\s*<\/p>/g, "").trim() === ""
     ? ""
     : sanitized;
@@ -46,7 +46,7 @@ function toBlogData(values: BlogFormValues) {
       // Sanitized here rather than trusting the rich-text editor's output —
       // this action is callable directly regardless of which UI produced
       // the value (docs/05_DATABASE.md: never trust client input).
-      content: DOMPurify.sanitize(values.content),
+      content: sanitizeHtml(values.content),
       coverImage: values.coverImage || null,
       categoryId: values.categoryId || null,
       readingTime:
