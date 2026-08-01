@@ -33,6 +33,17 @@ function ImageUploadField({ id, label, value, onChange, folder, error }: ImageUp
       formData.append("folder", folder);
 
       const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
+
+      // A rejection can come from a proxy in front of the app rather than from
+      // the route handler, in which case the body is an HTML error page, not
+      // JSON. Parsing it unconditionally turned every such failure into a
+      // "JSON.parse: unexpected character" error that hid the real cause, so
+      // branch on the status and content type before trusting the body.
+      if (res.status === 413) throw new Error(d.errors.uploadTooLarge);
+
+      const isJson = res.headers.get("content-type")?.includes("application/json");
+      if (!isJson) throw new Error(d.errors.uploadFailed);
+
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? d.errors.uploadFailed);
       onChange(data.url);

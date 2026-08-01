@@ -327,6 +327,7 @@ export const en: Dictionary = {
     pageBody: "We couldn't load this page. Please try again.",
     globalBody: "An error occurred on the site. Please try again.",
     uploadFailed: "The upload failed.",
+    uploadTooLarge: "This image is too large to upload. Please choose a smaller file.",
   },
 
   notFound: {
