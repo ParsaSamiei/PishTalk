@@ -1,25 +1,23 @@
 import "server-only";
 
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 
 import {
   DEFAULT_LOCALE,
   LOCALE_COOKIE,
   LOCALE_DIRECTION,
   LOCALE_HTML_LANG,
-  localeFromAcceptLanguage,
   resolveLocale,
   type Locale,
 } from "./config";
 import { getDictionaryFor, type Dictionary } from "./dictionaries";
 
 /**
- * Resolves the visitor's locale: the cookie wins, and a visitor who has never
- * chosen one falls back to their browser's `Accept-Language` preference.
+ * Resolves the visitor's locale: the cookie if the visitor has chosen one,
+ * otherwise Persian.
  *
- * The cookie is checked first so an explicit choice always beats the header —
- * an English speaker who deliberately switches to Persian must stay in
- * Persian on the next request.
+ * Persian is unconditional for a first visit. `Accept-Language` is
+ * deliberately not consulted — see the note in the body.
  *
  * Calling this opts the route into dynamic rendering, which is the price of
  * cookie-based locale selection (there is no URL segment to vary on).
@@ -30,11 +28,11 @@ export async function getLocale(): Promise<Locale> {
     const cookieValue = store.get(LOCALE_COOKIE)?.value;
     if (cookieValue) return resolveLocale(cookieValue);
 
-    const headerList = await headers();
-    return (
-      localeFromAcceptLanguage(headerList.get("accept-language")) ??
-      DEFAULT_LOCALE
-    );
+    // No cookie set: Persian is the true default. We used to check
+    // Accept-Language here, but that meant English browsers landed on English,
+    // which isn't the intended default experience. Visitors who want English
+    // can flip the toggle.
+    return DEFAULT_LOCALE;
   } catch {
     // `cookies()`/`headers()` throw outside a request scope (e.g. while
     // prerendering a fully static route). Persian is the site default, so
