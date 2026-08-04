@@ -59,32 +59,3 @@ export function isLocale(value: unknown): value is Locale {
 export function resolveLocale(value: string | undefined | null): Locale {
   return isLocale(value) ? value : DEFAULT_LOCALE;
 }
-
-/**
- * Picks a locale from an `Accept-Language` header, for a visitor who has no
- * locale cookie yet. Persian stays the default, so this can only promote a
- * visitor to English when English genuinely outranks Persian in their stated
- * preferences.
- *
- * Parses quality values ("en-GB,en;q=0.9,fa;q=0.8") rather than trusting the
- * first tag, since the list is not ordered by preference alone.
- */
-export function localeFromAcceptLanguage(header: string | null): Locale | null {
-  if (!header) return null;
-
-  let best: { locale: Locale; q: number } | null = null;
-
-  for (const part of header.split(",")) {
-    const [tag, ...params] = part.trim().split(";");
-    const base = tag.trim().toLowerCase().split("-")[0];
-    if (!isLocale(base)) continue;
-
-    const qParam = params.find((p) => p.trim().startsWith("q="));
-    const q = qParam ? Number.parseFloat(qParam.trim().slice(2)) : 1;
-    if (Number.isNaN(q)) continue;
-
-    if (!best || q > best.q) best = { locale: base, q };
-  }
-
-  return best?.locale ?? null;
-}
