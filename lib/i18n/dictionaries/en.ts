@@ -13,7 +13,7 @@ export const en: Dictionary = {
     blog: "Blog",
     resources: "Resources",
     gallery: "Gallery",
-    rules: "Code of Conduct",
+    rules: "Rules",
     faq: "FAQ",
     about: "About",
     contact: "Contact",
@@ -165,7 +165,8 @@ export const en: Dictionary = {
     emptyPast: "No past events yet",
     emptyUpcoming: "No upcoming events scheduled",
     searchHint: "Try a different term or change the filter.",
-    announceHint: "Pishtalk events are announced here as soon as they're confirmed.",
+    announceHint:
+      "Pishtalk events are announced here as soon as they're confirmed.",
     notFound: "Event not found",
     registerClosed: "Registration for this event is closed",
     registerOpen: "Register for this event",
@@ -197,7 +198,8 @@ export const en: Dictionary = {
     viewAllPosts: "View all posts",
     notFound: "Post not found",
     author: "By the Pishtalk team",
-    homeEmptyDescription: "The first Pishtalk blog posts will appear here soon.",
+    homeEmptyDescription:
+      "The first Pishtalk blog posts will appear here soon.",
   },
 
   resources: {
@@ -260,14 +262,14 @@ export const en: Dictionary = {
   },
 
   rules: {
-    pageTitle: "Code of Conduct",
+    pageTitle: "Rules",
     metaDescription: "The rules for attending Pishtalk events.",
     lead: "To keep Pishtalk a safe and worthwhile space for everyone, please follow these rules.",
-    emptyTitle: "The code of conduct is coming soon",
+    emptyTitle: "The Rules is coming soon",
     emptyDescription:
       "The rules for attending Pishtalk events will appear here soon.",
     previewTitle: "Attending Pishtalk: the ground rules",
-    viewFull: "Read the full code of conduct",
+    viewFull: "Read the full Rules",
   },
 
   contact: {
@@ -327,7 +329,8 @@ export const en: Dictionary = {
     pageBody: "We couldn't load this page. Please try again.",
     globalBody: "An error occurred on the site. Please try again.",
     uploadFailed: "The upload failed.",
-    uploadTooLarge: "This image is too large to upload. Please choose a smaller file.",
+    uploadTooLarge:
+      "This image is too large to upload. Please choose a smaller file.",
   },
 
   notFound: {

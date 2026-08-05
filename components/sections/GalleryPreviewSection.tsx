@@ -25,7 +25,7 @@ async function GalleryPreviewSection({ images }: GalleryPreviewSectionProps) {
   const { locale, dictionary: d } = await getLocaleContext();
 
   return (
-    <Section id="gallery-preview" className="bg-surface-secondary" circuit>
+    <Section id="gallery-preview" circuit>
       <Container className="flex flex-col gap-10">
         <Reveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <SectionTitle

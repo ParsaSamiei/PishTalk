@@ -33,7 +33,7 @@ async function RulesPreviewSection({ rules }: RulesPreviewSectionProps) {
   const { locale, dictionary: d } = await getLocaleContext();
 
   return (
-    <Section id="rules" circuit>
+    <Section id="rules" className="bg-surface-secondary" circuit>
       <Container className="flex flex-col gap-10">
         <Reveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <SectionTitle

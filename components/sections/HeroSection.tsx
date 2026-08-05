@@ -151,13 +151,13 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
           variants={containerVariants}
           className="flex flex-col items-center gap-8 text-center lg:items-start lg:text-start"
         >
-          <motion.span
+          {/* <motion.span
             variants={itemVariants}
             className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-secondary px-4 py-1.5 text-sm text-text-secondary dark:border-white/15 dark:bg-white/5 dark:text-white/80"
           >
             <Bot className="size-4 text-accent" aria-hidden="true" />
             {d.hero.club}
-          </motion.span>
+          </motion.span> */}
 
           <motion.h1
             variants={itemVariants}
@@ -178,7 +178,7 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
 
           <motion.p
             variants={itemVariants}
-            className="max-w-xl text-lg text-text-secondary"
+            className="max-w-xl text-lg text-text-secondary justify"
           >
             {d.hero.subtitle}
           </motion.p>
@@ -189,7 +189,8 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
               className="flex flex-col items-center gap-4 lg:items-start"
             >
               <p className="text-sm text-text-secondary">
-                {d.hero.nextEventPrefix} · {formatEventDate(nextEvent.date, locale)}
+                {d.hero.nextEventPrefix} ·{" "}
+                {formatEventDate(nextEvent.date, locale)}
               </p>
               <Countdown target={nextEvent.date} variant="auto" />
             </motion.div>

@@ -35,8 +35,8 @@ async function WhyAttendSection() {
   const d = await getDictionary();
 
   return (
-    <Section id="why-attend" circuit>
-      <Container className="flex flex-col gap-10">
+    <Section id="why-attend" className="bg-surface-secondary" circuit>
+      <Container className="flex flex-col gap-10 ">
         <Reveal className="mx-auto">
           <SectionTitle
             eyebrow={d.whyAttend.eyebrow}
