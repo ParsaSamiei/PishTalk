@@ -3,9 +3,9 @@ import { NextEventSection } from "@/components/sections/NextEventSection";
 import { AboutSection } from "@/components/sections/AboutSection";
 import { WhyAttendSection } from "@/components/sections/WhyAttendSection";
 import { EventTimelineSection } from "@/components/sections/EventTimelineSection";
-import { PreviousEventsSection } from "@/components/sections/PreviousEventsSection";
+// import { PreviousEventsSection } from "@/components/sections/PreviousEventsSection";
 import { GalleryPreviewSection } from "@/components/sections/GalleryPreviewSection";
-import { ResourcesSection } from "@/components/sections/ResourcesSection";
+// import { ResourcesSection } from "@/components/sections/ResourcesSection";
 import { LatestBlogsSection } from "@/components/sections/LatestBlogsSection";
 import { RulesPreviewSection } from "@/components/sections/RulesPreviewSection";
 import { FaqPreviewSection } from "@/components/sections/FaqPreviewSection";
@@ -13,10 +13,10 @@ import { ContactSection } from "@/components/sections/ContactSection";
 
 import {
   getNextEvent,
-  getPastEvents,
+  // getPastEvents,
 } from "@/features/events/actions/getEvents";
 import { getLatestGalleryImages } from "@/features/gallery/actions/getGallery";
-import { getLatestResources } from "@/features/resources/actions/getResources";
+// import { getLatestResources } from "@/features/resources/actions/getResources";
 import { getLatestBlogs } from "@/features/blogs/actions/getBlogs";
 import { getFaqs } from "@/features/faq/actions/getFaqs";
 import { getRules } from "@/lib/rules";
@@ -42,18 +42,18 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   const [
     nextEvent,
-    pastEvents,
+    // pastEvents,
     galleryImages,
-    resources,
+    // resources,
     blogs,
     faqs,
     rules,
     settings,
   ] = await Promise.all([
     getNextEvent(),
-    getPastEvents(6),
+    // getPastEvents(6),
     getLatestGalleryImages(8),
-    getLatestResources(6),
+    // getLatestResources(6),
     getLatestBlogs(3),
     getFaqs(5),
     getRules(),
@@ -68,9 +68,9 @@ export default async function HomePage() {
       <WhyAttendSection />
       <LatestBlogsSection blogs={blogs} />
       <EventTimelineSection event={nextEvent} />
-      <PreviousEventsSection events={pastEvents} />
+      {/* <PreviousEventsSection events={pastEvents} /> */}
       <GalleryPreviewSection images={galleryImages} />
-      <ResourcesSection resources={resources} />
+      {/* <ResourcesSection resources={resources} /> */}
       <RulesPreviewSection rules={rules} />
       <FaqPreviewSection faqs={faqs} />
       <ContactSection

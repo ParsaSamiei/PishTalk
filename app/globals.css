@@ -23,7 +23,7 @@
   --color-accent: #f4b942;
   --color-accent-hover: #d89e2e;
   --color-surface: #ffffff;
-  --color-surface-secondary: #f8fafc;
+  --color-surface-secondary: #e2e8f0;
   --color-background: #ffffff;
   --color-background-dark: #020817;
   --color-border: #e2e8f0;
@@ -52,7 +52,7 @@
   --color-accent-hover: #d89e2e;
 
   --color-surface: #0f172a;
-  --color-surface-secondary: #0b1220;
+  --color-surface-secondary: #334155;
   --color-background: var(--color-background-dark);
   --color-border: #1e293b;
   --color-text-primary: #f8fafc;

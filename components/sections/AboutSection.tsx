@@ -25,8 +25,8 @@ async function AboutSection() {
   const d = await getDictionary();
 
   return (
-    <Section id="about" className="bg-surface-secondary">
-      <Container className="grid gap-10 lg:grid-cols-2 lg:items-center">
+    <Section id="about">
+      <Container className="grid gap-10 lg:grid-cols-2 lg:items-center bg-surface-secondary">
         <Reveal className="flex flex-col gap-6">
           <SectionTitle
             eyebrow={d.about.eyebrow}

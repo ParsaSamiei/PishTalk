@@ -33,7 +33,9 @@ interface NextEventSectionProps {
  */
 async function NextEventSection({ event }: NextEventSectionProps) {
   const { locale, dictionary: d } = await getLocaleContext();
-  const subtitle = event ? pick(locale, event.subtitle, event.subtitleEn) : null;
+  const subtitle = event
+    ? pick(locale, event.subtitle, event.subtitleEn)
+    : null;
 
   return (
     <Section id="next-event" className="scroll-mt-24" circuit>
