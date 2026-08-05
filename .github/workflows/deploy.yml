@@ -40,6 +40,16 @@ jobs:
           push: true
           tags: ghcr.io/parsasamiei/pishtalk:migrator
 
+      - name: Build and push seeder image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: seeder
+          push: true
+          tags: ghcr.io/parsasamiei/pishtalk:seeder
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
@@ -52,6 +62,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /opt/pishtalk
-            docker compose pull app migrator
+            docker compose pull app migrator seeder
             docker compose up -d
             docker image prune -f
