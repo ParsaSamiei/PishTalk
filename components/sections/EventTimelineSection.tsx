@@ -22,7 +22,7 @@ async function EventTimelineSection({ event }: EventTimelineSectionProps) {
   const hasTimeline = Boolean(event?.timeline.length);
 
   return (
-    <Section id="event-timeline" className="bg-surface-secondary" circuit>
+    <Section id="event-timeline" circuit>
       <Container className="flex flex-col gap-10">
         <Reveal>
           <SectionTitle

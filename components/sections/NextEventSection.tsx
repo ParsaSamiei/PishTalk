@@ -38,11 +38,7 @@ async function NextEventSection({ event }: NextEventSectionProps) {
     : null;
 
   return (
-    <Section
-      id="next-event"
-      className="scroll-mt-24 bg-surface-secondary"
-      circuit
-    >
+    <Section id="next-event" className="scroll-mt-24" circuit>
       <Container className="flex flex-col gap-10">
         <Reveal>
           <SectionTitle

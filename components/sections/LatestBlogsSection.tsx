@@ -20,7 +20,7 @@ async function LatestBlogsSection({ blogs }: LatestBlogsSectionProps) {
   const d = await getDictionary();
 
   return (
-    <Section id="latest-blogs" circuit>
+    <Section id="latest-blogs" className="bg-surface-secondary" circuit>
       <Container className="flex flex-col gap-10">
         <Reveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <SectionTitle
