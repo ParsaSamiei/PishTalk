@@ -95,7 +95,7 @@ async function Footer({
                       alt={sponsor.name}
                       width={200}
                       height={80}
-                      className="h-23 w-auto object-contain"
+                      className="h-18 w-auto object-contain"
                     />
                   </a>
                 ))}

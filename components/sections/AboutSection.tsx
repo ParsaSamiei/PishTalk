@@ -26,14 +26,15 @@ async function AboutSection() {
 
   return (
     <Section id="about" className="bg-surface-secondary">
-      <Container className="grid gap-10 lg:grid-cols-2 lg:items-center ">
-        <Reveal className="flex flex-col gap-6">
+      <Container className="grid gap-10 lg:grid-cols-2 lg:items-center text-justify ">
+        <Reveal className="flex flex-col gap-6 [&_p]:text-justify">
           <SectionTitle
             eyebrow={d.about.eyebrow}
             title={d.about.title}
             description={d.about.description}
+            className="max-w-none"
           />
-          <p className="w-full text-justify leading-relaxed text-text-secondary">
+          <p className="w-full leading-relaxed text-text-secondary ">
             {d.about.body}
           </p>
           <Button asChild variant="outline" className="self-start">

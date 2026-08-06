@@ -150,7 +150,7 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
             directly here.
           */}
           <div
-            className="prose prose-slate max-w-none prose-headings:text-text-primary prose-p:text-text-secondary prose-a:text-accent-hover"
+            className="prose prose-slate max-w-none prose-headings:text-text-primary prose-p:text-text-secondary prose-a:text-accent-hover [&_p]:text-justify "
             dangerouslySetInnerHTML={{ __html: content }}
           />
 
