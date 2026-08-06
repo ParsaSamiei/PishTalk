@@ -57,8 +57,8 @@ export const en: Dictionary = {
   hero: {
     club: "Pishnam Robotics Club",
     titleLead: "A community for engineers in",
-    titleHighlight: "robotics",
-    titleTail: ", AI and technology",
+    titleHighlight: "Robotics",
+    titleTail: " and AI",
     subtitle:
       "Every month we gather to learn, talk and network — alongside engineers and enthusiasts walking a similar path.",
     nextEventPrefix: "Next event",
