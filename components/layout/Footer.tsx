@@ -123,6 +123,16 @@ async function Footer({
                 </Link>
               </li>
             ))}
+            {/* Not part of getMainNavItems: the header nav is already full,
+                so this stays footer-only rather than crowding the navbar. */}
+            <li>
+              <Link
+                href="/my-registrations"
+                className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+              >
+                {d.registration.viewMyRegistrations}
+              </Link>
+            </li>
           </ul>
         </nav>
 

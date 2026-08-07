@@ -195,6 +195,12 @@ export default async function EventPage({ params }: EventPageProps) {
               ) : (
                 <RegistrationForm eventId={event.id} />
               )}
+              <Link
+                href="/my-registrations"
+                className="mt-4 block text-center text-sm text-text-secondary underline-offset-4 transition-colors hover:text-accent-hover hover:underline"
+              >
+                {d.registration.viewMyRegistrations}
+              </Link>
             </Card>
           </div>
 

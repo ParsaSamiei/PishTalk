@@ -27,12 +27,17 @@ export default async function RegisterSuccessPage() {
           {d.registration.successHeading}
         </h1>
         <p className="text-text-secondary">{d.registration.successBody}</p>
-        <div className="mt-4 flex gap-3">
+        <div className="mt-4 flex flex-wrap justify-center gap-3">
           <Button asChild>
             <Link href="/">{d.common.backHome}</Link>
           </Button>
           <Button asChild variant="outline">
             <Link href="/events">{d.about.seeEvents}</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href="/my-registrations">
+              {d.registration.viewMyRegistrations}
+            </Link>
           </Button>
         </div>
       </Container>

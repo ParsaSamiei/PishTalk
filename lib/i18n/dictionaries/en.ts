@@ -315,6 +315,17 @@ export const en: Dictionary = {
     successHeading: "You're registered",
     successBody:
       "We'll send you the event details shortly. We look forward to seeing you!",
+    viewMyRegistrations: "View my registrations",
+    lookupTitle: "My registrations",
+    lookupDescription:
+      "Enter the mobile number and last name you used when registering to see which events you've signed up for and your attendance status.",
+    lookupSubmit: "Search",
+    lookupEmptyTitle: "No registrations found",
+    lookupEmptyDescription:
+      "We couldn't find any registrations for that mobile number and last name. Double-check what you entered.",
+    statusRegistered: "Registered",
+    statusAttended: "Attended",
+    statusCancelled: "Cancelled",
   },
 
   validation: {
