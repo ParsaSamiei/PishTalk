@@ -1,39 +1,31 @@
 "use client";
 
 import { useCountdown } from "@/hooks/useCountdown";
-import { useDictionary } from "@/lib/i18n/client";
+import { useDictionary, useLocale } from "@/lib/i18n/client"; // adjust to your actual export
 import { cn } from "@/lib/utils";
 
 interface CountdownProps {
   readonly target: Date;
   readonly className?: string;
-  /**
-   * "light": white numerals for a permanently-dark backdrop (e.g. the
-   * always-navy panel inside NextEventSection).
-   * "dark": text-primary numerals for a normal light surface.
-   * "auto": follows the site's own light/dark theme — use this on anything
-   * that sits on a background which itself switches with the theme (e.g.
-   * the Hero, which is light in light mode and navy in dark mode).
-   */
   readonly variant?: "light" | "dark" | "auto";
 }
 
-const UNITS: ReadonlyArray<"days" | "hours" | "minutes" | "seconds"> = [
-  "seconds",
-  "minutes",
-  "hours",
-  "days",
-];
+type Unit = "days" | "hours" | "minutes" | "seconds";
 
-/**
- * Live countdown boxes to the next event, per docs/04_DESIGN_SYSTEM.md
- * ("Rounded", "Large Numbers", "Accent Color", "Updates live").
- */
+// Order chosen so that, combined with the page's text direction,
+// the VISUAL result is always: days, hours, minutes, seconds (left → right).
+const UNITS_RTL: ReadonlyArray<Unit> = ["seconds", "minutes", "hours", "days"];
+const UNITS_LTR: ReadonlyArray<Unit> = ["days", "hours", "minutes", "seconds"];
+
 function Countdown({ target, className, variant = "light" }: CountdownProps) {
-  const d = useDictionary();
+  const { locale, dictionary: d } = useLocale();
+
   const countdown = useCountdown(target);
 
   if (countdown.isPast) return null;
+
+  const isRtl = locale === "fa"; // swap for your actual RTL check
+  const UNITS = isRtl ? UNITS_RTL : UNITS_LTR;
 
   return (
     <div
@@ -49,7 +41,8 @@ function Countdown({ target, className, variant = "light" }: CountdownProps) {
             "flex w-16 flex-col items-center gap-1 rounded-2xl px-2 py-3 sm:w-20",
             variant === "light" && "bg-white/10 text-white",
             variant === "dark" && "bg-surface-secondary text-text-primary",
-            variant === "auto" && "bg-surface-secondary text-text-primary dark:bg-white/10 dark:text-white"
+            variant === "auto" &&
+              "bg-surface-secondary text-text-primary dark:bg-white/10 dark:text-white",
           )}
         >
           <span

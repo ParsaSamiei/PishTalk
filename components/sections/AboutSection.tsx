@@ -26,14 +26,15 @@ async function AboutSection() {
 
   return (
     <Section id="about" className="bg-surface-secondary">
-      <Container className="grid gap-10 lg:grid-cols-2 lg:items-center ">
-        <Reveal className="flex flex-col gap-6">
+      <Container className="grid gap-10 lg:grid-cols-2 lg:items-center text-justify ">
+        <Reveal className="flex flex-col gap-6 [&_p]:text-justify">
           <SectionTitle
             eyebrow={d.about.eyebrow}
             title={d.about.title}
             description={d.about.description}
+            className="max-w-none"
           />
-          <p className="w-full text-justify leading-relaxed text-text-secondary">
+          <p className="w-full leading-relaxed text-text-secondary ">
             {d.about.body}
           </p>
           <Button asChild variant="outline" className="self-start">
@@ -45,11 +46,11 @@ async function AboutSection() {
         </Reveal>
 
         <Reveal delay={0.15}>
-          <div className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-[var(--radius-hero)] border border-border bg-surface lg:mx-0 lg:ms-auto dark:bg-primary">
+          <div className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-hero border border-border bg-surface lg:mx-0 lg:ms-auto dark:bg-primary">
             <CircuitBackground
               id="about-panel"
               size={60}
-              className="text-primary/[0.05] dark:text-white/[0.07]"
+              className="text-primary/5 dark:text-white/[0.07]"
             />
             <div
               aria-hidden="true"
@@ -58,13 +59,13 @@ async function AboutSection() {
             <FloatingIcon
               icon={Sparkles}
               size="sm"
-              className="border-border bg-surface-secondary text-text-secondary dark:border-white/10 dark:bg-white/5 dark:text-white/70 top-[16%] start-[14%]"
+              className="border-border bg-surface-secondary text-text-secondary dark:border-white/10 dark:bg-white/5 dark:text-white/70 top-[16%] inset-s-[14%]"
               style={{ animationDelay: "-1s" }}
             />
             <FloatingIcon
               icon={Cpu}
               size="sm"
-              className="border-border bg-surface-secondary text-sky-600 dark:border-white/10 dark:bg-white/5 dark:text-sky-300 bottom-[20%] end-[16%]"
+              className="border-border bg-surface-secondary text-sky-600 dark:border-white/10 dark:bg-white/5 dark:text-sky-300 bottom-[20%] inset-e-[16%]"
               style={{ animationDelay: "-3.4s" }}
             />
             <div className="absolute inset-0 flex items-center justify-center">

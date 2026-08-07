@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/requireAdmin";
+import { resolveCertificateName } from "@/features/registration/types/registration";
 
 /**
  * Registration fields are free text supplied by anonymous site visitors.
@@ -33,6 +34,7 @@ export async function GET() {
   const header = [
     "نام",
     "نام خانوادگی",
+    "نام برای گواهی",
     "موبایل",
     "ایمیل",
     "دانشگاه",
@@ -47,6 +49,7 @@ export async function GET() {
     [
       registration.firstName,
       registration.lastName,
+      resolveCertificateName(registration),
       registration.phone,
       registration.email ?? "",
       registration.university ?? "",

@@ -9,7 +9,7 @@ import { requireAdmin } from "@/lib/requireAdmin";
 // 10MB per docs/05_DATABASE.md
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-const ALLOWED_FOLDERS = ["events", "blog", "gallery", "profile"] as const;
+const ALLOWED_FOLDERS = ["events", "blog", "gallery", "profile", "sponsors"] as const;
 const MAX_DIMENSION = 1600;
 
 export async function POST(request: NextRequest) {

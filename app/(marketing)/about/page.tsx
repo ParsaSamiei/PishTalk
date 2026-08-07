@@ -32,7 +32,7 @@ export default async function AboutPage() {
           <p className="text-lg text-text-secondary">{d.about.pageLead}</p>
         </div>
 
-        <div className="flex flex-col gap-6 leading-relaxed text-text-secondary">
+        <div className="flex flex-col gap-6 leading-relaxed text-text-secondary text-justify">
           <p>{d.about.paragraph1}</p>
           <p>{d.about.paragraph2}</p>
           <p>{d.about.paragraph3}</p>

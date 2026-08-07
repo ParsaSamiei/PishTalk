@@ -21,6 +21,7 @@ export function getMainNavItems(d: Dictionary): readonly NavItem[] {
     { label: d.nav.resources, href: "/resources" },
     { label: d.nav.gallery, href: "/gallery" },
     { label: d.nav.rules, href: "/rules" },
+    { label: d.nav.support, href: "/support" },
     { label: d.nav.faq, href: "/faq" },
     { label: d.nav.about, href: "/about" },
     { label: d.nav.contact, href: "/contact" },

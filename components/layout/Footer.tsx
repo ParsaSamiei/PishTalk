@@ -56,7 +56,9 @@ async function Footer({
     pishnamUrl ?? settings.pishnamUrl ?? "https://pishnam.com";
   // Prop wins, then the admin-set translation, then the dictionary default.
   const taglineText =
-    tagline ?? pick(locale, settings.tagline, settings.taglineEn) ?? d.footer.tagline;
+    tagline ??
+    pick(locale, settings.tagline, settings.taglineEn) ??
+    d.footer.tagline;
   const siteName = pick(locale, settings.siteName, settings.siteNameEn);
   const copyright =
     pick(locale, settings.copyright, settings.copyrightEn) ??
@@ -93,7 +95,7 @@ async function Footer({
                       alt={sponsor.name}
                       width={200}
                       height={80}
-                      className="h-20 w-auto object-contain"
+                      className="h-18 w-auto object-contain"
                     />
                   </a>
                 ))}
@@ -102,7 +104,10 @@ async function Footer({
           ) : null}
         </div>
 
-        <nav aria-label={d.footer.quickLinksLabel} className="flex flex-col gap-2">
+        <nav
+          aria-label={d.footer.quickLinksLabel}
+          className="flex flex-col gap-2"
+        >
           <h3 className="text-sm font-semibold text-text-primary">
             {d.footer.quickLinks}
           </h3>
@@ -118,6 +123,16 @@ async function Footer({
                 </Link>
               </li>
             ))}
+            {/* Not part of getMainNavItems: the header nav is already full,
+                so this stays footer-only rather than crowding the navbar. */}
+            <li>
+              <Link
+                href="/my-registrations"
+                className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+              >
+                {d.registration.viewMyRegistrations}
+              </Link>
+            </li>
           </ul>
         </nav>
 

@@ -159,22 +159,24 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
             {d.hero.club}
           </motion.span> */}
 
-          <motion.h1
-            variants={itemVariants}
-            className="max-w-xl text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl"
-          >
-            {d.hero.titleLead}{" "}
-            <span
-              className="
-                text-gradient-accent
-                drop-shadow-[0_1px_2px_rgba(245,158,11,0.35)]
-                dark:drop-shadow-[0_0_8px_rgba(250,204,21,0.4)]
-                "
+          <div className="min-h-36min-h-[11rem] lg:min-h-52 flex items-center">
+            <motion.h1
+              variants={itemVariants}
+              className="max-w-xl text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl"
             >
-              {d.hero.titleHighlight}
-            </span>
-            {d.hero.titleTail}
-          </motion.h1>
+              {d.hero.titleLead}{" "}
+              <span
+                className="
+        text-gradient-accent
+        drop-shadow-[0_1px_2px_rgba(245,158,11,0.35)]
+        dark:drop-shadow-[0_0_8px_rgba(250,204,21,0.4)]
+      "
+              >
+                {d.hero.titleHighlight}
+              </span>
+              {d.hero.titleTail}
+            </motion.h1>
+          </div>
 
           <motion.p
             variants={itemVariants}
@@ -204,16 +206,39 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
               asChild
               variant="accent"
               size="lg"
-              className="transition-shadow duration-300 hover:shadow-[0_0_32px_rgba(244,185,66,0.35)]"
+              className="transition-shadow duration-300 hover:shadow-[0_0_32px_rgba(244,185,66,0.35)]  border border-white/25"
             >
               <Link href={nextEvent ? `/events/${nextEvent.slug}` : "/events"}>
                 {d.nav.registerCta}
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg">
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="
+                border
+              border-black/20
+              dark:border-white/20
+                bg-transparent
+                text-foreground/85
+              hover:border-black/30
+              dark:hover:border-white/40
+              hover:bg-white/8
+                hover:text-foreground
+                hover:shadow-[0_0_24px_rgba(0,0,0,0.08)]
+                dark:hover:shadow-[0_0_24px_rgba(255,255,255,0.08)]
+                hover:-translate-y-0.5
+                transition-all
+                duration-300
+              "
+            >
               <Link href="/about">
                 {d.hero.aboutCta}
-                <ForwardArrow className="size-4" aria-hidden="true" />
+                <ForwardArrow
+                  className="size-4 transition-transform duration-300 group-hover:translate-x-1"
+                  aria-hidden="true"
+                />
               </Link>
             </Button>
           </motion.div>

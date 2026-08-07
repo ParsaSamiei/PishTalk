@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { CalendarDays } from "lucide-react";
 
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
+import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { EventCard } from "@/components/cards/EventCard";
 import { EventsFilterBar } from "@/features/events/components/EventsFilterBar";
@@ -48,13 +50,20 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
         style={{ animationDelay: "-2s" }}
       />
       <Container className="relative flex flex-col gap-10">
-        <div className="flex flex-col gap-3">
-          <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">
-            {d.events.pageTitle}
-          </h1>
-          <p className="max-w-2xl text-lg text-text-secondary">
-            {d.events.lead}
-          </p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex flex-col gap-3">
+            <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">
+              {d.events.pageTitle}
+            </h1>
+            <p className="max-w-2xl text-lg text-text-secondary">
+              {d.events.lead}
+            </p>
+          </div>
+          <Button asChild variant="outline" className="w-fit shrink-0">
+            <Link href="/my-registrations">
+              {d.registration.viewMyRegistrations}
+            </Link>
+          </Button>
         </div>
 
         <Suspense>

@@ -14,6 +14,7 @@ export const en: Dictionary = {
     resources: "Resources",
     gallery: "Gallery",
     rules: "Rules",
+    support: "Support",
     faq: "FAQ",
     about: "About",
     contact: "Contact",
@@ -57,8 +58,8 @@ export const en: Dictionary = {
   hero: {
     club: "Pishnam Robotics Club",
     titleLead: "A community for engineers in",
-    titleHighlight: "robotics",
-    titleTail: ", AI and technology",
+    titleHighlight: "Robotics",
+    titleTail: " and AI",
     subtitle:
       "Every month we gather to learn, talk and network — alongside engineers and enthusiasts walking a similar path.",
     nextEventPrefix: "Next event",
@@ -272,6 +273,15 @@ export const en: Dictionary = {
     viewFull: "Read the full Rules",
   },
 
+  support: {
+    pageTitle: "Support Pishtalk",
+    metaDescription: "Support Pishtalk and meet the supporters behind it.",
+    lead: "Pishtalk is run with the support of people and organizations who care about growing the Persian-speaking robotics and AI community. If you'd like to support Pishtalk, get in touch through the Contact page.",
+    supportersTitle: "Pishtalk's supporters",
+    emptyTitle: "No supporters listed yet",
+    emptyDescription: "Pishtalk's supporters will be introduced here soon.",
+  },
+
   contact: {
     pageTitle: "Contact",
     metaDescription:
@@ -300,11 +310,25 @@ export const en: Dictionary = {
     company: "Company (optional)",
     profession: "Profession (optional)",
     notes: "Notes (optional)",
+    certificateName: "Name for certificate of attendance (Latin script)",
+    certificateNameHint:
+      "Your name looks like it's written in Persian. Enter your name in Latin script so it can be printed on your certificate of attendance.",
     submit: "Register for this event",
     successTitle: "Registration complete",
     successHeading: "You're registered",
     successBody:
       "We'll send you the event details shortly. We look forward to seeing you!",
+    viewMyRegistrations: "View my registrations",
+    lookupTitle: "My registrations",
+    lookupDescription:
+      "Enter the mobile number and last name you used when registering to see which events you've signed up for and your attendance status.",
+    lookupSubmit: "Search",
+    lookupEmptyTitle: "No registrations found",
+    lookupEmptyDescription:
+      "We couldn't find any registrations for that mobile number and last name. Double-check what you entered.",
+    statusRegistered: "Registered",
+    statusAttended: "Attended",
+    statusCancelled: "Cancelled",
   },
 
   validation: {
@@ -314,6 +338,8 @@ export const en: Dictionary = {
     phoneInvalid: "Enter a valid phone number",
     mobileInvalid: "Mobile number must start with 09 and be 11 digits",
     messageMin: "Message must be at least 10 characters",
+    certificateNameRequired: "Enter your name in Latin script for your certificate of attendance",
+    certificateNameInvalid: "This field must use Latin letters only",
   },
 
   errors: {

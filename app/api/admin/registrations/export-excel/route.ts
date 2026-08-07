@@ -3,6 +3,7 @@ import * as XLSX from "xlsx";
 
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/requireAdmin";
+import { resolveCertificateName } from "@/features/registration/types/registration";
 
 const STATUS_LABELS: Record<string, string> = {
   REGISTERED: "ثبت‌نام شده",
@@ -31,6 +32,7 @@ export async function GET() {
   const rows = registrations.map((registration) => ({
     نام: neutralizeFormula(registration.firstName),
     "نام خانوادگی": neutralizeFormula(registration.lastName),
+    "نام برای گواهی": neutralizeFormula(resolveCertificateName(registration)),
     موبایل: registration.phone,
     ایمیل: registration.email ?? "",
     دانشگاه: neutralizeFormula(registration.university ?? ""),
