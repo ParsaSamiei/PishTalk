@@ -310,6 +310,9 @@ export const en: Dictionary = {
     company: "Company (optional)",
     profession: "Profession (optional)",
     notes: "Notes (optional)",
+    certificateName: "Name for certificate of attendance (Latin script)",
+    certificateNameHint:
+      "Your name looks like it's written in Persian. Enter your name in Latin script so it can be printed on your certificate of attendance.",
     submit: "Register for this event",
     successTitle: "Registration complete",
     successHeading: "You're registered",
@@ -335,6 +338,8 @@ export const en: Dictionary = {
     phoneInvalid: "Enter a valid phone number",
     mobileInvalid: "Mobile number must start with 09 and be 11 digits",
     messageMin: "Message must be at least 10 characters",
+    certificateNameRequired: "Enter your name in Latin script for your certificate of attendance",
+    certificateNameInvalid: "This field must use Latin letters only",
   },
 
   errors: {

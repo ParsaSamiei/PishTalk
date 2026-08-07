@@ -10,6 +10,7 @@ import { DeleteButton } from "@/features/admin/components/DeleteButton";
 import { deleteRegistration } from "@/features/admin/actions/registrationActions";
 import { prisma } from "@/lib/prisma";
 import { formatEventDate } from "@/utils/formatDate";
+import { resolveCertificateName } from "@/features/registration/types/registration";
 import type { Prisma } from "@prisma/client";
 
 const PAGE_SIZE = 25;
@@ -87,6 +88,7 @@ export default async function AdminRegistrationsPage({ searchParams }: AdminRegi
             <thead className="sticky top-0 border-b border-border bg-surface text-text-secondary">
               <tr>
                 <th className="p-4 text-start font-medium">نام</th>
+                <th className="p-4 text-start font-medium">نام (گواهی)</th>
                 <th className="p-4 text-start font-medium">موبایل</th>
                 <th className="p-4 text-start font-medium">ایمیل</th>
                 <th className="p-4 text-start font-medium">دانشگاه / شرکت</th>
@@ -105,6 +107,9 @@ export default async function AdminRegistrationsPage({ searchParams }: AdminRegi
                 >
                   <td className="p-4 font-medium text-text-primary">
                     {registration.firstName} {registration.lastName}
+                  </td>
+                  <td className="p-4 text-text-secondary" dir="ltr">
+                    {resolveCertificateName(registration)}
                   </td>
                   <td className="p-4 text-text-secondary" dir="ltr">
                     {registration.phone}

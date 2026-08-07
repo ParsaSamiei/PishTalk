@@ -83,6 +83,7 @@ export async function createRegistration(
             eventId,
             firstName: parsed.data.firstName,
             lastName: parsed.data.lastName,
+            certificateName: parsed.data.certificateName || null,
             phone: parsed.data.phone,
             email: parsed.data.email || null,
             university: parsed.data.university || null,

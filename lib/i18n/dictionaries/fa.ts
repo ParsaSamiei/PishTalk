@@ -304,6 +304,9 @@ export const fa = {
     company: "شرکت (اختیاری)",
     profession: "حرفه (اختیاری)",
     notes: "توضیحات (اختیاری)",
+    certificateName: "نام برای گواهی حضور (لاتین)",
+    certificateNameHint:
+      "نام شما به فارسی وارد شده است. برای صدور گواهی حضور، نام خود را به لاتین وارد کنید.",
     submit: "ثبت‌نام در رویداد",
     successTitle: "ثبت‌نام موفق",
     successHeading: "ثبت‌نام شما با موفقیت انجام شد",
@@ -329,6 +332,8 @@ export const fa = {
     phoneInvalid: "شماره تلفن معتبر نیست",
     mobileInvalid: "شماره موبایل باید با ۰۹ شروع شود و ۱۱ رقم باشد",
     messageMin: "پیام باید حداقل ۱۰ حرف باشد",
+    certificateNameRequired: "برای صدور گواهی حضور، نام خود را به لاتین وارد کنید",
+    certificateNameInvalid: "این فیلد باید فقط با حروف لاتین نوشته شود",
   },
 
   errors: {

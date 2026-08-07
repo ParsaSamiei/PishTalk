@@ -12,8 +12,10 @@ import { Button } from "@/components/ui/Button";
 import { useDictionary } from "@/lib/i18n/client";
 import {
   createRegistrationFormSchema,
+  isPersianScript,
   type RegistrationFormValues,
 } from "@/features/registration/types/registration";
+import { transliteratePersianName } from "@/features/registration/utils/transliterate";
 import { createRegistration } from "@/features/registration/actions/createRegistration";
 
 interface RegistrationFormProps {
@@ -30,10 +32,29 @@ function RegistrationForm({ eventId }: RegistrationFormProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    watch,
+    setValue,
+    formState: { errors, isSubmitting, dirtyFields },
   } = useForm<RegistrationFormValues>({
     resolver: zodResolver(schema),
   });
+
+  const firstName = watch("firstName");
+  const lastName = watch("lastName");
+  const needsCertificateName = isPersianScript(firstName ?? "") || isPersianScript(lastName ?? "");
+
+  // Pre-fill a transliteration suggestion the first time the field appears,
+  // but never overwrite something the visitor has already typed/edited.
+  React.useEffect(() => {
+    if (needsCertificateName && !dirtyFields.certificateName) {
+      const suggestion = [firstName, lastName]
+        .filter(Boolean)
+        .map((part) => transliteratePersianName(part ?? ""))
+        .join(" ")
+        .trim();
+      setValue("certificateName", suggestion);
+    }
+  }, [needsCertificateName, firstName, lastName, dirtyFields.certificateName, setValue]);
 
   async function onSubmit(values: RegistrationFormValues) {
     setServerError(null);
@@ -76,6 +97,25 @@ function RegistrationForm({ eventId }: RegistrationFormProps) {
           ) : null}
         </div>
       </div>
+
+      {needsCertificateName ? (
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="certificateName">{d.registration.certificateName}</Label>
+          <Input
+            id="certificateName"
+            dir="ltr"
+            aria-invalid={Boolean(errors.certificateName)}
+            aria-describedby="certificateName-hint"
+            {...register("certificateName")}
+          />
+          <p id="certificateName-hint" className="text-sm text-text-secondary">
+            {d.registration.certificateNameHint}
+          </p>
+          {errors.certificateName ? (
+            <p className="text-sm text-danger">{errors.certificateName.message}</p>
+          ) : null}
+        </div>
+      ) : null}
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="phone">{d.registration.phone}</Label>
