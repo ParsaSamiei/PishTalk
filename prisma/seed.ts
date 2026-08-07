@@ -168,6 +168,23 @@ async function main() {
     }
   }
 
+  // --- Sponsors (shown on the public /support page, not the footer) ---
+  const sponsorItems = [
+    {
+      name: "پیشنام",
+      url: "https://pishnam.org",
+      description: "باشگاه رباتیک پیشنام، برگزارکننده پیشتاک.",
+    },
+  ];
+  for (const [index, sponsor] of sponsorItems.entries()) {
+    const existing = await prisma.sponsor.findFirst({
+      where: { name: sponsor.name },
+    });
+    if (!existing) {
+      await prisma.sponsor.create({ data: { ...sponsor, sortOrder: index } });
+    }
+  }
+
   console.log("Seed complete. Next event:", nextEvent.title);
 }
 

@@ -14,6 +14,7 @@ export const en: Dictionary = {
     resources: "Resources",
     gallery: "Gallery",
     rules: "Rules",
+    support: "Support",
     faq: "FAQ",
     about: "About",
     contact: "Contact",
@@ -270,6 +271,15 @@ export const en: Dictionary = {
       "The rules for attending Pishtalk events will appear here soon.",
     previewTitle: "Attending Pishtalk: the ground rules",
     viewFull: "Read the full Rules",
+  },
+
+  support: {
+    pageTitle: "Support Pishtalk",
+    metaDescription: "Support Pishtalk and meet the supporters behind it.",
+    lead: "Pishtalk is run with the support of people and organizations who care about growing the Persian-speaking robotics and AI community. If you'd like to support Pishtalk, get in touch through the Contact page.",
+    supportersTitle: "Pishtalk's supporters",
+    emptyTitle: "No supporters listed yet",
+    emptyDescription: "Pishtalk's supporters will be introduced here soon.",
   },
 
   contact: {

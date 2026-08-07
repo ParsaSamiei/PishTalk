@@ -276,6 +276,31 @@ model Rule {
   @@map("rules")
 }
 
+/// Supporters shown on the public /support page (independent of the
+/// footer's static SPONSORS list in lib/sponsors.ts, which is unaffected).
+/// Managed from /admin/sponsors, per docs/00_AI_INSTRUCTIONS.md's
+/// "Future Expansion: Sponsors".
+model Sponsor {
+  id          String  @id @default(uuid())
+  name        String
+  /// Path under /public/uploads/sponsors. Optional: a supporter can be
+  /// listed by name alone, with no logo uploaded.
+  logo        String?
+  /// Where the logo/name links out to. Optional: a supporter may not have a site.
+  url         String?
+  description String?
+  sortOrder   Int     @default(0) @map("sort_order")
+  published   Boolean @default(true)
+
+  descriptionEn String? @map("description_en")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([sortOrder])
+  @@map("sponsors")
+}
+
 /// Not listed in docs/05_DATABASE.md's table overview, but the Contact Form
 /// component (docs/04_DESIGN_SYSTEM.md) needs somewhere to land submissions
 /// until an email provider is wired up. Minimal by design.

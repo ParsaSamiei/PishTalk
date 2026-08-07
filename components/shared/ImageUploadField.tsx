@@ -13,7 +13,7 @@ interface ImageUploadFieldProps {
   readonly label: string;
   readonly value?: string | null;
   readonly onChange: (url: string) => void;
-  readonly folder: "events" | "blog" | "gallery" | "profile";
+  readonly folder: "events" | "blog" | "gallery" | "profile" | "sponsors";
   readonly error?: string;
 }
 
