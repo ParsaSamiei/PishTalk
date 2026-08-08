@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { mkdir } from "fs/promises";
+import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
-import { Jimp } from "jimp";
-
 import { requireAdmin } from "@/lib/requireAdmin";
+import { decodeImage } from "@/lib/decodeImage";
 
 // 10MB per docs/05_DATABASE.md
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
@@ -49,35 +48,54 @@ export async function POST(request: NextRequest) {
     ? (folderInput as (typeof ALLOWED_FOLDERS)[number])
     : "misc";
 
-  // Everything below was previously unguarded: any failure here (a corrupt
-  // buffer Jimp can't decode, a permissions error on mkdir/write, a full
-  // disk, ...) crashed the route handler with no JSON body at all. The
-  // client's `await res.json()` in ImageUploadField then threw its own,
-  // unrelated parse error on top, masking whatever actually went wrong and
-  // leaving nothing in the server logs to diagnose it from.
+  // Decoding and disk I/O are deliberately in separate try blocks with
+  // distinct messages. They were previously one block behind a single generic
+  // "پردازش تصویر با خطا مواجه شد.", which is what made this bug so hard to
+  // place: an undecodable upload and a permissions error on the uploads
+  // volume produced the identical string, so the message told you nothing
+  // about which half had failed. Keep them apart.
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  let jpeg: Buffer;
   try {
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const uploadDir = path.join(process.cwd(), "public", "uploads", folder);
-    await mkdir(uploadDir, { recursive: true });
-
-    // UUID filename per docs/05_DATABASE.md — never trust uploaded filenames
-    const filename = `${randomUUID()}.jpg`;
-    const filepath = path.join(uploadDir, filename);
-
-    const image = await Jimp.read(buffer);
+    // decodeImage routes webp through a WASM libwebp build; everything else
+    // goes straight to Jimp. See lib/decodeImage.ts for why not sharp.
+    const image = await decodeImage(buffer);
     const { width, height } = image.bitmap;
 
     // Only downscale, never upscale a small source image
     if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
       image.scaleToFit({ w: MAX_DIMENSION, h: MAX_DIMENSION });
     }
-    await image.write(filepath as `${string}.jpg`, { quality: 82 });
+    jpeg = await image.getBuffer("image/jpeg", { quality: 82 });
+  } catch (err) {
+    console.error("Image decode failed:", err);
+    return NextResponse.json(
+      { error: "فایل تصویر معتبر نیست یا آسیب دیده است." },
+      { status: 400 },
+    );
+  }
+
+  try {
+    const uploadDir = path.join(process.cwd(), "public", "uploads", folder);
+    await mkdir(uploadDir, { recursive: true });
+
+    // UUID filename per docs/05_DATABASE.md — never trust uploaded filenames
+    const filename = `${randomUUID()}.jpg`;
+    await writeFile(path.join(uploadDir, filename), jpeg);
 
     return NextResponse.json({ url: `/uploads/${folder}/${filename}` });
   } catch (err) {
-    console.error("Image upload failed:", err);
+    // Log the errno explicitly: EACCES here means the uploads volume is not
+    // writable by the runtime user, which is a deployment problem rather than
+    // anything to do with the file that was uploaded.
+    console.error(
+      "Image write failed:",
+      (err as NodeJS.ErrnoException)?.code ?? "",
+      err,
+    );
     return NextResponse.json(
-      { error: "پردازش تصویر با خطا مواجه شد." },
+      { error: "ذخیره تصویر روی سرور ممکن نشد." },
       { status: 500 },
     );
   }

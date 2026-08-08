@@ -34,6 +34,29 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // lib/decodeImage.ts reads @jsquash's .wasm off disk at runtime via
+  // require.resolve. Keeping the package external stops the bundler from
+  // rewriting that resolution, and the tracing include copies the .wasm into
+  // the standalone output — file tracing does not follow a runtime readFile on
+  // its own, so without this the webp path throws ENOENT in the container
+  // while working perfectly in dev.
+  serverExternalPackages: ["@jsquash/webp", "jimp"],
+  outputFileTracingIncludes: {
+    "/api/admin/upload": ["./node_modules/@jsquash/webp/codec/dec/*.wasm"],
+  },
+  webpack: (config) => {
+    // @jsquash ships .wasm as raw assets to be loaded via readFile and
+    // WebAssembly.compile at runtime. Without this, webpack tries to parse
+    // them as modules and fails with "WebAssembly is not enabled by default".
+    config.experiments = { ...config.experiments, asyncWebAssembly: true };
+    // Treat .wasm as assets rather than entry points; emit them unchanged so
+    // require.resolve finds them where we expect them.
+    config.module.rules.push({
+      test: /\.wasm$/,
+      type: "asset/resource",
+    });
+    return config;
+  },
   images: {
     // Media (event covers, gallery, blog covers, logo/favicon/OG image) is
     // uploaded through the admin panel via /api/admin/upload and served as a
