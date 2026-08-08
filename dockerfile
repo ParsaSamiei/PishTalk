@@ -51,6 +51,13 @@ COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modul
 # already-broken volume has to be chown'd separately.
 RUN mkdir -p ./public/uploads && chown -R nextjs:nodejs ./public/uploads
 
+# Same reasoning for the support receipt images, which deliberately live
+# OUTSIDE public/ because everything under public/uploads is served without
+# authentication (app/uploads/[...path]/route.ts). Without this line Docker
+# would create the `receipts` volume's mount target as root and every receipt
+# upload would fail with EACCES for uid 1001. See lib/receipt-storage.ts.
+RUN mkdir -p ./private-uploads/receipts && chown -R nextjs:nodejs ./private-uploads
+
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000

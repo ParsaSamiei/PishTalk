@@ -38,15 +38,19 @@ function Countdown({ target, className, variant = "light" }: CountdownProps) {
         <div
           key={unit}
           className={cn(
-            "flex w-16 flex-col items-center gap-1 rounded-2xl px-2 py-3 sm:w-20",
-            variant === "light" && "bg-white/10 text-white",
-            variant === "dark" && "bg-surface-secondary text-text-primary",
+            "flex w-16 flex-col items-center gap-1 rounded-2xl px-2 py-3",
+            "border border-white/90 bg-white shadow-md",
+            "transition-all duration-300",
+            "hover:-translate-y-1 hover:shadow-lg",
+            "sm:w-20 sm:py-4",
+            variant === "light" && "bg-white/10 text-white border-white/20",
+            variant === "dark" && "bg-white/75 text-text-primary",
             variant === "auto" &&
-              "bg-surface-secondary text-text-primary dark:bg-white/10 dark:text-white",
+              "bg-white/75 text-text-primary dark:border-white/10 dark:bg-white/10 dark:text-white",
           )}
         >
           <span
-            className="font-mono text-2xl font-bold text-accent sm:text-3xl"
+            className="font-mono text-2xl font-extrabold tracking-tight text-accent-light sm:text-3xl"
             aria-hidden="true"
           >
             {String(countdown[unit]).padStart(2, "0")}

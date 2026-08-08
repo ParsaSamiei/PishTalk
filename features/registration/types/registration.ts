@@ -49,6 +49,13 @@ export function createRegistrationFormSchema(d: Dictionary) {
       company: z.string().trim().max(150).optional().or(z.literal("")),
       profession: z.string().trim().max(150).optional().or(z.literal("")),
       notes: z.string().trim().max(500).optional().or(z.literal("")),
+      // Attendance eligibility acknowledgement. Not persisted — it exists
+      // only to make the visitor affirm the requirement before submitting,
+      // so it is validated but never written to the Registration row.
+      // Required-ness lives in the superRefine below rather than a field-level
+      // .refine(), which would narrow the inferred type to `true` and break
+      // the form's `boolean` input type.
+      eligibilityConfirmed: z.boolean().optional(),
     })
     .superRefine((values, ctx) => {
       const needsCertificateName =
@@ -59,6 +66,14 @@ export function createRegistrationFormSchema(d: Dictionary) {
           code: z.ZodIssueCode.custom,
           path: ["certificateName"],
           message: d.validation.certificateNameRequired,
+        });
+      }
+
+      if (values.eligibilityConfirmed !== true) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["eligibilityConfirmed"],
+          message: d.validation.eligibilityRequired,
         });
       }
     });

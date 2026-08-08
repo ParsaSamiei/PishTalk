@@ -222,9 +222,7 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
               dark:border-white/20
                 bg-transparent
                 text-foreground/85
-              hover:border-black/30
               dark:hover:border-white/40
-              hover:bg-white/8
                 hover:text-foreground
                 hover:shadow-[0_0_24px_rgba(0,0,0,0.08)]
                 dark:hover:shadow-[0_0_24px_rgba(255,255,255,0.08)]

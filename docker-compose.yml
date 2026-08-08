@@ -50,6 +50,13 @@ services:
       - "8080:3000"
     volumes:
       - uploads:/app/public/uploads
+      # Support receipts. Kept out of the `uploads` volume on purpose: that one
+      # is mounted under public/ and is served without authentication, while
+      # receipts contain supporters' bank details and are only readable through
+      # /api/admin/receipts/[id]/image. Without this mount the images land on
+      # the container's writable layer and are lost on the next image update,
+      # leaving database rows pointing at files that no longer exist.
+      - receipts:/app/private-uploads
     environment:
       DATABASE_URL: ${DATABASE_URL}
       AUTH_SECRET: ${AUTH_SECRET:?set AUTH_SECRET in .env, generate with: npx auth secret}
@@ -61,3 +68,4 @@ services:
 volumes:
   pgdata:
   uploads:
+  receipts:

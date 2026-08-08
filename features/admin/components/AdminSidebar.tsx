@@ -15,6 +15,7 @@ import {
   UserCircle,
   MessageSquare,
   HandHeart,
+  ReceiptText,
 } from "lucide-react";
 
 import { Logo } from "@/components/shared/Logo";
@@ -34,6 +35,13 @@ import { cn } from "@/lib/utils";
  * lists Sponsors under "Future Expansion", not the current Sidebar spec.
  * Placed next to Rules since both are simple published-list content pages
  * that feed a single public page (/support, /rules).
+ *
+ * "رسیدهای حمایت" (Support receipts) is an addition too, and the only
+ * queue-shaped section besides Messages: visitors submit bank receipts from
+ * /support and an admin approves or rejects each one. Placed directly after
+ * Sponsors because both belong to the /support page. Note the href does not
+ * prefix-collide with /admin/registrations, /admin/resources or /admin/rules,
+ * which matters because the active state below matches on startsWith.
  */
 export const ADMIN_NAV = [
   { label: "داشبورد", href: "/admin", icon: LayoutDashboard },
@@ -46,6 +54,7 @@ export const ADMIN_NAV = [
   { label: "سوالات متداول", href: "/admin/faq", icon: HelpCircle },
   { label: "قوانین", href: "/admin/rules", icon: ShieldCheck },
   { label: "حامیان", href: "/admin/sponsors", icon: HandHeart },
+  { label: "رسیدهای حمایت", href: "/admin/receipts", icon: ReceiptText },
   { label: "تنظیمات سایت", href: "/admin/settings", icon: Settings },
   { label: "پروفایل", href: "/admin/profile", icon: UserCircle },
 ] as const;

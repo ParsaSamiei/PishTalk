@@ -276,10 +276,34 @@ export const en: Dictionary = {
   support: {
     pageTitle: "Support Pishtalk",
     metaDescription: "Support Pishtalk and meet the supporters behind it.",
-    lead: "Pishtalk is run with the support of people and organizations who care about growing the Persian-speaking robotics and AI community. If you'd like to support Pishtalk, get in touch through the Contact page.",
+    lead: "Pishtalk is supported by people and organizations who care about the growth of the Persian-speaking robotics and AI community. All financial support we receive goes directly back into the community and the operation of Pishtalk — including hosting, maintaining the platform, and organizing and running community events. Pishtalk is not operated as a for-profit website, and no support is taken as personal profit.",
+    contactCta:
+      "If you'd like to support Pishtalk and help us keep building this community, please get in touch through the Contact page.",
     supportersTitle: "Pishtalk's supporters",
     emptyTitle: "No supporters listed yet",
     emptyDescription: "Pishtalk's supporters will be introduced here soon.",
+    paymentTitle: "Financial support",
+    paymentLead:
+      "Transfer any amount to the card number below, then send us a photo of your receipt using the form so we can record your support.",
+    cardNumber: "Card number",
+    cardHolder: "Account holder",
+    sheba: "SHEBA (IBAN)",
+    copy: "Copy",
+    copied: "Copied",
+    toman: "Toman",
+    formTitle: "Send your receipt",
+    fullNameLabel: "Full name",
+    phoneLabel: "Mobile number",
+    amountLabel: "Amount transferred (Toman)",
+    receiptLabel: "Receipt image",
+    receiptHint: "JPG, PNG or WebP — up to 6 MB",
+    chooseFile: "Choose receipt image",
+    submit: "Send receipt",
+    submitting: "Sending...",
+    successTitle: "We've received your receipt",
+    successBody:
+      "Your support will be recorded once we've reviewed it. Thank you for backing Pishtalk.",
+    submitAnother: "Send another receipt",
   },
 
   contact: {
@@ -313,6 +337,8 @@ export const en: Dictionary = {
     certificateName: "Name for certificate of attendance (Latin script)",
     certificateNameHint:
       "Your name looks like it's written in Persian. Enter your name in Latin script so it can be printed on your certificate of attendance.",
+    eligibility:
+      "I confirm that I am at least 18 years old and have a degree in, or am currently studying, robotics, engineering, computer science, or a related field.",
     submit: "Register for this event",
     successTitle: "Registration complete",
     successHeading: "You're registered",
@@ -338,8 +364,15 @@ export const en: Dictionary = {
     phoneInvalid: "Enter a valid phone number",
     mobileInvalid: "Mobile number must start with 09 and be 11 digits",
     messageMin: "Message must be at least 10 characters",
-    certificateNameRequired: "Enter your name in Latin script for your certificate of attendance",
+    certificateNameRequired:
+      "Enter your name in Latin script for your certificate of attendance",
     certificateNameInvalid: "This field must use Latin letters only",
+    eligibilityRequired:
+      "You must confirm you meet the attendance requirements to register",
+    amountMin: "Amount must be at least 1,000 Toman",
+    amountMax: "The amount you entered isn't valid",
+    receiptRequired: "Choose an image of your payment receipt",
+    receiptFormat: "Only JPG, PNG or WebP images are allowed",
   },
 
   errors: {
@@ -357,6 +390,8 @@ export const en: Dictionary = {
     uploadFailed: "The upload failed.",
     uploadTooLarge:
       "This image is too large to upload. Please choose a smaller file.",
+    receiptFailed: "The receipt couldn't be sent. Please try again.",
+    receiptDisabled: "Receipt submission isn't available right now.",
   },
 
   notFound: {

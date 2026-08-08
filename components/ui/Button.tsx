@@ -16,7 +16,7 @@ const buttonVariants = cva(
         secondary:
           "bg-surface-secondary text-text-primary hover:bg-border border border-border hover:shadow-md",
         outline:
-          "border border-border bg-transparent text-text-primary hover:bg-surface-secondary hover:border-accent hover:shadow-md",
+          "border-2 border-text-primary/30 bg-transparent text-text-primary hover:bg-surface-secondary hover:border-accent hover:shadow-[0_0_24px_rgba(244,185,66,0.22)]",
         ghost: "bg-transparent text-text-primary hover:bg-surface-secondary",
         danger:
           "bg-danger text-white hover:bg-danger/90 hover:animate-button-glow hover:shadow-lg",

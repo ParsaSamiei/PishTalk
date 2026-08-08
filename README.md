@@ -484,14 +484,14 @@ npm run db:seed  # Optional, only for initial data
 
 ### Planned Features
 
-- [ ] File upload pipeline for images/PDFs
+- [x] File upload pipeline for images/PDFs
 - [ ] Email notifications for registrations and contact form
 - [ ] Advanced search with filters
 - [ ] Event duplication quick action
 - [ ] Built-in analytics dashboard
 - [ ] Automated email reminders
 - [ ] Social media integration
-- [ ] Multi-language support
+- [x] Multi-language support
 
 ## 🤝 Contributing
 

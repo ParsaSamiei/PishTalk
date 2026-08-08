@@ -22,8 +22,9 @@
   --color-primary-hover: #334155;
   --color-accent: #f4b942;
   --color-accent-hover: #d89e2e;
+  --color-accent-light: #f0ad24;
   --color-surface: #ffffff;
-  --color-surface-secondary: #e2e8f0;
+  --color-surface-secondary: #cbd5e1;
   --color-background: #ffffff;
   --color-background-dark: #020817;
   --color-border: #e2e8f0;
@@ -71,6 +72,7 @@
   --color-primary-hover: var(--color-primary-hover);
   --color-accent: var(--color-accent);
   --color-accent-hover: var(--color-accent-hover);
+  --color-accent-light: var(--color-accent-light);
   --color-surface: var(--color-surface);
   --color-surface-secondary: var(--color-surface-secondary);
   --color-border: var(--color-border);
