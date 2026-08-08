@@ -8,7 +8,9 @@ import { EmptyState } from "@/components/shared/EmptyState";
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { Card } from "@/components/ui/Card";
 import { Reveal } from "@/components/animations/Reveal";
-import { getSponsors } from "@/lib/support";
+import { PaymentDetailsCard } from "@/features/support/components/PaymentDetailsCard";
+import { ReceiptForm } from "@/features/support/components/ReceiptForm";
+import { getSponsors, getSupportPaymentInfo } from "@/lib/support";
 import { getDictionary, getLocaleContext } from "@/lib/i18n/server";
 import { pick } from "@/lib/i18n/content";
 import { SITE_URL } from "@/lib/constants";
@@ -28,7 +30,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function SupportPage() {
   const { locale, dictionary: d } = await getLocaleContext();
-  const sponsors = await getSponsors();
+  const [sponsors, payment] = await Promise.all([
+    getSponsors(),
+    getSupportPaymentInfo(),
+  ]);
 
   return (
     <Section className="pt-12" circuit>
@@ -38,15 +43,42 @@ export default async function SupportPage() {
           <h1 className="text-3xl font-bold text-text-primary sm:text-4xl">
             {d.support.pageTitle}
           </h1>
-          <p className="max-w-2xl text-lg text-text-secondary">{d.support.lead}</p>
+          <p className="max-w-2xl text-lg text-text-secondary text-justify">
+            {d.support.lead}
+          </p>
+          {/*
+            Only point people at the contact page when there is no direct way
+            to give — otherwise the card number sits right below and sending
+            them elsewhere would be the long way round.
+          */}
+          {payment ? null : (
+            <p className="max-w-2xl text-lg text-text-secondary text-justify">
+              {d.support.contactCta}
+            </p>
+          )}
         </div>
+
+        {payment ? (
+          <Reveal>
+            <div className="grid gap-6 lg:grid-cols-2">
+              <PaymentDetailsCard payment={payment} dictionary={d} />
+              <ReceiptForm />
+            </div>
+          </Reveal>
+        ) : null}
 
         {sponsors.length > 0 ? (
           <div className="flex flex-col gap-5">
-            <h2 className="text-xl font-bold text-text-primary">{d.support.supportersTitle}</h2>
+            <h2 className="text-xl font-bold text-text-primary">
+              {d.support.supportersTitle}
+            </h2>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {sponsors.map((sponsor, index) => {
-                const description = pick(locale, sponsor.description, sponsor.descriptionEn);
+                const description = pick(
+                  locale,
+                  sponsor.description,
+                  sponsor.descriptionEn,
+                );
                 const content = (
                   <Card className="group flex h-full flex-col items-center gap-4 p-6 text-center transition-all duration-300 hover:-translate-y-1.5 hover:border-accent/40 hover:shadow-[0_16px_40px_-24px_rgba(244,185,66,0.55)]">
                     {sponsor.logo ? (
@@ -66,16 +98,24 @@ export default async function SupportPage() {
                       </div>
                     )}
                     <div className="flex flex-col gap-1">
-                      <p className="font-medium text-text-primary">{sponsor.name}</p>
+                      <p className="font-medium text-text-primary">
+                        {sponsor.name}
+                      </p>
                       {description ? (
-                        <p className="text-sm text-text-secondary">{description}</p>
+                        <p className="text-sm text-text-secondary">
+                          {description}
+                        </p>
                       ) : null}
                     </div>
                   </Card>
                 );
 
                 return (
-                  <Reveal key={sponsor.id} delay={index * 0.08} className="h-full">
+                  <Reveal
+                    key={sponsor.id}
+                    delay={index * 0.08}
+                    className="h-full"
+                  >
                     {sponsor.url ? (
                       <a
                         href={sponsor.url}

@@ -44,6 +44,12 @@ enum GalleryMediaType {
   VIDEO
 }
 
+enum SupportReceiptStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Admin {
   id           String    @id @default(uuid())
   name         String
@@ -54,6 +60,8 @@ model Admin {
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
   deletedAt    DateTime? @map("deleted_at")
+
+  reviewedReceipts SupportReceipt[]
 
   @@map("admins")
 }
@@ -320,6 +328,38 @@ model ContactMessage {
   @@map("contact_messages")
 }
 
+/// Bank-transfer receipts submitted by anonymous visitors on /support.
+/// Bookkeeping only: approving one does NOT create a public Sponsor row.
+model SupportReceipt {
+  id       String @id @default(uuid())
+  fullName String @map("full_name")
+  phone    String
+
+  /// Whole Tomans. Int rather than BigInt: BigInt is not JSON-serializable and
+  /// leaks awkwardly across the RSC boundary, while the Int ceiling
+  /// (~2.1e9 Toman) is far beyond any plausible donation.
+  amountToman Int @map("amount_toman")
+
+  /// Bare UUID filename inside the private receipts directory — never a path
+  /// or URL, so no value read out of the database can be concatenated into a
+  /// traversal. Resolved by lib/receipt-storage.ts.
+  receiptFile String @map("receipt_file")
+
+  status       SupportReceiptStatus @default(PENDING)
+  adminNote    String?              @map("admin_note")
+  reviewedAt   DateTime?            @map("reviewed_at")
+  reviewedById String?              @map("reviewed_by_id")
+  createdAt    DateTime             @default(now()) @map("created_at")
+  updatedAt    DateTime             @updatedAt @map("updated_at")
+
+  reviewedBy Admin? @relation(fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([phone])
+  @@map("support_receipts")
+}
+
 /// Singleton table: exactly one row should ever exist.
 model SiteSettings {
   id               String  @id @default(uuid())
@@ -360,6 +400,16 @@ model SiteSettings {
   /// field. Added as a minimal, optional extension.
   googleAnalyticsId String? @map("google_analytics_id")
   maintenanceMode  Boolean @default(false) @map("maintenance_mode")
+
+  /// Institute bank details shown on /support so visitors can transfer money
+  /// directly. Stored normalized: card number as 16 bare digits, SHEBA as
+  /// "IR" + 24 digits, both without separators — grouping is render-only.
+  /// `supportPaymentEnabled` defaults to false so the payment block never
+  /// renders with blank details on the deploy that introduces these columns.
+  supportPaymentEnabled Boolean @default(false) @map("support_payment_enabled")
+  supportCardNumber     String? @map("support_card_number")
+  supportCardHolder     String? @map("support_card_holder")
+  supportSheba          String? @map("support_sheba")
 
   updatedAt DateTime @updatedAt @map("updated_at")
 

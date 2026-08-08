@@ -259,6 +259,71 @@ function SiteSettingsForm({ defaultValues }: SiteSettingsFormProps) {
       </Card>
 
       <Card className="flex flex-col gap-5">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-lg font-semibold text-text-primary">حمایت مالی</h2>
+          <p className="text-sm text-text-secondary">
+            این اطلاعات در صفحه حمایت به بازدیدکنندگان نمایش داده می‌شود تا
+            بتوانند مبلغ را کارت‌به‌کارت کنند و سپس تصویر رسید را ارسال کنند.
+          </p>
+        </div>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="supportCardNumber">شماره کارت</Label>
+            <Input
+              id="supportCardNumber"
+              dir="ltr"
+              inputMode="numeric"
+              autoComplete="off"
+              placeholder="6037997712345678"
+              {...register("supportCardNumber")}
+            />
+            {errors.supportCardNumber ? (
+              <p className="text-sm text-danger">{errors.supportCardNumber.message}</p>
+            ) : null}
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="supportCardHolder">نام صاحب کارت</Label>
+            <Input
+              id="supportCardHolder"
+              autoComplete="off"
+              placeholder="مؤسسه رباتیک پیشنام"
+              {...register("supportCardHolder")}
+            />
+            {errors.supportCardHolder ? (
+              <p className="text-sm text-danger">{errors.supportCardHolder.message}</p>
+            ) : null}
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="supportSheba">
+            شماره شبا{" "}
+            <span className="font-normal text-text-secondary">(اختیاری)</span>
+          </Label>
+          <Input
+            id="supportSheba"
+            dir="ltr"
+            autoComplete="off"
+            placeholder="IR123456789012345678901234"
+            {...register("supportSheba")}
+          />
+          {errors.supportSheba ? (
+            <p className="text-sm text-danger">{errors.supportSheba.message}</p>
+          ) : null}
+        </div>
+        <label className="flex items-center gap-2 text-sm text-text-primary">
+          <input
+            type="checkbox"
+            className="size-4 rounded border-border accent-accent"
+            {...register("supportPaymentEnabled")}
+          />
+          نمایش بخش حمایت مالی و ارسال رسید در صفحه حمایت
+        </label>
+        {errors.supportPaymentEnabled ? (
+          <p className="text-sm text-danger">{errors.supportPaymentEnabled.message}</p>
+        ) : null}
+      </Card>
+
+      <Card className="flex flex-col gap-5">
         <h2 className="text-lg font-semibold text-text-primary">آنالیتیکس و نگهداری</h2>
         <div className="flex flex-col gap-2">
           <Label htmlFor="googleAnalyticsId">شناسه Google Analytics (اختیاری)</Label>

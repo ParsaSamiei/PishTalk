@@ -43,6 +43,10 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["@jsquash/webp", "jimp"],
   outputFileTracingIncludes: {
     "/api/admin/upload": ["./node_modules/@jsquash/webp/codec/dec/*.wasm"],
+    // Same reason: the public receipt upload also accepts webp and decodes it
+    // through the same WASM path, so it needs its own tracing entry — these
+    // are matched per route, not inherited.
+    "/api/support/receipt": ["./node_modules/@jsquash/webp/codec/dec/*.wasm"],
   },
   webpack: (config) => {
     // @jsquash ships .wasm as raw assets to be loaded via readFile and

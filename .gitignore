@@ -45,3 +45,7 @@ Archive.zip
 
 # user-uploaded media (persisted via a docker volume in production, see docker-compose.yml)
 /public/uploads
+
+# support receipt images — private, never served from public/ (lib/receipt-storage.ts).
+# There is no .dockerignore, so without this they would also enter the build context.
+/private-uploads

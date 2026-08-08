@@ -1,5 +1,12 @@
 import { z } from "zod";
 
+import {
+  isValidCardNumber,
+  isValidSheba,
+  normalizeCardNumber,
+  normalizeSheba,
+} from "@/lib/bank";
+
 export const siteSettingsFormSchema = z.object({
   siteName: z.string().trim().min(1).max(100),
   tagline: z.string().trim().min(1).max(200),
@@ -49,7 +56,55 @@ export const siteSettingsFormSchema = z.object({
     .optional()
     .or(z.literal("")),
   maintenanceMode: z.boolean().default(false),
-});
+  // Bank details for the /support payment block. The transforms normalize
+  // before validating, so a supporter's card number typed with Persian digits
+  // or spaces ("۶۰۳۷ ۹۹۷۷ ...") is stored as 16 bare Latin digits. Running the
+  // same lib/bank helpers here and in the server action means a value can
+  // never pass client-side validation and then fail on the server.
+  supportPaymentEnabled: z.boolean().default(false),
+  supportCardNumber: z
+    .string()
+    .optional()
+    .transform((value) => normalizeCardNumber(value ?? ""))
+    .refine(
+      (value) => value === "" || isValidCardNumber(value),
+      "شماره کارت باید ۱۶ رقم و معتبر باشد",
+    ),
+  supportCardHolder: z.string().trim().max(100).optional().or(z.literal("")),
+  supportSheba: z
+    .string()
+    .optional()
+    .transform((value) => normalizeSheba(value ?? ""))
+    .refine(
+      (value) => value === "" || isValidSheba(value),
+      "شماره شبا معتبر نیست (IR و ۲۴ رقم)",
+    ),
+})
+  /**
+   * Turning the block on with no card details would render an empty payment
+   * box on the public page, so the toggle is only allowed up once there is
+   * something to show. The issue is attached to the offending field rather
+   * than the checkbox so the admin sees which value is missing. SHEBA stays
+   * optional — card-to-card is the common case.
+   */
+  .superRefine((data, ctx) => {
+    if (!data.supportPaymentEnabled) return;
+
+    if (!data.supportCardNumber) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["supportCardNumber"],
+        message: "برای فعال‌سازی بخش حمایت مالی، شماره کارت را وارد کنید.",
+      });
+    }
+    if (!data.supportCardHolder) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["supportCardHolder"],
+        message: "برای فعال‌سازی بخش حمایت مالی، نام صاحب کارت را وارد کنید.",
+      });
+    }
+  });
 
 export type SiteSettingsFormValues = z.infer<typeof siteSettingsFormSchema>;
 export type SiteSettingsFormInput = z.input<typeof siteSettingsFormSchema>;

@@ -68,6 +68,13 @@ export async function updateSiteSettings(values: SiteSettingsFormValues): Promis
       defaultOgImage: parsed.data.defaultOgImage || null,
       googleAnalyticsId: parsed.data.googleAnalyticsId || null,
       maintenanceMode: parsed.data.maintenanceMode,
+      // Already normalized by the schema's transforms (16 bare digits /
+      // "IR" + 24 digits), so these are stored exactly as lib/bank produces
+      // them and can be compared and copied without re-parsing.
+      supportPaymentEnabled: parsed.data.supportPaymentEnabled,
+      supportCardNumber: parsed.data.supportCardNumber || null,
+      supportCardHolder: parsed.data.supportCardHolder || null,
+      supportSheba: parsed.data.supportSheba || null,
       siteNameEn: parsed.data.siteNameEn,
       taglineEn: parsed.data.taglineEn,
       descriptionEn: parsed.data.descriptionEn,

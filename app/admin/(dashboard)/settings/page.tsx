@@ -43,6 +43,10 @@ export default async function AdminSettingsPage() {
           copyrightEn: settings?.copyrightEn ?? "",
           seoTitleEn: settings?.seoTitleEn ?? "",
           seoDescriptionEn: settings?.seoDescriptionEn ?? "",
+          supportPaymentEnabled: settings?.supportPaymentEnabled ?? false,
+          supportCardNumber: settings?.supportCardNumber ?? "",
+          supportCardHolder: settings?.supportCardHolder ?? "",
+          supportSheba: settings?.supportSheba ?? "",
         }}
       />
     </div>
