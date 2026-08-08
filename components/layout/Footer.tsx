@@ -1,4 +1,4 @@
-import { Globe, Mail, MapPin, Phone } from "lucide-react";
+import { Globe, Mail, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -17,7 +17,7 @@ interface FooterProps {
   readonly contactEmail?: string | null;
   readonly phone?: string | null;
   readonly phone2?: string | null;
-  readonly address?: string | null;
+  // readonly address?: string | null;
   readonly instagram?: string | null;
   readonly telegram?: string | null;
   readonly pishnamUrl?: string | null;
@@ -32,7 +32,7 @@ async function Footer({
   contactEmail,
   phone,
   phone2,
-  address,
+  // address,
   instagram,
   telegram,
   pishnamUrl,
@@ -48,8 +48,8 @@ async function Footer({
   const phoneNumber2 = phone2 ?? settings.phone2;
   // An address is prose, so it gets a translation; the caller's explicit prop
   // wins when provided.
-  const streetAddress =
-    address ?? pick(locale, settings.address, settings.addressEn);
+  // const streetAddress =
+  //   address ?? pick(locale, settings.address, settings.addressEn);
   const instagramUrl = instagram ?? settings.instagram;
   const telegramUrl = telegram ?? settings.telegram;
   const pishnamWebsite =
@@ -125,14 +125,14 @@ async function Footer({
             ))}
             {/* Not part of getMainNavItems: the header nav is already full,
                 so this stays footer-only rather than crowding the navbar. */}
-            <li>
+            {/* <li>
               <Link
                 href="/my-registrations"
                 className="text-sm text-text-secondary transition-colors hover:text-text-primary"
               >
                 {d.registration.viewMyRegistrations}
               </Link>
-            </li>
+            </li> */}
           </ul>
         </nav>
 
@@ -184,7 +184,7 @@ async function Footer({
               </li>
             ) : null}
 
-            {streetAddress ? (
+            {/* {streetAddress ? (
               <li className="flex items-center gap-3">
                 <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-border">
                   <MapPin
@@ -194,7 +194,7 @@ async function Footer({
                 </span>
                 <span>{streetAddress}</span>
               </li>
-            ) : null}
+            ) : null} */}
 
             <li>
               <a
@@ -211,7 +211,7 @@ async function Footer({
             </li>
           </ul>
 
-          {settings.googleMapsEmbed ? (
+          {/* {settings.googleMapsEmbed ? (
             <div
               className="max-h-32 overflow-hidden rounded-card border border-border [&_iframe]:h-full [&_iframe]:w-full"
               style={{ aspectRatio: "16 / 9" }}
@@ -219,7 +219,7 @@ async function Footer({
                 __html: settings.googleMapsEmbed,
               }}
             />
-          ) : null}
+          ) : null} */}
         </div>
       </Container>
 

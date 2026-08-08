@@ -41,6 +41,7 @@ function RegistrationForm({ eventId }: RegistrationFormProps) {
 
   const firstName = watch("firstName");
   const lastName = watch("lastName");
+  const eligibilityConfirmed = watch("eligibilityConfirmed");
   const needsCertificateName = isPersianScript(firstName ?? "") || isPersianScript(lastName ?? "");
 
   // Pre-fill a transliteration suggestion the first time the field appears,
@@ -165,7 +166,31 @@ function RegistrationForm({ eventId }: RegistrationFormProps) {
         <p className="text-sm text-danger">{serverError}</p>
       ) : null}
 
-      <Button type="submit" size="lg" isLoading={isSubmitting}>
+      <div className="flex flex-col gap-2">
+        <label
+          htmlFor="eligibilityConfirmed"
+          className="flex items-start gap-3 text-sm text-text-primary"
+        >
+          <input
+            id="eligibilityConfirmed"
+            type="checkbox"
+            aria-invalid={Boolean(errors.eligibilityConfirmed)}
+            className="mt-0.5 size-4 shrink-0 rounded border-border accent-accent"
+            {...register("eligibilityConfirmed")}
+          />
+          <span>{d.registration.eligibility}</span>
+        </label>
+        {errors.eligibilityConfirmed ? (
+          <p className="text-sm text-danger">{errors.eligibilityConfirmed.message}</p>
+        ) : null}
+      </div>
+
+      <Button
+        type="submit"
+        size="lg"
+        isLoading={isSubmitting}
+        disabled={!eligibilityConfirmed}
+      >
         {d.registration.submit}
       </Button>
     </form>
