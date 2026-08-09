@@ -346,7 +346,7 @@ export const en: Dictionary = {
     successTitle: "Registration complete",
     successHeading: "You're registered",
     successBody:
-      "We'll send you the event details shortly. We look forward to seeing you!",
+      "Your resume will be reviewed, and once approved, we will contact you to coordinate your attendance and provide the event details.",
     viewMyRegistrations: "View my registrations",
     lookupTitle: "My registrations",
     lookupDescription:
