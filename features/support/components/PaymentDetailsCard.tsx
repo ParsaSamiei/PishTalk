@@ -60,7 +60,7 @@ function DetailRow({ label, display, copyValue, numeric = false }: DetailRowProp
  */
 function PaymentDetailsCard({ payment, dictionary: d }: PaymentDetailsCardProps) {
   return (
-    <Card className="flex h-full flex-col gap-4">
+    <Card className="flex h-full min-w-0 flex-col gap-4">
       <div className="flex items-start gap-3">
         <span
           aria-hidden="true"
