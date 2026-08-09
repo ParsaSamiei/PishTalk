@@ -84,7 +84,7 @@ export default async function AdminRegistrationsPage({ searchParams }: AdminRegi
         />
       ) : (
         <Card className="overflow-x-auto p-0">
-          <table className="w-full min-w-[960px] text-start text-sm">
+          <table className="w-full min-w-[1180px] text-start text-sm">
             <thead className="sticky top-0 border-b border-border bg-surface text-text-secondary">
               <tr>
                 <th className="p-4 text-start font-medium">نام</th>
@@ -92,6 +92,7 @@ export default async function AdminRegistrationsPage({ searchParams }: AdminRegi
                 <th className="p-4 text-start font-medium">موبایل</th>
                 <th className="p-4 text-start font-medium">ایمیل</th>
                 <th className="p-4 text-start font-medium">دانشگاه / شرکت</th>
+                <th className="p-4 text-start font-medium">درباره خودشون / دلیل حضور</th>
                 <th className="p-4 text-start font-medium">رویداد</th>
                 <th className="p-4 text-start font-medium">تاریخ ثبت‌نام</th>
                 <th className="p-4 text-start font-medium">عملیات</th>
@@ -119,6 +120,14 @@ export default async function AdminRegistrationsPage({ searchParams }: AdminRegi
                   </td>
                   <td className="p-4 text-text-secondary">
                     {registration.university || registration.company || "—"}
+                  </td>
+                  <td className="p-4 text-text-secondary">
+                    <p
+                      className="line-clamp-3 max-w-xs whitespace-pre-line"
+                      title={registration.notes ?? undefined}
+                    >
+                      {registration.notes || "—"}
+                    </p>
                   </td>
                   <td className="p-4 text-text-secondary">{registration.event.title}</td>
                   <td className="p-4 text-text-secondary">

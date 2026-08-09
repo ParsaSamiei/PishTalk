@@ -336,7 +336,13 @@ export const en: Dictionary = {
     university: "University (optional)",
     company: "Company (optional)",
     profession: "Profession (optional)",
-    notes: "Notes (optional)",
+    notes: "About you & why you want to attend",
+    notesHint:
+      "Please write at least a few sentences covering:\n" +
+      "• Your current job, field of study, or area of work (e.g. CS undergrad, web developer, robotics hobbyist...)\n" +
+      "• Why you want to attend this event — what specifically are you hoping to get out of it?\n" +
+      "• A bit about yourself — your background or relevant experience, so we know who you are.\n" +
+      'This is used only to review and approve registrations — please avoid one- or two-word answers like "interested".',
     certificateName: "Name for certificate of attendance (Latin script)",
     certificateNameHint:
       "Your name looks like it's written in Persian. Enter your name in Latin script so it can be printed on your certificate of attendance.",
@@ -347,14 +353,14 @@ export const en: Dictionary = {
     successHeading: "You're registered",
     successBody:
       "Your resume will be reviewed, and once approved, we will contact you to coordinate your attendance and provide the event details.",
-    viewMyRegistrations: "View my registrations",
-    lookupTitle: "My registrations",
+    viewMyRegistrations: "View my Registrations",
+    lookupTitle: "My Registrations",
     lookupDescription:
       "Enter the mobile number and last name you used when registering to see which events you've signed up for and your attendance status.",
     lookupSubmit: "Search",
-    lookupEmptyTitle: "No registrations found",
+    lookupEmptyTitle: "No Registrations found",
     lookupEmptyDescription:
-      "We couldn't find any registrations for that mobile number and last name. Double-check what you entered.",
+      "We couldn't find any Registrations for that mobile number and last name. Double-check what you entered.",
     statusRegistered: "Registered",
     statusAttended: "Attended",
     statusCancelled: "Cancelled",
@@ -367,6 +373,9 @@ export const en: Dictionary = {
     phoneInvalid: "Enter a valid phone number",
     mobileInvalid: "Mobile number must start with 09 and be 11 digits",
     messageMin: "Message must be at least 10 characters",
+    notesMin:
+      "Please write at least 30 characters about yourself and why you want to attend",
+    notesMax: "This field must not exceed 500 characters",
     certificateNameRequired:
       "Enter your name in Latin script for your certificate of attendance",
     certificateNameInvalid: "This field must use Latin letters only",
