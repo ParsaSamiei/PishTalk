@@ -20,7 +20,7 @@ interface FooterProps {
   // readonly address?: string | null;
   readonly instagram?: string | null;
   readonly telegram?: string | null;
-  readonly pishnamUrl?: string | null;
+  // readonly pishnamUrl?: string | null;
 }
 
 /**
@@ -35,7 +35,7 @@ async function Footer({
   // address,
   instagram,
   telegram,
-  pishnamUrl,
+  // pishnamUrl,
 }: FooterProps) {
   const year = new Date().getFullYear();
   const [settings, { locale, dictionary: d }] = await Promise.all([
@@ -52,8 +52,8 @@ async function Footer({
   //   address ?? pick(locale, settings.address, settings.addressEn);
   const instagramUrl = instagram ?? settings.instagram;
   const telegramUrl = telegram ?? settings.telegram;
-  const pishnamWebsite =
-    pishnamUrl ?? settings.pishnamUrl ?? "https://pishnam.com";
+  // const pishnamWebsite =
+  //   pishnamUrl ?? settings.pishnamUrl ?? "https://pishnam.com";
   // Prop wins, then the admin-set translation, then the dictionary default.
   const taglineText =
     tagline ??
@@ -196,7 +196,7 @@ async function Footer({
               </li>
             ) : null} */}
 
-            <li>
+            {/* <li>
               <a
                 href={pishnamWebsite}
                 target="_blank"
@@ -208,7 +208,7 @@ async function Footer({
                 </span>
                 {d.footer.pishnamSite}
               </a>
-            </li>
+            </li> */}
           </ul>
 
           {/* {settings.googleMapsEmbed ? (
