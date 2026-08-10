@@ -4,7 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle2, Receipt } from "lucide-react";
+import { CheckCircle2, Receipt, Upload, X } from "lucide-react";
 
 import { Label } from "@/components/ui/Label";
 import { Input } from "@/components/ui/Input";
@@ -34,6 +34,7 @@ function ReceiptForm() {
   const [file, setFile] = React.useState<File | null>(null);
   const [fileError, setFileError] = React.useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const schema = React.useMemo(() => createReceiptFormSchema(d), [d]);
 
@@ -89,6 +90,15 @@ function ReceiptForm() {
       return;
     }
     selectFile(selected);
+  }
+
+  function handleRemoveFile() {
+    selectFile(null);
+    setFileError(null);
+    // The input keeps its previous file reference even after we clear our
+    // own state, so re-selecting the exact same file wouldn't fire another
+    // change event unless the input's own value is reset too.
+    if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
   async function onSubmit(values: ReceiptFormValues) {
@@ -158,7 +168,7 @@ function ReceiptForm() {
   }
 
   return (
-    <Card className="flex h-full flex-col gap-4">
+    <Card className="flex h-full min-w-0 flex-col gap-4">
       <div className="flex items-start gap-3">
         <span
           aria-hidden="true"
@@ -214,29 +224,73 @@ function ReceiptForm() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex min-w-0 flex-col gap-2">
           <Label htmlFor="receiptFile">{d.support.receiptLabel}</Label>
+          {/*
+            The native file input's own button/text ("Choose File" / "no
+            file selected") comes straight from the browser's UI locale and
+            can't be restyled or translated with CSS — so the input itself
+            is visually hidden and driven by a normal, localized Button
+            instead. `sr-only` (not `hidden`) keeps it in the accessibility
+            tree and focusable, and the Label's `htmlFor` still points at
+            it, so keyboard and screen-reader users lose nothing.
+          */}
           <input
             id="receiptFile"
+            ref={fileInputRef}
             type="file"
             accept={RECEIPT_ALLOWED_TYPES.join(",")}
             onChange={handleFileChange}
             aria-describedby="receiptFileHint"
-            className="block w-full cursor-pointer rounded-lg border border-border bg-surface text-sm text-text-secondary file:mr-4 file:cursor-pointer file:rounded-e-none file:rounded-s-lg file:border-0 file:bg-accent/15 file:px-4 file:py-2.5 file:text-sm file:font-medium file:text-accent-hover hover:file:bg-accent/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+            className="sr-only"
           />
+          <div className="flex flex-wrap items-center gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload aria-hidden="true" />
+              {file ? d.support.changeFile : d.support.chooseFile}
+            </Button>
+            <span className="min-w-0 flex-1 truncate text-sm text-text-secondary">
+              {file ? file.name : d.support.noFileSelected}
+            </span>
+            {file ? (
+              <button
+                type="button"
+                onClick={handleRemoveFile}
+                aria-label={d.support.removeFile}
+                className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border text-text-secondary transition-colors hover:border-danger/40 hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+              >
+                <X className="size-4" aria-hidden="true" />
+              </button>
+            ) : null}
+          </div>
           <p id="receiptFileHint" className="text-xs text-text-secondary">
             {d.support.receiptHint}
           </p>
           {fileError ? <p className="text-sm text-danger">{fileError}</p> : null}
           {previewUrl ? (
-            <Image
-              src={previewUrl}
-              alt=""
-              width={160}
-              height={160}
-              unoptimized
-              className="mt-1 h-32 w-auto rounded-lg border border-border object-contain"
-            />
+            <div className="relative mt-1 inline-block w-fit">
+              <Image
+                src={previewUrl}
+                alt=""
+                width={160}
+                height={160}
+                unoptimized
+                className="h-32 w-auto rounded-lg border border-border object-contain"
+              />
+              <button
+                type="button"
+                onClick={handleRemoveFile}
+                aria-label={d.support.removeFile}
+                className="absolute -top-2 -end-2 inline-flex size-7 items-center justify-center rounded-full border border-border bg-surface text-text-secondary shadow-sm transition-colors hover:border-danger/40 hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+              >
+                <X className="size-4" aria-hidden="true" />
+              </button>
+            </div>
           ) : null}
         </div>
 

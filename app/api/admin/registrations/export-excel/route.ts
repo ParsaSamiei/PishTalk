@@ -38,6 +38,7 @@ export async function GET() {
     دانشگاه: neutralizeFormula(registration.university ?? ""),
     شرکت: neutralizeFormula(registration.company ?? ""),
     حرفه: neutralizeFormula(registration.profession ?? ""),
+    "درباره خودشون / دلیل حضور": neutralizeFormula(registration.notes ?? ""),
     رویداد: registration.event.title,
     وضعیت: STATUS_LABELS[registration.status] ?? registration.status,
     "تاریخ ثبت‌نام": registration.createdAt.toLocaleDateString("fa-IR"),
