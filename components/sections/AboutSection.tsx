@@ -126,19 +126,19 @@ async function AboutSection() {
               </div>
             </div>
 
-            {/* Mascot on a podium — the same hand-drawn, Framer Motion-animated
-            robot used on the 404 page (blink, wave, float, glowing chest
-            lights) instead of a static Lucide glyph, so the panel's
-            focal point actually reads as alive. Staged like the
-            "guest of honor" pose from the reference illustration; its
-            own drawn ground shadow doubles as the podium's rim light. */}
-            <div className="absolute inset-x-0 bottom-[7%] flex flex-col items-center">
+            {/* Mascot head — the same hand-drawn, Framer Motion-animated
+            robot head used on the 404 page (blink, float, glowing antenna)
+            instead of a static Lucide glyph, so the panel's focal point
+            actually reads as alive. Centered and scaled up so it reads as
+            the panel's "cherry" — the thing your eye lands on first —
+            rather than a small accent tucked at the bottom. */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
               <div
                 aria-hidden="true"
-                className="absolute bottom-4 size-24 rounded-full bg-accent/20 blur-2xl"
+                className="absolute size-40 rounded-full bg-accent/20 blur-2xl"
               />
-              <RobotMascot className="relative w-28 sm:w-32" />
-              <span className="-mt-3 h-2.5 w-28 rounded-full bg-border/70 dark:bg-white/10" />
+              <RobotMascot className="relative w-40 sm:w-48" />
+              <span className="-mt-4 h-3 w-36 rounded-full bg-border/70 dark:bg-white/10" />
             </div>
 
             {/* Floating icons with enhanced-float overrides */}

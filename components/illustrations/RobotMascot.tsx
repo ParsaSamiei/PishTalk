@@ -27,14 +27,15 @@ export function RobotMascot({ className }: RobotMascotProps) {
   const smoothX = useSpring(mouseX, springConfig);
   const smoothY = useSpring(mouseY, springConfig);
 
-  // Constrained head movement so it stays naturally attached to the neck
-  const headX = useTransform(smoothX, [-1, 1], [-8, 8]);
-  const headY = useTransform(smoothY, [-1, 1], [-5, 5]);
+  // Subtle head tilt/parallax layered on top of the float animation
+  const headX = useTransform(smoothX, [-1, 1], [-6, 6]);
+  const headY = useTransform(smoothY, [-1, 1], [-4, 4]);
   const headRotate = useTransform(smoothX, [-1, 1], [-5, 5]);
 
-  // Constrained eye movement — max 10px travel ensures they never leave the navy screen
-  const eyeX = useTransform(smoothX, [-1, 1], [-10, 10]);
-  const eyeY = useTransform(smoothY, [-1, 1], [-6, 6]);
+  // Constrained eye movement — kept small and subtle so it's a hint of
+  // tracking rather than eyes visibly darting around the screen
+  const eyeX = useTransform(smoothX, [-1, 1], [-4, 4]);
+  const eyeY = useTransform(smoothY, [-1, 1], [-2.5, 2.5]);
 
   useEffect(() => {
     if (shouldReduceMotion) return;
@@ -87,19 +88,6 @@ export function RobotMascot({ className }: RobotMascotProps) {
         ease: "easeInOut" as const,
       };
 
-  // Friendly bounce for the wave
-  const waveAnimate = shouldReduceMotion
-    ? { y: -3 }
-    : { y: [0, -14, -2, -14, 0] };
-  const waveTransition = shouldReduceMotion
-    ? { duration: 0 }
-    : {
-        duration: 1.6,
-        repeat: Infinity,
-        repeatDelay: 1.2,
-        ease: "easeInOut" as const,
-      };
-
   const antennaAnimate = shouldReduceMotion
     ? { opacity: 0.9, scale: 1 }
     : { opacity: [0.65, 1, 0.65], scale: [1, 1.25, 1] };
@@ -107,18 +95,9 @@ export function RobotMascot({ className }: RobotMascotProps) {
     ? { duration: 0 }
     : { duration: 2.2, repeat: Infinity, ease: "easeInOut" as const };
 
-  const dotTransition = (delay: number) =>
-    shouldReduceMotion
-      ? { duration: 0 }
-      : { duration: 1.4, repeat: Infinity, ease: "easeInOut" as const, delay };
-  const dotAnimate = shouldReduceMotion
-    ? { opacity: 0.9 }
-    : { opacity: [0.3, 1, 0.3], y: [0, -2.5, 0] };
-
   const SCREEN = "#0F172A";
   const EYE = "#E2E8F0";
   const BODY = "#D5A844";
-  const BODY_SHADE = "#AD832D";
   const HIGHLIGHT = "#E5C477";
 
   const ANTENNA_STEM = "stroke-[#0F172A]/30 dark:stroke-white/40";
@@ -126,7 +105,7 @@ export function RobotMascot({ className }: RobotMascotProps) {
   return (
     <motion.svg
       aria-hidden="true"
-      viewBox="0 0 280 300"
+      viewBox="0 0 280 200"
       className={cn("select-none cursor-pointer", className)}
       xmlns="http://www.w3.org/2000/svg"
       // Pleasant pop on hover without being too aggressive
@@ -143,86 +122,33 @@ export function RobotMascot({ className }: RobotMascotProps) {
       {/* Ground shadow */}
       <motion.ellipse
         cx="140"
-        cy="286"
-        rx="56"
+        cy="176"
+        rx="50"
         ry="9"
         fill="#020817"
         animate={shadowAnimate}
         transition={floatTransition}
-        style={{ transformOrigin: "140px 286px" }}
+        style={{ transformOrigin: "140px 176px" }}
       />
 
-      {/* Main floating body container */}
+      {/* Main floating head — no body, arms, or legs; just the head
+      assembly bobbing on its own above the podium/shadow. */}
       <motion.g animate={floatAnimate} transition={floatTransition}>
-        {/* Left resting shoulder nub */}
-        <circle cx="85" cy="196" r="12" fill={BODY_SHADE} />
-
-        {/* Body Base */}
-        <rect x="90" y="170" width="100" height="100" rx="30" fill={BODY} />
-        <ellipse
-          cx="120"
-          cy="184"
-          rx="22"
-          ry="8"
-          fill={HIGHLIGHT}
-          opacity="0.35"
-        />
-
-        {/* Chest screen with animated typing indicator */}
-        <rect x="110" y="196" width="60" height="30" rx="10" fill={SCREEN} />
-        <motion.circle
-          cx="128"
-          cy="211"
-          r="3.2"
-          fill={EYE}
-          animate={dotAnimate}
-          transition={dotTransition(0)}
-        />
-        <motion.circle
-          cx="140"
-          cy="211"
-          r="3.2"
-          fill={EYE}
-          animate={dotAnimate}
-          transition={dotTransition(0.2)}
-        />
-        <motion.circle
-          cx="152"
-          cy="211"
-          r="3.2"
-          fill={EYE}
-          animate={dotAnimate}
-          transition={dotTransition(0.4)}
-        />
-
-        {/* Neck */}
-        <rect x="128" y="150" width="24" height="22" rx="8" fill={BODY} />
-
-        {/* Interactive Right Arm / Shoulder Waving Nub */}
-        <motion.circle
-          cx="195"
-          cy="196"
-          r="12"
-          fill={BODY_SHADE}
-          animate={waveAnimate}
-          transition={waveTransition}
-        />
-
-        {/* --- Interactive Head & Antenna Assembly --- */}
+        {/* Subtle cursor-follow tilt layered on top of the float */}
         <motion.g
           style={{
             x: headX,
             y: headY,
             rotate: headRotate,
-            transformOrigin: "140px 140px",
+            transformOrigin: "140px 113px",
           }}
         >
           {/* Antenna Stem */}
           <line
             x1="140"
-            y1="76"
+            y1="70"
             x2="140"
-            y2="50"
+            y2="44"
             className={ANTENNA_STEM}
             strokeWidth="3"
             strokeLinecap="round"
@@ -231,28 +157,28 @@ export function RobotMascot({ className }: RobotMascotProps) {
           {/* Antenna Light & Glow */}
           <motion.circle
             cx="140"
-            cy="44"
+            cy="38"
             r="15"
             fill="url(#robot-antenna-glow)"
             animate={antennaAnimate}
             transition={antennaTransition}
-            style={{ transformOrigin: "140px 44px" }}
+            style={{ transformOrigin: "140px 38px" }}
           />
           <motion.circle
             cx="140"
-            cy="44"
+            cy="38"
             r="6"
             fill={BODY}
             animate={antennaAnimate}
             transition={antennaTransition}
-            style={{ transformOrigin: "140px 44px" }}
+            style={{ transformOrigin: "140px 38px" }}
           />
 
           {/* Head Base */}
-          <rect x="85" y="76" width="110" height="86" rx="28" fill={BODY} />
+          <rect x="85" y="70" width="110" height="86" rx="28" fill={BODY} />
           <ellipse
             cx="115"
-            cy="90"
+            cy="84"
             rx="26"
             ry="8"
             fill={HIGHLIGHT}
@@ -260,7 +186,7 @@ export function RobotMascot({ className }: RobotMascotProps) {
           />
 
           {/* Face Screen */}
-          <rect x="101" y="92" width="78" height="56" rx="18" fill={SCREEN} />
+          <rect x="101" y="86" width="78" height="56" rx="18" fill={SCREEN} />
 
           {/* Eyes & Smile — Tightly constrained so they never clip out of the screen */}
           <motion.g style={{ x: eyeX, y: eyeY }}>
@@ -268,15 +194,15 @@ export function RobotMascot({ className }: RobotMascotProps) {
             <motion.g
               animate={blinkAnimate}
               transition={blinkTransition}
-              style={{ transformOrigin: "140px 119px" }}
+              style={{ transformOrigin: "140px 113px" }}
             >
-              <rect x="114" y="110" width="14" height="18" rx="7" fill={EYE} />
-              <rect x="152" y="110" width="14" height="18" rx="7" fill={EYE} />
+              <rect x="114" y="104" width="14" height="18" rx="7" fill={EYE} />
+              <rect x="152" y="104" width="14" height="18" rx="7" fill={EYE} />
             </motion.g>
 
             {/* Smile */}
             <path
-              d="M120 138 Q140 148 160 138"
+              d="M120 132 Q140 142 160 132"
               stroke={EYE}
               strokeWidth="3"
               strokeLinecap="round"
