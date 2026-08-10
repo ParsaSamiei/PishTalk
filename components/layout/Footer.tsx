@@ -10,7 +10,7 @@ import { getMainNavItems } from "@/lib/navigation";
 import { getSiteSettings } from "@/lib/site-settings";
 import { getLocaleContext } from "@/lib/i18n/server";
 import { pick } from "@/lib/i18n/content";
-import { SPONSORS } from "@/lib/sponsors";
+import { getSponsors } from "@/lib/support";
 
 interface FooterProps {
   readonly tagline?: string;
@@ -38,9 +38,12 @@ async function Footer({
   // pishnamUrl,
 }: FooterProps) {
   const year = new Date().getFullYear();
-  const [settings, { locale, dictionary: d }] = await Promise.all([
+  const [settings, { locale, dictionary: d }, sponsors] = await Promise.all([
     getSiteSettings(),
     getLocaleContext(),
+    // Same Sponsor model / admin/sponsors screen that backs the /support
+    // page, so a supporter added there shows up here automatically.
+    getSponsors(),
   ]);
   const navItems = getMainNavItems(d);
   const email = contactEmail ?? settings.contactEmail;
@@ -73,35 +76,6 @@ async function Footer({
             {taglineText}
           </p>
           <SocialLinks instagram={instagramUrl} telegram={telegramUrl} />
-
-          {SPONSORS.length > 0 ? (
-            <div className="mt-1 flex flex-col gap-2">
-              <h3 className="text-sm font-semibold text-text-primary">
-                {d.footer.sponsors}
-              </h3>
-
-              <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
-                {SPONSORS.map((sponsor) => (
-                  <a
-                    key={sponsor.name}
-                    href={sponsor.url}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    aria-label={sponsor.name}
-                    className="opacity-60  transition-all duration-150 hover:opacity-100 hover:grayscale-0"
-                  >
-                    <Image
-                      src={sponsor.logo}
-                      alt={sponsor.name}
-                      width={200}
-                      height={80}
-                      className="h-18 w-auto object-contain"
-                    />
-                  </a>
-                ))}
-              </div>
-            </div>
-          ) : null}
         </div>
 
         <nav
@@ -112,7 +86,7 @@ async function Footer({
             {d.footer.quickLinks}
           </h3>
 
-          <ul className="flex flex-col gap-1.5">
+          <ul className="grid grid-flow-col grid-rows-3 gap-x-6 gap-y-1.5">
             {navItems.slice(0, 6).map((item) => (
               <li key={item.href}>
                 <Link
@@ -222,6 +196,54 @@ async function Footer({
           ) : null} */}
         </div>
       </Container>
+
+      {sponsors.length > 0 ? (
+        <div className="border-t border-border">
+          <Container className="flex flex-col items-center gap-3 py-6">
+            <h3 className="text-sm font-semibold text-text-primary">
+              {d.footer.sponsors}
+            </h3>
+
+            {/* justify-center means a single sponsor sits dead-center
+            instead of hugging the start edge, and a full row stays
+            centered as a group rather than spreading edge to edge. */}
+            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+              {sponsors.map((sponsor) =>
+                sponsor.logo ? (
+                  <a
+                    key={sponsor.id}
+                    href={sponsor.url ?? undefined}
+                    target={sponsor.url ? "_blank" : undefined}
+                    rel={sponsor.url ? "noreferrer noopener" : undefined}
+                    aria-label={sponsor.name}
+                    className="opacity-60 transition-all duration-150 hover:opacity-100 hover:grayscale-0"
+                  >
+                    <Image
+                      src={sponsor.logo}
+                      alt={sponsor.name}
+                      width={200}
+                      height={80}
+                      className="h-18 w-auto object-contain"
+                    />
+                  </a>
+                ) : (
+                  // A supporter can be listed by name alone (no logo
+                  // uploaded in the admin panel), so fall back to text.
+                  <a
+                    key={sponsor.id}
+                    href={sponsor.url ?? undefined}
+                    target={sponsor.url ? "_blank" : undefined}
+                    rel={sponsor.url ? "noreferrer noopener" : undefined}
+                    className="text-sm font-medium text-text-secondary opacity-60 transition-all duration-150 hover:text-text-primary hover:opacity-100"
+                  >
+                    {sponsor.name}
+                  </a>
+                ),
+              )}
+            </div>
+          </Container>
+        </div>
+      ) : null}
 
       <div className="border-t border-border">
         <Container className="py-4 text-center text-sm text-text-secondary">
