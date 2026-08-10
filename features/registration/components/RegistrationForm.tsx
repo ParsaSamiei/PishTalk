@@ -159,7 +159,19 @@ function RegistrationForm({ eventId }: RegistrationFormProps) {
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="notes">{d.registration.notes}</Label>
-        <Textarea id="notes" rows={3} {...register("notes")} />
+        <p id="notes-hint" className="whitespace-pre-line text-sm text-text-secondary">
+          {d.registration.notesHint}
+        </p>
+        <Textarea
+          id="notes"
+          rows={4}
+          aria-invalid={Boolean(errors.notes)}
+          aria-describedby="notes-hint"
+          {...register("notes")}
+        />
+        {errors.notes ? (
+          <p className="text-sm text-danger">{errors.notes.message}</p>
+        ) : null}
       </div>
 
       {serverError ? (

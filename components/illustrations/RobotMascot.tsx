@@ -1,6 +1,13 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  useReducedMotion,
+} from "framer-motion";
+import { useEffect } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -8,30 +15,65 @@ interface RobotMascotProps {
   readonly className?: string;
 }
 
-/**
- * A friendly, custom-drawn robot mascot — flat, minimal and geometric per
- * docs/02_BRAND_IDENTITY.md's illustration rules (no stock art, no 3D
- * renders). It idles with a gentle float, blinks, and waves hello, all via
- * Framer Motion.
- *
- * The Hero it lives in follows the site's light/dark theme, so the
- * mascot's own palette inverts to match: a navy body with light details in
- * light mode, a light body with navy details in dark mode (the original
- * look). This is done purely with Tailwind `dark:` classes — no
- * `useTheme()` — so there's no hydration flash; accent gold/sky/green stay
- * constant since they read clearly against either body colour.
- */
-function RobotMascot({ className }: RobotMascotProps) {
+export function RobotMascot({ className }: RobotMascotProps) {
   const shouldReduceMotion = useReducedMotion();
 
-  const floatAnimate = shouldReduceMotion ? { y: 0 } : { y: [0, -14, 0] };
+  // --- Interactive Cursor Tracking (Global) ---
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  // Smooth out mouse movements with a spring for natural momentum
+  const springConfig = { stiffness: 100, damping: 20 };
+  const smoothX = useSpring(mouseX, springConfig);
+  const smoothY = useSpring(mouseY, springConfig);
+
+  // Subtle head tilt/parallax layered on top of the float animation
+  const headX = useTransform(smoothX, [-1, 1], [-6, 6]);
+  const headY = useTransform(smoothY, [-1, 1], [-4, 4]);
+  const headRotate = useTransform(smoothX, [-1, 1], [-5, 5]);
+
+  // Constrained eye movement — kept small and subtle so it's a hint of
+  // tracking rather than eyes visibly darting around the screen
+  const eyeX = useTransform(smoothX, [-1, 1], [-4, 4]);
+  const eyeY = useTransform(smoothY, [-1, 1], [-2.5, 2.5]);
+
+  useEffect(() => {
+    if (shouldReduceMotion) return;
+
+    const handleWindowMouseMove = (event: MouseEvent) => {
+      // Calculate cursor position as a normalized value between -1 and 1
+      const { innerWidth, innerHeight } = window;
+      const x = (event.clientX / innerWidth) * 2 - 1;
+      const y = (event.clientY / innerHeight) * 2 - 1;
+
+      mouseX.set(x);
+      mouseY.set(y);
+    };
+
+    window.addEventListener("mousemove", handleWindowMouseMove);
+    return () => window.removeEventListener("mousemove", handleWindowMouseMove);
+  }, [mouseX, mouseY, shouldReduceMotion]);
+
+  // --- Animation Variants & Sequences ---
+
+  // Organic, multi-axis floating sequence (balanced travel)
+  const floatAnimate = shouldReduceMotion
+    ? { y: 0, x: 0, rotate: 0 }
+    : {
+        y: [0, -16, -4, -16, 0],
+        x: [0, 4, -4, 2, 0],
+        rotate: [0, 1.5, -1.5, 1, 0],
+      };
   const floatTransition = shouldReduceMotion
     ? { duration: 0 }
-    : { duration: 4, repeat: Infinity, ease: "easeInOut" as const };
+    : { duration: 5.5, repeat: Infinity, ease: "easeInOut" as const };
 
   const shadowAnimate = shouldReduceMotion
-    ? { scale: 1, opacity: 0.32 }
-    : { scale: [1, 0.85, 1], opacity: [0.34, 0.2, 0.34] };
+    ? { scale: 1, opacity: 0.3 }
+    : {
+        scale: [1, 0.8, 0.92, 0.8, 1],
+        opacity: [0.35, 0.18, 0.28, 0.18, 0.35],
+      };
 
   const blinkAnimate = shouldReduceMotion
     ? { scaleY: 1 }
@@ -46,213 +88,129 @@ function RobotMascot({ className }: RobotMascotProps) {
         ease: "easeInOut" as const,
       };
 
-  const waveAnimate = shouldReduceMotion
-    ? { rotate: -14 }
-    : { rotate: [0, -24, -4, -24, 0] };
-  const waveTransition = shouldReduceMotion
-    ? { duration: 0 }
-    : {
-        duration: 1.9,
-        repeat: Infinity,
-        repeatDelay: 1.6,
-        ease: "easeInOut" as const,
-      };
-
   const antennaAnimate = shouldReduceMotion
     ? { opacity: 0.9, scale: 1 }
-    : { opacity: [0.65, 1, 0.65], scale: [1, 1.2, 1] };
+    : { opacity: [0.65, 1, 0.65], scale: [1, 1.25, 1] };
   const antennaTransition = shouldReduceMotion
     ? { duration: 0 }
     : { duration: 2.2, repeat: Infinity, ease: "easeInOut" as const };
 
-  const lightTransition = (delay: number) =>
-    shouldReduceMotion
-      ? { duration: 0 }
-      : { duration: 1.8, repeat: Infinity, ease: "easeInOut" as const, delay };
-  const lightAnimate = shouldReduceMotion
-    ? { opacity: 0.9 }
-    : { opacity: [0.35, 1, 0.35] };
+  const SCREEN = "#0F172A";
+  const EYE = "#E2E8F0";
+  const BODY = "#D5A844";
+  const HIGHLIGHT = "#E5C477";
 
-  // Body: navy in light mode, off-white in dark mode.
-  const BODY = "fill-[#0F172A] dark:fill-[#F8FAFC]";
-  const BODY_OUTLINE = "stroke-[#F8FAFC]/15 dark:stroke-[#0F172A]/12";
-  // Details (eyes, mouth, arms): the inverse of the body, so they always read.
-  const DETAIL_FILL = "fill-[#F8FAFC] dark:fill-[#0F172A]";
-  const DETAIL_STROKE = "stroke-[#0F172A] dark:stroke-[#F8FAFC]";
-  const mouthStroke = "stroke-[#F8FAFC] dark:stroke-[#0F172A]";
-  const PANEL = "fill-[#F8FAFC]/10 dark:fill-[#0F172A]/8";
-  // Antenna stem stands against the open Hero background, not the body,
-  // so it inverts the other way: subtle navy on a light Hero, light on dark.
-  const ANTENNA_STEM = "stroke-[#0F172A]/35 dark:stroke-[#CBD5E1]";
+  const ANTENNA_STEM = "stroke-[#0F172A]/30 dark:stroke-white/40";
 
   return (
-    <svg
+    <motion.svg
       aria-hidden="true"
-      viewBox="0 0 300 360"
-      className={cn("select-none", className)}
+      viewBox="0 0 280 200"
+      className={cn("select-none cursor-pointer", className)}
       xmlns="http://www.w3.org/2000/svg"
+      // Pleasant pop on hover without being too aggressive
+      whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
+      transition={{ type: "spring", stiffness: 400, damping: 15 }}
     >
       <defs>
         <radialGradient id="robot-antenna-glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#F4B942" stopOpacity="0.55" />
-          <stop offset="100%" stopColor="#F4B942" stopOpacity="0" />
+          <stop offset="0%" stopColor={BODY} stopOpacity="0.55" />
+          <stop offset="100%" stopColor={BODY} stopOpacity="0" />
         </radialGradient>
       </defs>
 
-      {/* Ground shadow — shrinks as the mascot rises for a grounded float effect */}
+      {/* Ground shadow */}
       <motion.ellipse
-        cx="150"
-        cy="345"
-        rx="62"
-        ry="11"
+        cx="140"
+        cy="176"
+        rx="50"
+        ry="9"
         fill="#020817"
         animate={shadowAnimate}
         transition={floatTransition}
-        style={{ transformOrigin: "150px 345px" }}
+        style={{ transformOrigin: "140px 176px" }}
       />
 
+      {/* Main floating head — no body, arms, or legs; just the head
+      assembly bobbing on its own above the podium/shadow. */}
       <motion.g animate={floatAnimate} transition={floatTransition}>
-        {/* Antenna */}
-        <line
-          x1="150"
-          y1="70"
-          x2="150"
-          y2="40"
-          className={ANTENNA_STEM}
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
-        <motion.circle
-          cx="150"
-          cy="34"
-          r="17"
-          fill="url(#robot-antenna-glow)"
-          animate={antennaAnimate}
-          transition={antennaTransition}
-          style={{ transformOrigin: "150px 34px" }}
-        />
-        <motion.circle
-          cx="150"
-          cy="34"
-          r="7"
-          fill="#F4B942"
-          animate={antennaAnimate}
-          transition={antennaTransition}
-          style={{ transformOrigin: "150px 34px" }}
-        />
-
-        {/* Left resting arm */}
-        <path
-          d="M97 196 Q80 222 91 252"
-          className={DETAIL_STROKE}
-          strokeWidth="14"
-          strokeLinecap="round"
-          fill="none"
-        />
-        <circle cx="91" cy="252" r="10" fill="#F4B942" />
-
-        {/* Body */}
-        <rect
-          x="95"
-          y="180"
-          width="110"
-          height="128"
-          rx="32"
-          className={cn(BODY, BODY_OUTLINE)}
-          strokeWidth="2"
-        />
-        <rect
-          x="118"
-          y="204"
-          width="64"
-          height="46"
-          rx="14"
-          className={PANEL}
-        />
-        <motion.circle
-          cx="134"
-          cy="227"
-          r="4.5"
-          fill="#F4B942"
-          animate={lightAnimate}
-          transition={lightTransition(0)}
-        />
-        <motion.circle
-          cx="150"
-          cy="227"
-          r="4.5"
-          fill="#38BDF8"
-          animate={lightAnimate}
-          transition={lightTransition(0.4)}
-        />
-        <motion.circle
-          cx="166"
-          cy="227"
-          r="4.5"
-          fill="#4ADE80"
-          animate={lightAnimate}
-          transition={lightTransition(0.8)}
-        />
-
-        {/* Neck */}
-        <rect
-          x="138"
-          y="158"
-          width="24"
-          height="24"
-          className={cn(BODY, BODY_OUTLINE)}
-          strokeWidth="2"
-        />
-
-        {/* Head */}
-        <rect
-          x="100"
-          y="70"
-          width="100"
-          height="94"
-          rx="30"
-          className={cn(BODY, BODY_OUTLINE)}
-          strokeWidth="2"
-        />
-
-        {/* Eyes (blink together) */}
+        {/* Subtle cursor-follow tilt layered on top of the float */}
         <motion.g
-          animate={blinkAnimate}
-          transition={blinkTransition}
-          style={{ transformOrigin: "150px 112px" }}
+          style={{
+            x: headX,
+            y: headY,
+            rotate: headRotate,
+            transformOrigin: "140px 113px",
+          }}
         >
-          <circle cx="128" cy="112" r="9" className={DETAIL_FILL} />
-          <circle cx="172" cy="112" r="9" className={DETAIL_FILL} />
-        </motion.g>
+          {/* Antenna Stem */}
+          <line
+            x1="140"
+            y1="70"
+            x2="140"
+            y2="44"
+            className={ANTENNA_STEM}
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
 
-        {/* Smile */}
-        <path
-          d="M131 137 Q150 150 169 137"
-          className={mouthStroke}
-          strokeWidth="4.5"
-          strokeLinecap="round"
-          fill="none"
-        />
+          {/* Antenna Light & Glow */}
+          <motion.circle
+            cx="140"
+            cy="38"
+            r="15"
+            fill="url(#robot-antenna-glow)"
+            animate={antennaAnimate}
+            transition={antennaTransition}
+            style={{ transformOrigin: "140px 38px" }}
+          />
+          <motion.circle
+            cx="140"
+            cy="38"
+            r="6"
+            fill={BODY}
+            animate={antennaAnimate}
+            transition={antennaTransition}
+            style={{ transformOrigin: "140px 38px" }}
+          />
 
-        {/* Right waving arm, pivoted at the shoulder */}
-        <g transform="translate(203,196)">
-          <motion.g
-            animate={waveAnimate}
-            transition={waveTransition}
-            style={{ transformOrigin: "0px 0px" }}
-          >
+          {/* Head Base */}
+          <rect x="85" y="70" width="110" height="86" rx="28" fill={BODY} />
+          <ellipse
+            cx="115"
+            cy="84"
+            rx="26"
+            ry="8"
+            fill={HIGHLIGHT}
+            opacity="0.35"
+          />
+
+          {/* Face Screen */}
+          <rect x="101" y="86" width="78" height="56" rx="18" fill={SCREEN} />
+
+          {/* Eyes & Smile — Tightly constrained so they never clip out of the screen */}
+          <motion.g style={{ x: eyeX, y: eyeY }}>
+            {/* Eyes (blink sequence) */}
+            <motion.g
+              animate={blinkAnimate}
+              transition={blinkTransition}
+              style={{ transformOrigin: "140px 113px" }}
+            >
+              <rect x="114" y="104" width="14" height="18" rx="7" fill={EYE} />
+              <rect x="152" y="104" width="14" height="18" rx="7" fill={EYE} />
+            </motion.g>
+
+            {/* Smile */}
             <path
-              d="M0 0 L38 -50"
-              className={DETAIL_STROKE}
-              strokeWidth="14"
+              d="M120 132 Q140 142 160 132"
+              stroke={EYE}
+              strokeWidth="3"
               strokeLinecap="round"
+              fill="none"
             />
-            <circle cx="38" cy="-50" r="11" fill="#F4B942" />
           </motion.g>
-        </g>
+        </motion.g>
       </motion.g>
-    </svg>
+    </motion.svg>
   );
 }
-
-export { RobotMascot };

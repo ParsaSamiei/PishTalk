@@ -48,7 +48,12 @@ export function createRegistrationFormSchema(d: Dictionary) {
       university: z.string().trim().max(150).optional().or(z.literal("")),
       company: z.string().trim().max(150).optional().or(z.literal("")),
       profession: z.string().trim().max(150).optional().or(z.literal("")),
-      notes: z.string().trim().max(500).optional().or(z.literal("")),
+      // Required, unlike the other optional fields above: this is the
+      // visitor's own account of their work and why they want to attend,
+      // used by admins to screen registrations before approving them (see
+      // the hint text next to the field). A short min length is enough to
+      // rule out empty/one-word submissions without being a real barrier.
+      notes: z.string().trim().min(30, d.validation.notesMin).max(500, d.validation.notesMax),
       // Attendance eligibility acknowledgement. Not persisted — it exists
       // only to make the visitor affirm the requirement before submitting,
       // so it is validated but never written to the Registration row.

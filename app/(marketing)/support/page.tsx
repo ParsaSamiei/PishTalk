@@ -60,7 +60,7 @@ export default async function SupportPage() {
 
         {payment ? (
           <Reveal>
-            <div className="grid gap-6 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               <PaymentDetailsCard payment={payment} dictionary={d} />
               <ReceiptForm />
             </div>
@@ -72,7 +72,7 @@ export default async function SupportPage() {
             <h2 className="text-xl font-bold text-text-primary">
               {d.support.supportersTitle}
             </h2>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {sponsors.map((sponsor, index) => {
                 const description = pick(
                   locale,

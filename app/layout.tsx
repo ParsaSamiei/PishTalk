@@ -22,7 +22,7 @@ const vazirmatn = Vazirmatn({
 
 const DEFAULT_TITLE = "پیشتاک | جامعه مهندسان رباتیک";
 const DEFAULT_DESCRIPTION =
-  "پیشتاک رویداد ماهانه رباتیک، هوش مصنوعی و مهندسی نرم‌افزار، برگزار شده توسط باشگاه رباتیک پیشنام.";
+  "پیشتاک رویداد ماهانه رباتیک، هوش مصنوعی و مهندسی نرم‌افزار، برگزار شده توسط موسسه پژوهشگران پیشنام.";
 
 const DEFAULT_TITLE_EN = "Pishtalk | A community of robotics engineers";
 const DEFAULT_DESCRIPTION_EN =
@@ -106,7 +106,9 @@ export default async function RootLayout({
               url: SITE_URL,
               description:
                 pick(locale, settings.description, settings.descriptionEn) ??
-                (locale === "en" ? DEFAULT_DESCRIPTION_EN : DEFAULT_DESCRIPTION),
+                (locale === "en"
+                  ? DEFAULT_DESCRIPTION_EN
+                  : DEFAULT_DESCRIPTION),
               sameAs: [
                 settings.instagram,
                 settings.telegram,
