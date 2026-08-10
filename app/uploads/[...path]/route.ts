@@ -26,13 +26,18 @@ export async function GET(
 
   try {
     const buffer = await readFile(requestedPath);
-    // The upload route always re-encodes and writes images as .jpg via
-    // Jimp, so this is accurate for every file this directory will ever
-    // contain.
+    // The upload route re-encodes via Jimp and writes either .jpg or .png
+    // (.png when the source had transparency, to avoid flattening it to
+    // black — see app/api/admin/upload/route.ts), so the extension on disk
+    // is authoritative for the content type.
+    const contentType =
+      path.extname(requestedPath).toLowerCase() === ".png"
+        ? "image/png"
+        : "image/jpeg";
     return new NextResponse(new Uint8Array(buffer), {
       status: 200,
       headers: {
-        "Content-Type": "image/jpeg",
+        "Content-Type": contentType,
         "Cache-Control": "public, max-age=31536000, immutable",
       },
     });

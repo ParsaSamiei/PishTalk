@@ -56,7 +56,8 @@ export async function POST(request: NextRequest) {
   // about which half had failed. Keep them apart.
   const buffer = Buffer.from(await file.arrayBuffer());
 
-  let jpeg: Buffer;
+  let output: Buffer;
+  let ext: "jpg" | "png";
   try {
     // decodeImage routes webp through a WASM libwebp build; everything else
     // goes straight to Jimp. See lib/decodeImage.ts for why not sharp.
@@ -67,7 +68,28 @@ export async function POST(request: NextRequest) {
     if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
       image.scaleToFit({ w: MAX_DIMENSION, h: MAX_DIMENSION });
     }
-    jpeg = await image.getBuffer("image/jpeg", { quality: 82 });
+
+    // JPEG has no alpha channel: encoding a transparent source as JPEG makes
+    // Jimp flatten every transparent pixel onto opaque black, which silently
+    // blacks out things like badge/logo outlines that relied on transparency.
+    // Keep PNG (and its alpha) for any source that actually has transparent
+    // pixels; only flatten to JPEG when there's no alpha to lose.
+    const { data } = image.bitmap;
+    let hasAlpha = false;
+    for (let i = 3; i < data.length; i += 4) {
+      if (data[i] < 255) {
+        hasAlpha = true;
+        break;
+      }
+    }
+
+    if (hasAlpha) {
+      ext = "png";
+      output = await image.getBuffer("image/png");
+    } else {
+      ext = "jpg";
+      output = await image.getBuffer("image/jpeg", { quality: 82 });
+    }
   } catch (err) {
     console.error("Image decode failed:", err);
     return NextResponse.json(
@@ -81,8 +103,8 @@ export async function POST(request: NextRequest) {
     await mkdir(uploadDir, { recursive: true });
 
     // UUID filename per docs/05_DATABASE.md — never trust uploaded filenames
-    const filename = `${randomUUID()}.jpg`;
-    await writeFile(path.join(uploadDir, filename), jpeg);
+    const filename = `${randomUUID()}.${ext}`;
+    await writeFile(path.join(uploadDir, filename), output);
 
     return NextResponse.json({ url: `/uploads/${folder}/${filename}` });
   } catch (err) {
