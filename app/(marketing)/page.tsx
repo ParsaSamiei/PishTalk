@@ -17,6 +17,7 @@ import {
 } from "@/features/events/actions/getEvents";
 import { getLatestGalleryImages } from "@/features/gallery/actions/getGallery";
 // import { getLatestResources } from "@/features/resources/actions/getResources";
+import { getTotalRegisteredCount } from "@/features/registration/actions/getRegisteredCount";
 import { getLatestBlogs } from "@/features/blogs/actions/getBlogs";
 import { getFaqs } from "@/features/faq/actions/getFaqs";
 import { getRules } from "@/lib/rules";
@@ -49,6 +50,7 @@ export default async function HomePage() {
     faqs,
     rules,
     settings,
+    totalRegistered,
   ] = await Promise.all([
     getNextEvent(),
     // getPastEvents(6),
@@ -58,11 +60,12 @@ export default async function HomePage() {
     getFaqs(5),
     getRules(),
     getSiteSettings(),
+    getTotalRegisteredCount(),
   ]);
 
   return (
     <>
-      <HeroSection nextEvent={nextEvent} />
+      <HeroSection nextEvent={nextEvent} totalRegistered={totalRegistered} />
       <NextEventSection event={nextEvent} />
       <AboutSection />
       <WhyAttendSection />

@@ -65,6 +65,7 @@ export const en: Dictionary = {
     nextEventPrefix: "Next event",
     aboutCta: "About Pishtalk",
     scrollLabel: "Scroll to next section",
+    registeredCountSuffix: "people have registered for Pishtalk events so far",
   },
 
   about: {

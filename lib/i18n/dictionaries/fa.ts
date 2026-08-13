@@ -64,6 +64,7 @@ export const fa = {
     nextEventPrefix: "رویداد بعدی",
     aboutCta: "درباره پیشتاک",
     scrollLabel: "پیمایش به بخش بعدی",
+    registeredCountSuffix: "نفر تاکنون در رویدادهای پیشتاک ثبت‌نام کرده‌اند",
   },
 
   about: {

@@ -18,11 +18,13 @@ import {
   CircuitBoard,
   Orbit,
   Radar,
+  Users,
 } from "lucide-react";
 
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
 import { Countdown } from "@/components/shared/Countdown";
+import { OdometerCounter } from "@/components/shared/OdometerCounter";
 import { ForwardArrow } from "@/components/shared/DirectionalIcon";
 import { GlowOrb } from "@/components/illustrations/GlowOrb";
 import { CircuitBackground } from "@/components/illustrations/CircuitBackground";
@@ -48,6 +50,8 @@ const CoffeeMugScene = dynamic(
 
 interface HeroSectionProps {
   readonly nextEvent: EventDetail | null;
+  /** All-time count of people registered across every Pishtalk event. */
+  readonly totalRegistered: number;
 }
 
 /**
@@ -59,7 +63,7 @@ interface HeroSectionProps {
  * Navbar sitting on top of it can keep using its normal theme-token colors
  * in both modes.
  */
-function HeroSection({ nextEvent }: HeroSectionProps) {
+function HeroSection({ nextEvent, totalRegistered }: HeroSectionProps) {
   const { locale, dictionary: d } = useLocale();
   const shouldReduceMotion = useReducedMotion();
 
@@ -240,6 +244,26 @@ function HeroSection({ nextEvent }: HeroSectionProps) {
               </Link>
             </Button>
           </motion.div>
+
+          {totalRegistered > 0 ? (
+            <motion.div
+              variants={itemVariants}
+              className="inline-flex items-center gap-2.5 rounded-full border border-border bg-surface-secondary/60 px-4 py-2 dark:border-white/10 dark:bg-white/5"
+            >
+              <Users
+                className="size-4 shrink-0 text-accent-hover dark:text-accent"
+                aria-hidden="true"
+              />
+              <p className="text-sm text-text-secondary">
+                <OdometerCounter
+                  value={totalRegistered}
+                  prefix="+"
+                  className="text-base text-accent-hover dark:text-accent"
+                />{" "}
+                {d.hero.registeredCountSuffix}
+              </p>
+            </motion.div>
+          ) : null}
         </motion.div>
 
         <motion.div
