@@ -43,7 +43,7 @@ export interface RegistrationLookupEvent {
 
 export interface RegistrationLookupItem {
   readonly id: string;
-  readonly status: "REGISTERED" | "CANCELLED" | "ATTENDED";
+  readonly status: "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED" | "ATTENDED";
   /** ISO string, same reasoning as `RegistrationLookupEvent.date`. */
   readonly createdAt: string;
   readonly event: RegistrationLookupEvent;

@@ -61,6 +61,8 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       AUTH_SECRET: ${AUTH_SECRET:?set AUTH_SECRET in .env, generate with: npx auth secret}
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://pishtalk.ir}
+      FARAZSMS_API_KEY: ${FARAZSMS_API_KEY:?set FARAZSMS_API_KEY in .env, see docs.farazsms.com}
+      FARAZSMS_LINE_NUMBER: ${FARAZSMS_LINE_NUMBER:?set FARAZSMS_LINE_NUMBER in .env}
     depends_on:
       seeder:
         condition: service_completed_successfully

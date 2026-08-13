@@ -342,6 +342,22 @@ function SiteSettingsForm({ defaultValues }: SiteSettingsFormProps) {
         </label>
       </Card>
 
+      <Card className="flex flex-col gap-3">
+        <h2 className="text-lg font-semibold text-text-primary">تأیید ثبت‌نام و پیامک</h2>
+        <label className="flex items-center gap-2 text-sm text-text-primary">
+          <input
+            type="checkbox"
+            className="size-4 rounded border-border accent-accent"
+            {...register("smsApprovalEnabled")}
+          />
+          ارسال خودکار پیامک تأیید (فرازپیامک) پس از تأیید ثبت‌نام
+        </label>
+        <p className="text-sm text-text-secondary">
+          در صورت خاموش بودن، با تأیید یک ثبت‌نام از صفحه «ثبت‌نام‌ها» هیچ پیامکی ارسال نمی‌شود؛
+          به‌جای آن لینک تأیید برای کپی و ارسال دستی نمایش داده می‌شود.
+        </p>
+      </Card>
+
       {serverError ? <p className="text-sm text-danger">{serverError}</p> : null}
 
       <div className="flex items-center gap-4">

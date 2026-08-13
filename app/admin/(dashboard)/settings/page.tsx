@@ -34,6 +34,7 @@ export default async function AdminSettingsPage() {
           defaultOgImage: settings?.defaultOgImage ?? "",
           googleAnalyticsId: settings?.googleAnalyticsId ?? "",
           maintenanceMode: settings?.maintenanceMode ?? false,
+          smsApprovalEnabled: settings?.smsApprovalEnabled ?? true,
           siteNameEn: settings?.siteNameEn ?? "",
           taglineEn: settings?.taglineEn ?? "",
           descriptionEn: settings?.descriptionEn ?? "",

@@ -22,6 +22,7 @@ export interface SiteSettingsData {
   defaultOgImage: string | null;
   googleAnalyticsId: string | null;
   maintenanceMode: boolean;
+  smsApprovalEnabled: boolean;
 
   /** English translations; null or blank falls back to the Persian field. */
   siteNameEn: string | null;
@@ -58,6 +59,7 @@ const FALLBACK_SETTINGS: SiteSettingsData = {
   defaultOgImage: null,
   googleAnalyticsId: null,
   maintenanceMode: false,
+  smsApprovalEnabled: true,
 
   siteNameEn: "Pishtalk",
   taglineEn: "A community of robotics, AI and technology engineers",
@@ -105,6 +107,7 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
       defaultOgImage: settings.defaultOgImage,
       googleAnalyticsId: settings.googleAnalyticsId,
       maintenanceMode: settings.maintenanceMode,
+      smsApprovalEnabled: settings.smsApprovalEnabled,
 
       siteNameEn: settings.siteNameEn,
       taglineEn: settings.taglineEn,

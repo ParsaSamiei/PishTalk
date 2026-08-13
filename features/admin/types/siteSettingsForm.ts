@@ -56,6 +56,13 @@ export const siteSettingsFormSchema = z.object({
     .optional()
     .or(z.literal("")),
   maintenanceMode: z.boolean().default(false),
+  // Off means reviewRegistration() still approves and records the
+  // decision, it just skips the FarazSMS call — see lib/sms.ts and
+  // RegistrationReviewActions.tsx's copy-link fallback. Defaults to true so
+  // approvals keep sending automatically unless an admin deliberately
+  // turns this off (e.g. FarazSMS credit is out, or they'd rather review
+  // the message before it goes out for a sensitive event).
+  smsApprovalEnabled: z.boolean().default(true),
   // Bank details for the /support payment block. The transforms normalize
   // before validating, so a supporter's card number typed with Persian digits
   // or spaces ("۶۰۳۷ ۹۹۷۷ ...") is stored as 16 bare Latin digits. Running the
