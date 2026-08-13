@@ -376,10 +376,13 @@ export const en: Dictionary = {
     approvalNotApprovedTitle: "Not approved yet",
     approvalNotApprovedBody:
       "Your registration hasn't been reviewed yet, or wasn't approved. Contact us if you have questions.",
-    approvalDate: "Date",
+    approvalDate: "Event date",
     approvalTime: "Time",
-    approvalLocation: "Location",
+    approvalLocation: "Venue",
     approvalAttendeeName: "Attendee",
+    approvalMapTitle: "Location",
+    approvalMapCaption: "Check the map to plan your route.",
+    approvalMapFallbackCta: "Open in Google Maps",
   },
 
   validation: {

@@ -366,16 +366,20 @@ export const fa = {
     statusCancelled: "لغو شده",
     approvalPageTitle: "تأیید ثبت‌نام",
     approvalHeading: "ثبت‌نام شما تأیید شد",
-    approvalBody: "خوشحالیم که شما را در این رویداد می‌بینیم. جزئیات رویداد در زیر آمده است.",
+    approvalBody:
+      "خوشحالیم که شما را در این رویداد می‌بینیم. جزئیات رویداد در زیر آمده است.",
     approvalNotFoundTitle: "لینک نامعتبر است",
     approvalNotFoundBody: "این لینک ثبت‌نام معتبر نیست یا منقضی شده است.",
     approvalNotApprovedTitle: "هنوز تأیید نشده",
     approvalNotApprovedBody:
       "ثبت‌نام شما هنوز توسط تیم برگزاری بررسی نشده یا رد شده است. اگر سوالی دارید با ما تماس بگیرید.",
-    approvalDate: "تاریخ",
+    approvalDate: "تاریخ رویداد",
     approvalTime: "ساعت",
-    approvalLocation: "مکان",
+    approvalLocation: "محل برگزاری",
     approvalAttendeeName: "نام شرکت‌کننده",
+    approvalMapTitle: "موقعیت مکانی",
+    approvalMapCaption: "برای مشاهده مسیر، نقشه را بررسی کنید.",
+    approvalMapFallbackCta: "مشاهده مسیر در نقشه",
   },
 
   validation: {
