@@ -17,6 +17,7 @@ import {
 } from "@/features/registration/types/registration";
 import { transliteratePersianName } from "@/features/registration/utils/transliterate";
 import { createRegistration } from "@/features/registration/actions/createRegistration";
+import { trackEvent } from "@/lib/analytics";
 
 interface RegistrationFormProps {
   readonly eventId: string;
@@ -44,6 +45,17 @@ function RegistrationForm({ eventId }: RegistrationFormProps) {
   const eligibilityConfirmed = watch("eligibilityConfirmed");
   const needsCertificateName = isPersianScript(firstName ?? "") || isPersianScript(lastName ?? "");
 
+  // Funnel: fire once, the first time the visitor touches any field, so we
+  // can distinguish "viewed the form" (a plain Umami pageview) from
+  // "actually started filling it out".
+  const hasTrackedStartRef = React.useRef(false);
+  React.useEffect(() => {
+    if (hasTrackedStartRef.current) return;
+    if (Object.keys(dirtyFields).length === 0) return;
+    hasTrackedStartRef.current = true;
+    trackEvent("registration_started", { eventId });
+  }, [dirtyFields, eventId]);
+
   // Pre-fill a transliteration suggestion the first time the field appears,
   // but never overwrite something the visitor has already typed/edited.
   React.useEffect(() => {
@@ -59,11 +71,19 @@ function RegistrationForm({ eventId }: RegistrationFormProps) {
 
   async function onSubmit(values: RegistrationFormValues) {
     setServerError(null);
+    trackEvent("registration_submitted", { eventId });
     const result = await createRegistration(eventId, values);
 
     if (result.success) {
+      // No explicit "success" event: the /register-success navigation is
+      // itself tracked as a pageview by the Umami tracker, and doubling up
+      // here would just double-count the same conversion.
       router.push("/register-success");
     } else {
+      trackEvent("registration_failed", {
+        eventId,
+        reason: result.errorCode ?? "UNKNOWN",
+      });
       setServerError(result.error ?? d.errors.generic);
     }
   }

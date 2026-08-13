@@ -134,6 +134,21 @@ export default async function RootLayout({
             </Script>
           </>
         ) : null}
+
+        {/*
+          Self-hosted Umami (see docs/10_ANALYTICS.md). Infra-level, so it's
+          driven by env vars rather than the admin-editable site settings
+          used for Google Analytics above. Both env vars must be set for the
+          script to render at all, so it's silently absent in local dev.
+        */}
+        {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID &&
+        process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL ? (
+          <Script
+            src={process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL}
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+            strategy="afterInteractive"
+          />
+        ) : null}
       </body>
     </html>
   );

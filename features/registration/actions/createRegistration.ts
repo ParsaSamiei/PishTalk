@@ -11,9 +11,20 @@ import {
   type RegistrationFormValues,
 } from "@/features/registration/types/registration";
 
+export type CreateRegistrationErrorCode =
+  | "RATE_LIMITED"
+  | "INVALID_INPUT"
+  | "EVENT_UNAVAILABLE"
+  | "CAPACITY_FULL"
+  | "DUPLICATE_PHONE"
+  | "REGISTRATION_FAILED";
+
 export interface CreateRegistrationResult {
   readonly success: boolean;
   readonly error?: string;
+  // Stable, locale-independent reason for `error`, so callers (e.g.
+  // analytics) don't have to key off the translated message text.
+  readonly errorCode?: CreateRegistrationErrorCode;
 }
 
 const SUBMIT_LIMIT = 5;
@@ -32,7 +43,7 @@ export async function createRegistration(
   const ip = getClientIp(await headers());
   const rateLimit = checkRateLimit(`registration:${ip}`, SUBMIT_LIMIT, SUBMIT_WINDOW_MS);
   if (!rateLimit.allowed) {
-    return { success: false, error: d.errors.rateLimited };
+    return { success: false, error: d.errors.rateLimited, errorCode: "RATE_LIMITED" };
   }
 
   // Re-validated server-side with the request's locale: the client's own
@@ -40,7 +51,7 @@ export async function createRegistration(
   const parsed = createRegistrationFormSchema(d).safeParse(values);
 
   if (!parsed.success) {
-    return { success: false, error: d.errors.invalidInput };
+    return { success: false, error: d.errors.invalidInput, errorCode: "INVALID_INPUT" };
   }
 
   try {
@@ -50,7 +61,7 @@ export async function createRegistration(
     });
 
     if (!event || event.deletedAt || event.status !== "PUBLISHED") {
-      return { success: false, error: d.errors.eventUnavailable };
+      return { success: false, error: d.errors.eventUnavailable, errorCode: "EVENT_UNAVAILABLE" };
     }
 
     // The capacity check, duplicate-phone check, and insert all run inside
@@ -107,13 +118,13 @@ export async function createRegistration(
     return { success: true };
   } catch (error) {
     if (error instanceof Error && error.message === "CAPACITY_FULL") {
-      return { success: false, error: d.errors.eventFull };
+      return { success: false, error: d.errors.eventFull, errorCode: "CAPACITY_FULL" };
     }
     if (error instanceof Error && error.message === "DUPLICATE_PHONE") {
-      return { success: false, error: d.errors.duplicatePhone };
+      return { success: false, error: d.errors.duplicatePhone, errorCode: "DUPLICATE_PHONE" };
     }
     // Includes Prisma's P2034 serialization-failure code, raised when the
     // transaction above loses a race with another concurrent submission.
-    return { success: false, error: d.errors.registrationFailed };
+    return { success: false, error: d.errors.registrationFailed, errorCode: "REGISTRATION_FAILED" };
   }
 }
