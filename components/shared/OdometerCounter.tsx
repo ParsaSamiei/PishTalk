@@ -32,14 +32,13 @@ const WHEEL = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 // own* height (11.5em, ten stacked rows) rather than one row, so
 // `-${digit * 100}%` would overshoot by 10x and scroll every digit clean
 // off screen — the bug that made the whole counter render blank.
-const ROW_HEIGHT_EM = 1.15;
 // Slight height bump to give digits ample breathing room inside the wheel slot.
 const ROW_HEIGHT_EM = 1.25;
 
 // Matches the easing curve used by the Reveal wrapper elsewhere on the
 // homepage, so this feels like the same motion language, not a bolted-on
 // widget.
-const EASE: Easing = [0.16, 1, 0.3, 1];
+// Custom ease-out curve that starts deliberately and smoothly glides to a stop
 const SMOOTH_EASE: Easing = [0.22, 1, 0.36, 1];
 
 /**
@@ -104,7 +103,6 @@ function OdometerCounter({
       </span>
       {suffix ? <span className="ms-1.5">{suffix}</span> : null}
 
-          margin as Reveal so both animate at a consistent scroll depth. */}
       <motion.span
         aria-hidden="true"
         className="sr-only"
