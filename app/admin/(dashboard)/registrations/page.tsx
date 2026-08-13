@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { Download, FileSpreadsheet } from "lucide-react";
+import { Download, FileSpreadsheet, AlertTriangle } from "lucide-react";
 import type { RegistrationStatus } from "@prisma/client";
 
 import { Card } from "@/components/ui/Card";
@@ -29,7 +29,10 @@ const STATUS_TABS: { value: RegistrationStatus | "ALL"; label: string }[] = [
   { value: "CANCELLED", label: "لغو شده" },
 ];
 
-const STATUS_BADGE: Record<RegistrationStatus, { label: string; variant: BadgeProps["variant"] }> = {
+const STATUS_BADGE: Record<
+  RegistrationStatus,
+  { label: string; variant: BadgeProps["variant"] }
+> = {
   PENDING: { label: "در انتظار بررسی", variant: "warning" },
   APPROVED: { label: "تأیید شده", variant: "info" },
   REJECTED: { label: "رد شده", variant: "danger" },
@@ -38,12 +41,18 @@ const STATUS_BADGE: Record<RegistrationStatus, { label: string; variant: BadgePr
 };
 
 interface AdminRegistrationsPageProps {
-  readonly searchParams: Promise<{ q?: string; page?: string; status?: string }>;
+  readonly searchParams: Promise<{
+    q?: string;
+    page?: string;
+    status?: string;
+  }>;
 }
 
-function isRegistrationStatus(value: string | undefined): value is RegistrationStatus {
+function isRegistrationStatus(
+  value: string | undefined,
+): value is RegistrationStatus {
   return (
-    !!value && (STATUS_TABS.some((tab) => tab.value === value) && value !== "ALL")
+    !!value && STATUS_TABS.some((tab) => tab.value === value) && value !== "ALL"
   );
 }
 
@@ -77,13 +86,23 @@ async function getRegistrations(
     prisma.registration.count({ where }),
   ]);
 
-  return { registrations, totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)), total };
+  return {
+    registrations,
+    totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)),
+    total,
+  };
 }
 
-export default async function AdminRegistrationsPage({ searchParams }: AdminRegistrationsPageProps) {
+export default async function AdminRegistrationsPage({
+  searchParams,
+}: AdminRegistrationsPageProps) {
   const { q, page: pageParam, status } = await searchParams;
   const page = Math.max(1, Number(pageParam) || 1);
-  const { registrations, totalPages, total } = await getRegistrations(q, status, page);
+  const { registrations, totalPages, total } = await getRegistrations(
+    q,
+    status,
+    page,
+  );
   const activeStatus = isRegistrationStatus(status) ? status : "ALL";
 
   return (
@@ -113,7 +132,9 @@ export default async function AdminRegistrationsPage({ searchParams }: AdminRegi
         {STATUS_TABS.map((tab) => {
           const params = new URLSearchParams();
           if (tab.value !== "ALL") params.set("status", tab.value);
-          const href = params.toString() ? `/admin/registrations?${params}` : "/admin/registrations";
+          const href = params.toString()
+            ? `/admin/registrations?${params}`
+            : "/admin/registrations";
           const isActive = activeStatus === tab.value;
           return (
             <Link
@@ -143,7 +164,7 @@ export default async function AdminRegistrationsPage({ searchParams }: AdminRegi
         />
       ) : (
         <Card className="overflow-x-auto p-0">
-          <table className="w-full min-w-[1320px] text-start text-sm">
+          <table className="w-full min-w-[1380px] text-start text-sm">
             <thead className="sticky top-0 border-b border-border bg-surface text-text-secondary">
               <tr>
                 <th className="p-4 text-start font-medium">نام</th>
@@ -151,11 +172,15 @@ export default async function AdminRegistrationsPage({ searchParams }: AdminRegi
                 <th className="p-4 text-start font-medium">موبایل</th>
                 <th className="p-4 text-start font-medium">ایمیل</th>
                 <th className="p-4 text-start font-medium">دانشگاه / شرکت</th>
-                <th className="p-4 text-start font-medium">درباره خودشون / دلیل حضور</th>
+                <th className="p-4 text-start font-medium">
+                  درباره خودشون / دلیل حضور
+                </th>
                 <th className="p-4 text-start font-medium">رویداد</th>
                 <th className="p-4 text-start font-medium">تاریخ ثبت‌نام</th>
                 <th className="p-4 text-start font-medium">وضعیت</th>
-                <th className="p-4 text-start font-medium">عملیات</th>
+                <th className="min-w-[220px] p-4 text-start font-medium">
+                  عملیات
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -189,18 +214,27 @@ export default async function AdminRegistrationsPage({ searchParams }: AdminRegi
                       {registration.notes || "—"}
                     </p>
                   </td>
-                  <td className="p-4 text-text-secondary">{registration.event.title}</td>
+                  <td className="p-4 text-text-secondary">
+                    {registration.event.title}
+                  </td>
                   <td className="p-4 text-text-secondary">
                     {formatEventDate(registration.createdAt)}
                   </td>
                   <td className="p-4">
-                    <div className="flex flex-col gap-1">
-                      <Badge variant={STATUS_BADGE[registration.status].variant} className="w-fit">
+                    <div className="flex items-center gap-1.5">
+                      <Badge
+                        variant={STATUS_BADGE[registration.status].variant}
+                        className="w-fit"
+                      >
                         {STATUS_BADGE[registration.status].label}
                       </Badge>
-                      {registration.status === "APPROVED" && !registration.smsSentAt && (
-                        <span className="text-xs text-danger">ارسال پیامک ناموفق</span>
-                      )}
+                      {registration.status === "APPROVED" &&
+                        !registration.smsSentAt && (
+                          <AlertTriangle
+                            className="size-4 shrink-0 text-danger"
+                            aria-label="ارسال پیامک ناموفق یا انجام‌نشده"
+                          />
+                        )}
                     </div>
                   </td>
                   <td className="p-4">
@@ -209,7 +243,9 @@ export default async function AdminRegistrationsPage({ searchParams }: AdminRegi
                         id={registration.id}
                         fullName={`${registration.firstName} ${registration.lastName}`}
                         status={registration.status}
-                        smsSentAt={registration.smsSentAt?.toISOString() ?? null}
+                        smsSentAt={
+                          registration.smsSentAt?.toISOString() ?? null
+                        }
                         approvalToken={registration.approvalToken}
                       />
                       <DeleteButton
