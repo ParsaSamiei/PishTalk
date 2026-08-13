@@ -1,12 +1,72 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/requireAdmin";
 import { sendSms, buildApprovalSmsText } from "@/lib/sms";
 import { getSiteSettings } from "@/lib/site-settings";
 import type { ActionResult } from "@/features/admin/actions/eventActions";
+
+/** Same Latin-only shape as the public registration form's certificateName field. */
+const LATIN_NAME_RE = /^[A-Za-z][A-Za-z\s'-]*$/;
+
+const updateRegistrationNameSchema = z.object({
+  id: z.string().min(1),
+  firstName: z.string().trim().min(2).max(50),
+  lastName: z.string().trim().min(2).max(50),
+  certificateName: z
+    .string()
+    .trim()
+    .max(100)
+    .regex(LATIN_NAME_RE, "نام گواهی باید با حروف لاتین باشد.")
+    .optional()
+    .or(z.literal("")),
+});
+
+export type UpdateRegistrationNameValues = z.infer<
+  typeof updateRegistrationNameSchema
+>;
+
+/**
+ * Lets an admin correct a registrant's name after submission — typos, a
+ * mis-typed certificate spelling, etc. Mirrors the same firstName/lastName/
+ * certificateName trio and validation the public registration form uses
+ * (see features/registration/types/registration.ts), but has no
+ * Persian-script-triggers-required-certificateName rule: an admin may
+ * legitimately clear certificateName back to empty if firstName/lastName
+ * are already Latin.
+ */
+export async function updateRegistrationName(
+  values: UpdateRegistrationNameValues,
+): Promise<ActionResult> {
+  await requireAdmin();
+
+  const parsed = updateRegistrationNameSchema.safeParse(values);
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: parsed.error.issues[0]?.message ?? "اطلاعات وارد شده نامعتبر است.",
+    };
+  }
+
+  try {
+    await prisma.registration.update({
+      where: { id: parsed.data.id },
+      data: {
+        firstName: parsed.data.firstName,
+        lastName: parsed.data.lastName,
+        certificateName: parsed.data.certificateName || null,
+      },
+    });
+    revalidatePath("/admin/registrations");
+    return { success: true };
+  } catch (err) {
+    console.error("updateRegistrationName failed:", err);
+    return { success: false, error: "ویرایش نام با خطا مواجه شد." };
+  }
+}
 
 export async function deleteRegistration(id: string): Promise<ActionResult> {
   await requireAdmin();

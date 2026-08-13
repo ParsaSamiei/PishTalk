@@ -11,6 +11,7 @@ import { Pagination } from "@/components/shared/Pagination";
 import { AdminSearchBar } from "@/features/admin/components/AdminSearchBar";
 import { DeleteButton } from "@/features/admin/components/DeleteButton";
 import { RegistrationReviewActions } from "@/features/admin/components/RegistrationReviewActions";
+import { EditRegistrationNameForm } from "@/features/admin/components/EditRegistrationNameForm";
 import { deleteRegistration } from "@/features/admin/actions/registrationActions";
 import { prisma } from "@/lib/prisma";
 import { formatEventDate } from "@/utils/formatDate";
@@ -239,6 +240,12 @@ export default async function AdminRegistrationsPage({
                   </td>
                   <td className="p-4">
                     <div className="flex items-center gap-1">
+                      <EditRegistrationNameForm
+                        id={registration.id}
+                        firstName={registration.firstName}
+                        lastName={registration.lastName}
+                        certificateName={registration.certificateName}
+                      />
                       <RegistrationReviewActions
                         id={registration.id}
                         fullName={`${registration.firstName} ${registration.lastName}`}
