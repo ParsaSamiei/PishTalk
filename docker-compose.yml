@@ -40,6 +40,48 @@ services:
       migrator:
         condition: service_completed_successfully
 
+  # --- Analytics (see docs/10_ANALYTICS.md) ---------------------------------
+  # Self-hosted Umami, served at https://pishtalk.ir/analytics via Nginx.
+  # Separate DB from the app's own Postgres on purpose: unrelated schema,
+  # and analytics writes shouldn't contend with app traffic.
+  umami-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: ${UMAMI_DB_PASSWORD:?set UMAMI_DB_PASSWORD in .env}
+      POSTGRES_DB: umami
+    volumes:
+      - umami_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U umami"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  umami:
+    # BASE_PATH is a Next.js build-time value, so there's no official
+    # ghcr.io image pre-built for a /analytics subpath — it has to be built
+    # locally from source with the build arg baked in. Pin a tag so `docker
+    # compose build` doesn't silently pick up upstream changes; bump it
+    # deliberately when you want to upgrade Umami.
+    build:
+      context: https://github.com/umami-software/umami.git#v3.2.0
+      args:
+        BASE_PATH: /analytics
+    image: pishtalk-umami:v3.2.0-analytics
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3001:3000"
+    environment:
+      DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD}@umami-db:5432/umami
+      DATABASE_TYPE: postgresql
+      BASE_PATH: /analytics
+      APP_SECRET: ${UMAMI_APP_SECRET:?set UMAMI_APP_SECRET in .env, generate with: openssl rand -base64 32}
+    depends_on:
+      umami-db:
+        condition: service_healthy
+
   app:
     image: ghcr.io/parsasamiei/pishtalk:latest
     build:
@@ -63,11 +105,19 @@ services:
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://pishtalk.ir}
       FARAZSMS_API_KEY: ${FARAZSMS_API_KEY:?set FARAZSMS_API_KEY in .env, see docs.farazsms.com}
       FARAZSMS_LINE_NUMBER: ${FARAZSMS_LINE_NUMBER:?set FARAZSMS_LINE_NUMBER in .env}
+      # Optional. Both must be set for the tracker script to render at all
+      # (see app/layout.tsx). Read server-side at request time, not baked
+      # in at build time, so plain runtime env vars are fine here.
+      NEXT_PUBLIC_UMAMI_WEBSITE_ID: ${NEXT_PUBLIC_UMAMI_WEBSITE_ID:-}
+      NEXT_PUBLIC_UMAMI_SCRIPT_URL: ${NEXT_PUBLIC_UMAMI_SCRIPT_URL:-}
     depends_on:
       seeder:
         condition: service_completed_successfully
+      umami:
+        condition: service_started
 
 volumes:
   pgdata:
   uploads:
   receipts:
+  umami_pgdata:
