@@ -68,6 +68,7 @@ export async function updateSiteSettings(values: SiteSettingsFormValues): Promis
       defaultOgImage: parsed.data.defaultOgImage || null,
       googleAnalyticsId: parsed.data.googleAnalyticsId || null,
       maintenanceMode: parsed.data.maintenanceMode,
+      smsApprovalEnabled: parsed.data.smsApprovalEnabled,
       // Already normalized by the schema's transforms (16 bare digits /
       // "IR" + 24 digits), so these are stored exactly as lib/bank produces
       // them and can be compared and copied without re-parsing.
@@ -98,6 +99,7 @@ export async function updateSiteSettings(values: SiteSettingsFormValues): Promis
     }
 
     revalidatePath("/", "layout");
+    revalidatePath("/admin/registrations");
     return { success: true };
   } catch (err) {
     console.error("updateSiteSettings failed:", err);

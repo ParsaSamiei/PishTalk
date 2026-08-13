@@ -65,6 +65,7 @@ export const en: Dictionary = {
     nextEventPrefix: "Next event",
     aboutCta: "About Pishtalk",
     scrollLabel: "Scroll to next section",
+    registeredCountSuffix: "people have registered for Pishtalk events so far",
   },
 
   about: {
@@ -352,7 +353,7 @@ export const en: Dictionary = {
     successTitle: "Registration complete",
     successHeading: "You're registered",
     successBody:
-      "Your resume will be reviewed, and once approved, we will contact you to coordinate your attendance and provide the event details.",
+      "Your resume will be reviewed. If approved, you'll receive an SMS with a confirmation and the event details.",
     viewMyRegistrations: "View my Registrations",
     lookupTitle: "My Registrations",
     lookupDescription:
@@ -362,8 +363,26 @@ export const en: Dictionary = {
     lookupEmptyDescription:
       "We couldn't find any Registrations for that mobile number and last name. Double-check what you entered.",
     statusRegistered: "Registered",
+    statusPending: "Pending review",
+    statusApproved: "Approved",
+    statusRejected: "Not approved",
     statusAttended: "Attended",
     statusCancelled: "Cancelled",
+    approvalPageTitle: "Registration confirmed",
+    approvalHeading: "Your registration is confirmed",
+    approvalBody: "We're glad you'll be joining us. Event details are below.",
+    approvalNotFoundTitle: "Invalid link",
+    approvalNotFoundBody: "This registration link isn't valid or has expired.",
+    approvalNotApprovedTitle: "Not approved yet",
+    approvalNotApprovedBody:
+      "Your registration hasn't been reviewed yet, or wasn't approved. Contact us if you have questions.",
+    approvalDate: "Event date",
+    approvalTime: "Time",
+    approvalLocation: "Venue",
+    approvalAttendeeName: "Attendee",
+    approvalMapTitle: "Location",
+    approvalMapCaption: "Check the map to plan your route.",
+    approvalMapFallbackCta: "Open in Google Maps",
   },
 
   validation: {

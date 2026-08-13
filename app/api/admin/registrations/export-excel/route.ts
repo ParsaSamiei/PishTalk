@@ -6,7 +6,9 @@ import { requireAdmin } from "@/lib/requireAdmin";
 import { resolveCertificateName } from "@/features/registration/types/registration";
 
 const STATUS_LABELS: Record<string, string> = {
-  REGISTERED: "ثبت‌نام شده",
+  PENDING: "در انتظار بررسی",
+  APPROVED: "تأیید شده",
+  REJECTED: "رد شده",
   CANCELLED: "لغوشده",
   ATTENDED: "حضور یافته",
 };

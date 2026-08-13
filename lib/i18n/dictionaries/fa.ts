@@ -64,6 +64,7 @@ export const fa = {
     nextEventPrefix: "رویداد بعدی",
     aboutCta: "درباره پیشتاک",
     scrollLabel: "پیمایش به بخش بعدی",
+    registeredCountSuffix: "نفر تاکنون در رویدادهای پیشتاک ثبت‌نام کرده‌اند",
   },
 
   about: {
@@ -348,7 +349,7 @@ export const fa = {
     successTitle: "ثبت‌نام موفق",
     successHeading: "ثبت‌نام شما با موفقیت انجام شد",
     successBody:
-      "رزومه شما بررسی خواهد شد و پس از تأیید، برای هماهنگی و ارسال جزئیات رویداد با شما تماس خواهیم گرفت.",
+      "رزومه شما بررسی خواهد شد و در صورت تأیید، پیامکی حاوی تأییدیه و جزئیات رویداد برای شما ارسال می‌شود.",
     viewMyRegistrations: "مشاهده ثبت‌نام‌های من",
     lookupTitle: "ثبت‌نام‌های من",
     lookupDescription:
@@ -358,8 +359,27 @@ export const fa = {
     lookupEmptyDescription:
       "با این شماره موبایل و نام خانوادگی هیچ ثبت‌نامی ثبت نشده است. از صحت اطلاعات وارد شده مطمئن شوید.",
     statusRegistered: "ثبت‌نام شده",
+    statusPending: "در انتظار بررسی",
+    statusApproved: "تأیید شده",
+    statusRejected: "تأیید نشده",
     statusAttended: "حضور یافته",
     statusCancelled: "لغو شده",
+    approvalPageTitle: "تأیید ثبت‌نام",
+    approvalHeading: "ثبت‌نام شما تأیید شد",
+    approvalBody:
+      "خوشحالیم که شما را در این رویداد می‌بینیم. جزئیات رویداد در زیر آمده است.",
+    approvalNotFoundTitle: "لینک نامعتبر است",
+    approvalNotFoundBody: "این لینک ثبت‌نام معتبر نیست یا منقضی شده است.",
+    approvalNotApprovedTitle: "هنوز تأیید نشده",
+    approvalNotApprovedBody:
+      "ثبت‌نام شما هنوز توسط تیم برگزاری بررسی نشده یا رد شده است. اگر سوالی دارید با ما تماس بگیرید.",
+    approvalDate: "تاریخ رویداد",
+    approvalTime: "ساعت",
+    approvalLocation: "محل برگزاری",
+    approvalAttendeeName: "نام شرکت‌کننده",
+    approvalMapTitle: "موقعیت مکانی",
+    approvalMapCaption: "برای مشاهده مسیر، نقشه را بررسی کنید.",
+    approvalMapFallbackCta: "مشاهده مسیر در نقشه",
   },
 
   validation: {

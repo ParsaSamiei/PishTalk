@@ -14,13 +14,17 @@ interface SocialLinksProps {
  * Renders the community's social links. Reads from site settings so
  * updating a handle in the admin panel never requires a code change.
  */
-async function SocialLinks({ instagram, telegram, className }: SocialLinksProps) {
+async function SocialLinks({
+  instagram,
+  telegram,
+  className,
+}: SocialLinksProps) {
   const d = await getDictionary();
   const links = [
     { href: instagram, label: d.footer.instagram, Icon: InstagramIcon },
     { href: telegram, label: d.footer.telegram, Icon: Send },
   ].filter((link): link is { href: string; label: string; Icon: typeof Send } =>
-    Boolean(link.href)
+    Boolean(link.href),
   );
 
   if (links.length === 0) return null;
@@ -34,9 +38,9 @@ async function SocialLinks({ instagram, telegram, className }: SocialLinksProps)
           target="_blank"
           rel="noreferrer noopener"
           aria-label={label}
-          className="flex size-10 items-center justify-center rounded-full border border-border text-text-secondary transition-colors duration-150 hover:border-accent hover:text-accent-hover"
+          className="flex size-13 items-center justify-center rounded-full border border-border text-text-secondary transition-colors duration-150 hover:border-accent hover:text-accent-hover"
         >
-          <Icon className="size-4" aria-hidden="true" />
+          <Icon className="size-5" aria-hidden="true" />
         </a>
       ))}
     </div>

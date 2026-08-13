@@ -25,7 +25,9 @@ enum EventStatus {
 }
 
 enum RegistrationStatus {
-  REGISTERED
+  PENDING
+  APPROVED
+  REJECTED
   CANCELLED
   ATTENDED
 }
@@ -61,7 +63,8 @@ model Admin {
   updatedAt    DateTime  @updatedAt @map("updated_at")
   deletedAt    DateTime? @map("deleted_at")
 
-  reviewedReceipts SupportReceipt[]
+  reviewedReceipts      SupportReceipt[]
+  reviewedRegistrations Registration[]
 
   @@map("admins")
 }
@@ -146,14 +149,34 @@ model Registration {
   company    String?
   profession String?
   notes      String?
-  status     RegistrationStatus @default(REGISTERED)
+  status     RegistrationStatus @default(PENDING)
+
+  /// Opaque, unguessable token used in the approval-notice SMS link
+  /// (/registration-status/[token]). Generated at submission time — before
+  /// any admin has looked at the row — rather than derived from `id`, which
+  /// shows up in admin URLs and CSV/Excel exports and so isn't safe to also
+  /// use as a bearer credential.
+  approvalToken String @unique @default(uuid()) @map("approval_token")
+
+  /// Set together when an admin approves/rejects from /admin/registrations.
+  reviewedAt   DateTime? @map("reviewed_at")
+  reviewedById String?   @map("reviewed_by_id")
+  adminNote    String?   @map("admin_note")
+
+  /// Set once the FarazSMS approval notice is actually accepted by the API.
+  /// Null after an APPROVED decision means the send failed; the admin panel
+  /// surfaces that so the SMS can be retried instead of failing silently.
+  smsSentAt DateTime? @map("sms_sent_at")
+
   createdAt  DateTime           @default(now()) @map("created_at")
 
-  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  event      Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  reviewedBy Admin? @relation(fields: [reviewedById], references: [id], onDelete: SetNull)
 
   @@index([eventId])
   @@index([phone])
   @@index([email])
+  @@index([status])
   @@map("registrations")
 }
 
@@ -400,6 +423,11 @@ model SiteSettings {
   /// field. Added as a minimal, optional extension.
   googleAnalyticsId String? @map("google_analytics_id")
   maintenanceMode  Boolean @default(false) @map("maintenance_mode")
+
+  /// Off skips the FarazSMS call in reviewRegistration() (the approval
+  /// itself still happens); on sends it automatically. See
+  /// features/admin/actions/registrationActions.ts.
+  smsApprovalEnabled Boolean @default(true) @map("sms_approval_enabled")
 
   /// Institute bank details shown on /support so visitors can transfer money
   /// directly. Stored normalized: card number as 16 bare digits, SHEBA as

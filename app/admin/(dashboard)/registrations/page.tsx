@@ -1,35 +1,80 @@
 import { Suspense } from "react";
-import { Download, FileSpreadsheet } from "lucide-react";
+import Link from "next/link";
+import { Download, FileSpreadsheet, AlertTriangle } from "lucide-react";
+import type { RegistrationStatus } from "@prisma/client";
 
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { Badge, type BadgeProps } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Pagination } from "@/components/shared/Pagination";
 import { AdminSearchBar } from "@/features/admin/components/AdminSearchBar";
 import { DeleteButton } from "@/features/admin/components/DeleteButton";
+import { RegistrationReviewActions } from "@/features/admin/components/RegistrationReviewActions";
+import { EditRegistrationNameForm } from "@/features/admin/components/EditRegistrationNameForm";
 import { deleteRegistration } from "@/features/admin/actions/registrationActions";
 import { prisma } from "@/lib/prisma";
 import { formatEventDate } from "@/utils/formatDate";
 import { resolveCertificateName } from "@/features/registration/types/registration";
+import { cn } from "@/lib/utils";
 import type { Prisma } from "@prisma/client";
 
 const PAGE_SIZE = 25;
 
+const STATUS_TABS: { value: RegistrationStatus | "ALL"; label: string }[] = [
+  { value: "ALL", label: "همه" },
+  { value: "PENDING", label: "در انتظار بررسی" },
+  { value: "APPROVED", label: "تأیید شده" },
+  { value: "REJECTED", label: "رد شده" },
+  { value: "ATTENDED", label: "حضور یافته" },
+  { value: "CANCELLED", label: "لغو شده" },
+];
+
+const STATUS_BADGE: Record<
+  RegistrationStatus,
+  { label: string; variant: BadgeProps["variant"] }
+> = {
+  PENDING: { label: "در انتظار بررسی", variant: "warning" },
+  APPROVED: { label: "تأیید شده", variant: "info" },
+  REJECTED: { label: "رد شده", variant: "danger" },
+  ATTENDED: { label: "حضور یافته", variant: "success" },
+  CANCELLED: { label: "لغو شده", variant: "danger" },
+};
+
 interface AdminRegistrationsPageProps {
-  readonly searchParams: Promise<{ q?: string; page?: string }>;
+  readonly searchParams: Promise<{
+    q?: string;
+    page?: string;
+    status?: string;
+  }>;
 }
 
-async function getRegistrations(q: string | undefined, page: number) {
-  const where: Prisma.RegistrationWhereInput = q
-    ? {
-        OR: [
-          { firstName: { contains: q, mode: "insensitive" } },
-          { lastName: { contains: q, mode: "insensitive" } },
-          { phone: { contains: q } },
-          { email: { contains: q, mode: "insensitive" } },
-        ],
-      }
-    : {};
+function isRegistrationStatus(
+  value: string | undefined,
+): value is RegistrationStatus {
+  return (
+    !!value && STATUS_TABS.some((tab) => tab.value === value) && value !== "ALL"
+  );
+}
+
+async function getRegistrations(
+  q: string | undefined,
+  status: string | undefined,
+  page: number,
+) {
+  const where: Prisma.RegistrationWhereInput = {
+    ...(q
+      ? {
+          OR: [
+            { firstName: { contains: q, mode: "insensitive" } },
+            { lastName: { contains: q, mode: "insensitive" } },
+            { phone: { contains: q } },
+            { email: { contains: q, mode: "insensitive" } },
+          ],
+        }
+      : {}),
+    ...(isRegistrationStatus(status) ? { status } : {}),
+  };
 
   const [registrations, total] = await Promise.all([
     prisma.registration.findMany({
@@ -42,13 +87,24 @@ async function getRegistrations(q: string | undefined, page: number) {
     prisma.registration.count({ where }),
   ]);
 
-  return { registrations, totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)), total };
+  return {
+    registrations,
+    totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)),
+    total,
+  };
 }
 
-export default async function AdminRegistrationsPage({ searchParams }: AdminRegistrationsPageProps) {
-  const { q, page: pageParam } = await searchParams;
+export default async function AdminRegistrationsPage({
+  searchParams,
+}: AdminRegistrationsPageProps) {
+  const { q, page: pageParam, status } = await searchParams;
   const page = Math.max(1, Number(pageParam) || 1);
-  const { registrations, totalPages, total } = await getRegistrations(q, page);
+  const { registrations, totalPages, total } = await getRegistrations(
+    q,
+    status,
+    page,
+  );
+  const activeStatus = isRegistrationStatus(status) ? status : "ALL";
 
   return (
     <div className="flex flex-col gap-6">
@@ -73,6 +129,31 @@ export default async function AdminRegistrationsPage({ searchParams }: AdminRegi
         </div>
       </div>
 
+      <div className="flex flex-wrap gap-2">
+        {STATUS_TABS.map((tab) => {
+          const params = new URLSearchParams();
+          if (tab.value !== "ALL") params.set("status", tab.value);
+          const href = params.toString()
+            ? `/admin/registrations?${params}`
+            : "/admin/registrations";
+          const isActive = activeStatus === tab.value;
+          return (
+            <Link
+              key={tab.value}
+              href={href}
+              className={cn(
+                "rounded-full border px-3 py-1.5 text-sm transition-colors",
+                isActive
+                  ? "border-accent bg-accent/15 text-accent-hover"
+                  : "border-border text-text-secondary hover:bg-surface-secondary",
+              )}
+            >
+              {tab.label}
+            </Link>
+          );
+        })}
+      </div>
+
       <Suspense>
         <AdminSearchBar searchPlaceholder="جستجو بر اساس نام، موبایل یا ایمیل..." />
       </Suspense>
@@ -84,7 +165,7 @@ export default async function AdminRegistrationsPage({ searchParams }: AdminRegi
         />
       ) : (
         <Card className="overflow-x-auto p-0">
-          <table className="w-full min-w-[1180px] text-start text-sm">
+          <table className="w-full min-w-345-start text-sm">
             <thead className="sticky top-0 border-b border-border bg-surface text-text-secondary">
               <tr>
                 <th className="p-4 text-start font-medium">نام</th>
@@ -92,10 +173,13 @@ export default async function AdminRegistrationsPage({ searchParams }: AdminRegi
                 <th className="p-4 text-start font-medium">موبایل</th>
                 <th className="p-4 text-start font-medium">ایمیل</th>
                 <th className="p-4 text-start font-medium">دانشگاه / شرکت</th>
-                <th className="p-4 text-start font-medium">درباره خودشون / دلیل حضور</th>
+                <th className="p-4 text-start font-medium">
+                  درباره خودشون / دلیل حضور
+                </th>
                 <th className="p-4 text-start font-medium">رویداد</th>
                 <th className="p-4 text-start font-medium">تاریخ ثبت‌نام</th>
-                <th className="p-4 text-start font-medium">عملیات</th>
+                <th className="p-4 text-start font-medium">وضعیت</th>
+                <th className="min-w-55 p-4 text-start font-medium">عملیات</th>
               </tr>
             </thead>
             <tbody>
@@ -129,15 +213,51 @@ export default async function AdminRegistrationsPage({ searchParams }: AdminRegi
                       {registration.notes || "—"}
                     </p>
                   </td>
-                  <td className="p-4 text-text-secondary">{registration.event.title}</td>
+                  <td className="p-4 text-text-secondary">
+                    {registration.event.title}
+                  </td>
                   <td className="p-4 text-text-secondary">
                     {formatEventDate(registration.createdAt)}
                   </td>
                   <td className="p-4">
-                    <DeleteButton
-                      confirmMessage={`آیا از حذف ثبت‌نام «${registration.firstName} ${registration.lastName}» مطمئن هستید؟`}
-                      action={deleteRegistration.bind(null, registration.id)}
-                    />
+                    <div className="flex items-center gap-1.5">
+                      <Badge
+                        variant={STATUS_BADGE[registration.status].variant}
+                        className="w-fit"
+                      >
+                        {STATUS_BADGE[registration.status].label}
+                      </Badge>
+                      {registration.status === "APPROVED" &&
+                        !registration.smsSentAt && (
+                          <AlertTriangle
+                            className="size-4 shrink-0 text-danger"
+                            aria-label="ارسال پیامک ناموفق یا انجام‌نشده"
+                          />
+                        )}
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <div className="flex items-center gap-1">
+                      <EditRegistrationNameForm
+                        id={registration.id}
+                        firstName={registration.firstName}
+                        lastName={registration.lastName}
+                        certificateName={registration.certificateName}
+                      />
+                      <RegistrationReviewActions
+                        id={registration.id}
+                        fullName={`${registration.firstName} ${registration.lastName}`}
+                        status={registration.status}
+                        smsSentAt={
+                          registration.smsSentAt?.toISOString() ?? null
+                        }
+                        approvalToken={registration.approvalToken}
+                      />
+                      <DeleteButton
+                        confirmMessage={`آیا از حذف ثبت‌نام «${registration.firstName} ${registration.lastName}» مطمئن هستید؟`}
+                        action={deleteRegistration.bind(null, registration.id)}
+                      />
+                    </div>
                   </td>
                 </tr>
               ))}

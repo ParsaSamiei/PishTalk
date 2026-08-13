@@ -51,13 +51,17 @@ function MyRegistrationsLookup() {
   }
 
   const statusVariant: Record<RegistrationLookupItem["status"], BadgeProps["variant"]> = {
-    REGISTERED: "info",
+    PENDING: "warning",
+    APPROVED: "info",
+    REJECTED: "danger",
     ATTENDED: "success",
     CANCELLED: "danger",
   };
 
   const statusLabel: Record<RegistrationLookupItem["status"], string> = {
-    REGISTERED: d.registration.statusRegistered,
+    PENDING: d.registration.statusPending,
+    APPROVED: d.registration.statusApproved,
+    REJECTED: d.registration.statusRejected,
     ATTENDED: d.registration.statusAttended,
     CANCELLED: d.registration.statusCancelled,
   };

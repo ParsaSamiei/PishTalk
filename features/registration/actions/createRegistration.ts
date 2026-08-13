@@ -60,9 +60,17 @@ export async function createRegistration(
     // surface as a normal "please try again" error.
     await prisma.$transaction(
       async (tx: Prisma.TransactionClient) => {
+        // Counts PENDING alongside APPROVED: a capacity-limited event must
+        // reserve the spot as soon as someone submits, or two concurrent
+        // submissions right at the last spot could both go PENDING and
+        // both later be approved past capacity.
+        const activeStatuses: Prisma.RegistrationWhereInput["status"] = {
+          in: ["PENDING", "APPROVED"],
+        };
+
         if (event.capacity !== null) {
           const registeredCount = await tx.registration.count({
-            where: { eventId, status: "REGISTERED" },
+            where: { eventId, status: activeStatuses },
           });
 
           if (registeredCount >= event.capacity) {
@@ -71,7 +79,7 @@ export async function createRegistration(
         }
 
         const existing = await tx.registration.findFirst({
-          where: { eventId, phone: parsed.data.phone, status: "REGISTERED" },
+          where: { eventId, phone: parsed.data.phone, status: activeStatuses },
         });
 
         if (existing) {
