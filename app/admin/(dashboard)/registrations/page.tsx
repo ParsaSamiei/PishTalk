@@ -165,7 +165,7 @@ export default async function AdminRegistrationsPage({
         />
       ) : (
         <Card className="overflow-x-auto p-0">
-          <table className="w-full min-w-[1380px] text-start text-sm">
+          <table className="w-full min-w-345-start text-sm">
             <thead className="sticky top-0 border-b border-border bg-surface text-text-secondary">
               <tr>
                 <th className="p-4 text-start font-medium">نام</th>
@@ -179,9 +179,7 @@ export default async function AdminRegistrationsPage({
                 <th className="p-4 text-start font-medium">رویداد</th>
                 <th className="p-4 text-start font-medium">تاریخ ثبت‌نام</th>
                 <th className="p-4 text-start font-medium">وضعیت</th>
-                <th className="min-w-[220px] p-4 text-start font-medium">
-                  عملیات
-                </th>
+                <th className="min-w-55 p-4 text-start font-medium">عملیات</th>
               </tr>
             </thead>
             <tbody>

@@ -33,11 +33,14 @@ const WHEEL = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 // `-${digit * 100}%` would overshoot by 10x and scroll every digit clean
 // off screen — the bug that made the whole counter render blank.
 const ROW_HEIGHT_EM = 1.15;
+// Slight height bump to give digits ample breathing room inside the wheel slot.
+const ROW_HEIGHT_EM = 1.25;
 
 // Matches the easing curve used by the Reveal wrapper elsewhere on the
 // homepage, so this feels like the same motion language, not a bolted-on
 // widget.
 const EASE: Easing = [0.16, 1, 0.3, 1];
+const SMOOTH_EASE: Easing = [0.22, 1, 0.36, 1];
 
 /**
  * Odometer-style rolling digit counter for landing-page social-proof
@@ -54,17 +57,14 @@ function OdometerCounter({
   value,
   prefix,
   suffix,
-  duration = 1.8,
+  duration = 3.2, // Slower, more impactful default speed
   className,
   once = true,
 }: OdometerCounterProps) {
   const shouldReduceMotion = useReducedMotion();
   const [started, setStarted] = React.useState(false);
 
-  // Split the target into individual digits, keeping thousands separators
-  // as static characters between the rolling wheels (e.g. "1,240"). Each
   // entry gets its rolling-wheel index precomputed up front (rather than
-  // mutated inside the render map below) so re-renders stay pure.
   const chars = Math.max(0, Math.round(value))
     .toLocaleString("en-US")
     .split("");
@@ -83,11 +83,11 @@ function OdometerCounter({
         className,
       )}
     >
-      {prefix ? <span className="me-1">{prefix}</span> : null}
+      {prefix ? <span className="me-1.5">{prefix}</span> : null}
       <span className="inline-flex items-center">
         {entries.map(({ char, digitIndex }, i) =>
           char === "," ? (
-            <span key={`sep-${i}`} className="opacity-40">
+            <span key={`sep-${i}`} className="opacity-40 px-[0.05em]">
               {char}
             </span>
           ) : (
@@ -102,9 +102,8 @@ function OdometerCounter({
           ),
         )}
       </span>
-      {suffix ? <span className="ms-1">{suffix}</span> : null}
+      {suffix ? <span className="ms-1.5">{suffix}</span> : null}
 
-      {/* Invisible trigger: fires once the counter scrolls into view, same
           margin as Reveal so both animate at a consistent scroll depth. */}
       <motion.span
         aria-hidden="true"
@@ -132,8 +131,6 @@ function OdometerDigit({
   started,
   instant,
 }: OdometerDigitProps) {
-  // em-based sizing keeps each wheel's height in step with whatever
-  // font-size the caller applies via className, no fixed pixel value to
   // keep in sync.
   const rowStyle: React.CSSProperties = {
     height: `${ROW_HEIGHT_EM}em`,
@@ -142,21 +139,27 @@ function OdometerDigit({
 
   return (
     <span
-      className="relative inline-block w-[0.62em] overflow-hidden align-top [mask-image:linear-gradient(to_bottom,transparent,black_18%,black_82%,transparent)]"
+      className="relative inline-block w-[0.72em] overflow-hidden align-top mask-[linear-gradient(to_bottom,transparent_0%,black_10%,black_90%,transparent_100%)]"
       style={rowStyle}
     >
       <motion.span
-        className="absolute inset-x-0 top-0 flex flex-col items-center"
+        className="absolute inset-x-0 top-0 flex flex-col items-center will-change-transform"
         initial={{ y: "0em" }}
         animate={{ y: started ? `${-(digit * ROW_HEIGHT_EM)}em` : "0em" }}
         transition={
           instant
             ? { duration: 0 }
-            : { duration, ease: EASE, delay: index * 0.06 }
+            : {
+                type: "tween",
+                duration,
+                ease: SMOOTH_EASE,
+                // Increased delay per digit column for a more visible cascading roll
+                delay: index * 0.12,
+              }
         }
       >
         {WHEEL.map((n) => (
-          <span key={n} style={rowStyle}>
+          <span key={n} style={rowStyle} className="select-none">
             {n}
           </span>
         ))}
