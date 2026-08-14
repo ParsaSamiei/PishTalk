@@ -13,8 +13,9 @@ import { pick } from "@/lib/i18n/content";
 import { getSponsors } from "@/lib/support";
 // Single source of truth for the app version shown in the footer — bump it
 // in package.json and it flows through automatically, no separate constant
-// to forget to update.
-import { version as appVersion } from "@/package.json";
+// to forget to update. Import the whole module (not a named `version`
+// export) since Next/webpack only allows the default export from JSON.
+import packageJson from "@/package.json";
 
 interface FooterProps {
   readonly tagline?: string;
@@ -261,9 +262,9 @@ async function Footer({
           <span
             dir="ltr"
             className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 font-mono text-xs text-text-secondary/70"
-            title={`${d.footer.version} ${appVersion}`}
+            title={`${d.footer.version} ${packageJson.version}`}
           >
-            v{appVersion}
+            v{packageJson.version}
           </span>
         </Container>
       </div>
