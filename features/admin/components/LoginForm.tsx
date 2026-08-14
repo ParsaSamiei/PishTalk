@@ -74,7 +74,7 @@ function LoginForm() {
             aria-label={showPassword ? "پنهان کردن رمز عبور" : "نمایش رمز عبور"}
             aria-pressed={showPassword}
             tabIndex={-1}
-            className="absolute inset-y-0 end-0 flex w-10 items-center justify-center text-text-secondary transition-colors hover:text-text-primary"
+            className="absolute inset-y-0 inset-e-0 flex w-10 items-center justify-center text-text-secondary transition-colors hover:text-text-primary"
           >
             {showPassword ? (
               <EyeOff className="size-4" aria-hidden="true" />
