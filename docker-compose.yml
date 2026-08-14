@@ -66,7 +66,7 @@ services:
     # compose build` doesn't silently pick up upstream changes; bump it
     # deliberately when you want to upgrade Umami.
     build:
-      context: https://github.com/umami-software/umami.git#v3.2.0
+      context: ./umami-src
       args:
         BASE_PATH: /analytics
     image: pishtalk-umami:v3.2.0-analytics
@@ -77,7 +77,7 @@ services:
       DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD}@umami-db:5432/umami
       DATABASE_TYPE: postgresql
       BASE_PATH: /analytics
-      APP_SECRET: ${UMAMI_APP_SECRET:?set UMAMI_APP_SECRET in .env, generate with: openssl rand -base64 32}
+      APP_SECRET: ${UMAMI_APP_SECRET:?set UMAMI_APP_SECRET in .env}
     depends_on:
       umami-db:
         condition: service_healthy
@@ -101,7 +101,7 @@ services:
       - receipts:/app/private-uploads
     environment:
       DATABASE_URL: ${DATABASE_URL}
-      AUTH_SECRET: ${AUTH_SECRET:?set AUTH_SECRET in .env, generate with: npx auth secret}
+      AUTH_SECRET: ${AUTH_SECRET:?set AUTH_SECRET in .env}
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://pishtalk.ir}
       FARAZSMS_API_KEY: ${FARAZSMS_API_KEY:?set FARAZSMS_API_KEY in .env, see docs.farazsms.com}
       FARAZSMS_LINE_NUMBER: ${FARAZSMS_LINE_NUMBER:?set FARAZSMS_LINE_NUMBER in .env}
