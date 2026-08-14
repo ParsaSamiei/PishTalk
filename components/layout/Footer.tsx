@@ -11,6 +11,10 @@ import { getSiteSettings } from "@/lib/site-settings";
 import { getLocaleContext } from "@/lib/i18n/server";
 import { pick } from "@/lib/i18n/content";
 import { getSponsors } from "@/lib/support";
+// Single source of truth for the app version shown in the footer — bump it
+// in package.json and it flows through automatically, no separate constant
+// to forget to update.
+import { version as appVersion } from "@/package.json";
 
 interface FooterProps {
   readonly tagline?: string;
@@ -246,8 +250,21 @@ async function Footer({
       ) : null}
 
       <div className="border-t border-border">
-        <Container className="py-4 text-center text-sm text-text-secondary">
-          © {year} {copyright}
+        <Container className="flex flex-col items-center justify-center gap-2 py-4 text-center text-sm text-text-secondary sm:flex-row sm:gap-3">
+          <span>
+            © {year} {copyright}
+          </span>
+
+          {/* Version stays LTR and monospaced regardless of locale, same
+              treatment as phone numbers above — it's a build identifier,
+              not prose, so it shouldn't be affected by the RTL context. */}
+          <span
+            dir="ltr"
+            className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 font-mono text-xs text-text-secondary/70"
+            title={`${d.footer.version} ${appVersion}`}
+          >
+            v{appVersion}
+          </span>
         </Container>
       </div>
     </footer>
