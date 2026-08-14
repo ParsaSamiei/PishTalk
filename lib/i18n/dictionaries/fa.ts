@@ -441,6 +441,7 @@ export const fa = {
     rights: "تمامی حقوق محفوظ است.",
     instagram: "اینستاگرام پیشتاک",
     telegram: "تلگرام پیشتاک",
+    version: "نسخه",
   },
 
   maintenance: {

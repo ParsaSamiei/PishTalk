@@ -445,6 +445,7 @@ export const en: Dictionary = {
     rights: "All rights reserved.",
     instagram: "Pishtalk on Instagram",
     telegram: "Pishtalk on Telegram",
+    version: "Version",
   },
 
   maintenance: {

@@ -56,12 +56,23 @@ function OdometerCounter({
   value,
   prefix,
   suffix,
-  duration = 3.2, // Slower, more impactful default speed
+  duration = 3.6, // Slower, more impactful default speed
   className,
   once = true,
 }: OdometerCounterProps) {
   const shouldReduceMotion = useReducedMotion();
   const [started, setStarted] = React.useState(false);
+
+  // The badge sits in the hero, so it's already on-screen the instant the
+  // page loads — without a small settle delay the roll can kick off while
+  // the page is still painting/hydrating and only the tail end is caught.
+  // This timer just gives it a beat before starting, it doesn't affect how
+  // long the roll itself takes.
+  const startTimer = React.useRef<ReturnType<typeof setTimeout>>(undefined);
+  const handleViewportEnter = React.useCallback(() => {
+    startTimer.current = setTimeout(() => setStarted(true), 350);
+  }, []);
+  React.useEffect(() => () => clearTimeout(startTimer.current), []);
 
   // entry gets its rolling-wheel index precomputed up front (rather than
   const chars = Math.max(0, Math.round(value))
@@ -74,6 +85,11 @@ function OdometerCounter({
       : { char, digitIndex: nextDigitIndex++ },
   );
 
+  // Screen readers get the plain formatted number; the rolling wheels
+  // themselves are decorative and hidden from the accessibility tree so
+  // the animation doesn't get announced digit-by-digit.
+  const formattedValue = chars.join("");
+
   return (
     <span
       dir="ltr"
@@ -83,12 +99,13 @@ function OdometerCounter({
       )}
     >
       {prefix ? <span className="me-1.5">{prefix}</span> : null}
-      <span className="inline-flex items-center">
+      <span aria-hidden="true" className="inline-flex items-center gap-[0.09em]">
         {entries.map(({ char, digitIndex }, i) =>
           char === "," ? (
-            <span key={`sep-${i}`} className="opacity-40 px-[0.05em]">
-              {char}
-            </span>
+            <span
+              key={`sep-${i}`}
+              className="mx-[0.02em] inline-block h-[0.4em] w-px self-center rounded-full bg-current opacity-25"
+            />
           ) : (
             <OdometerDigit
               key={`digit-${i}`}
@@ -101,12 +118,13 @@ function OdometerCounter({
           ),
         )}
       </span>
+      <span className="sr-only">{formattedValue}</span>
       {suffix ? <span className="ms-1.5">{suffix}</span> : null}
 
       <motion.span
         aria-hidden="true"
         className="sr-only"
-        onViewportEnter={() => setStarted(true)}
+        onViewportEnter={handleViewportEnter}
         viewport={{ once, margin: "-80px" }}
       />
     </span>
@@ -121,7 +139,11 @@ interface OdometerDigitProps {
   readonly instant: boolean;
 }
 
-/** A single rolling wheel: a 0–9 column that translates up to `digit`. */
+/**
+ * A single rolling wheel: a 0–9 column that translates up to `digit`,
+ * housed in a small beveled "drum" tile so it reads as one mechanical
+ * barrel among several, rather than a flat row of digits.
+ */
 function OdometerDigit({
   digit,
   index,
@@ -135,34 +157,72 @@ function OdometerDigit({
     lineHeight: `${ROW_HEIGHT_EM}em`,
   };
 
+  // Cascading delay shared by the roll and the little settle-bounce that
+  // follows it, so the bounce only kicks in once that column's roll has
+  // actually finished.
+  const rollDelay = index * 0.12;
+
   return (
-    <span
-      className="relative inline-block w-[0.72em] overflow-hidden align-top mask-[linear-gradient(to_bottom,transparent_0%,black_10%,black_90%,transparent_100%)]"
+    <motion.span
+      className="relative inline-block w-[0.86em] rounded-[0.16em] border border-black/10 bg-gradient-to-b from-white/90 via-white/50 to-black/5 align-top shadow-[inset_0_1px_1px_rgba(255,255,255,0.6),inset_0_-2px_3px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.08)] dark:border-white/10 dark:from-white/15 dark:via-white/5 dark:to-black/20 dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-2px_3px_rgba(0,0,0,0.35),0_1px_2px_rgba(0,0,0,0.25)]"
       style={rowStyle}
+      initial={{ scale: 1 }}
+      animate={
+        instant || !started
+          ? { scale: 1 }
+          : { scale: [1, 1.12, 0.97, 1] }
+      }
+      transition={
+        instant
+          ? { duration: 0 }
+          : {
+              delay: duration + rollDelay - 0.08,
+              duration: 0.42,
+              ease: "easeOut",
+            }
+      }
     >
-      <motion.span
-        className="absolute inset-x-0 top-0 flex flex-col items-center will-change-transform"
-        initial={{ y: "0em" }}
-        animate={{ y: started ? `${-(digit * ROW_HEIGHT_EM)}em` : "0em" }}
-        transition={
-          instant
-            ? { duration: 0 }
-            : {
-                type: "tween",
-                duration,
-                ease: SMOOTH_EASE,
-                // Increased delay per digit column for a more visible cascading roll
-                delay: index * 0.12,
-              }
-        }
+      {/* Rolling digit column, clipped and faded at the edges so numerals
+          appear to scroll up out of / down into the drum. */}
+      <span
+        className="absolute inset-0 overflow-hidden mask-[linear-gradient(to_bottom,transparent_0%,black_12%,black_88%,transparent_100%)]"
+        style={rowStyle}
       >
-        {WHEEL.map((n) => (
-          <span key={n} style={rowStyle} className="select-none">
-            {n}
-          </span>
-        ))}
-      </motion.span>
-    </span>
+        <motion.span
+          className="absolute inset-x-0 top-0 flex flex-col items-center will-change-transform"
+          initial={{ y: "0em" }}
+          animate={{ y: started ? `${-(digit * ROW_HEIGHT_EM)}em` : "0em" }}
+          transition={
+            instant
+              ? { duration: 0 }
+              : {
+                  type: "tween",
+                  duration,
+                  ease: SMOOTH_EASE,
+                  // Increased delay per digit column for a more visible cascading roll
+                  delay: rollDelay,
+                }
+          }
+        >
+          {WHEEL.map((n) => (
+            <span key={n} style={rowStyle} className="select-none">
+              {n}
+            </span>
+          ))}
+        </motion.span>
+      </span>
+
+      {/* Glossy highlight across the top of the drum, purely decorative. */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-[0.16em] bg-gradient-to-b from-white/50 to-transparent dark:from-white/10"
+      />
+      {/* Faint centerline seam, evoking the split of a real odometer drum. */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-black/10 dark:bg-black/30"
+      />
+    </motion.span>
   );
 }
 

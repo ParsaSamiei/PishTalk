@@ -212,7 +212,9 @@ function HeroSection({ nextEvent, totalRegistered }: HeroSectionProps) {
               size="lg"
               className="transition-shadow duration-300 hover:shadow-[0_0_32px_rgba(244,185,66,0.35)]  border border-white/25"
             >
-              <Link href={nextEvent ? `/events/${nextEvent.slug}` : "/events"}>
+              <Link
+                href={nextEvent ? `/events/${nextEvent.slug}#register` : "/events"}
+              >
                 {d.nav.registerCta}
               </Link>
             </Button>

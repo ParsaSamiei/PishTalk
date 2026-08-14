@@ -124,7 +124,7 @@ export default async function EventPage({ params }: EventPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="relative overflow-hidden bg-surface-primary">
+      <section className="relative overflow-hidden bg-surface">
         {event.coverImage ? (
           <div className="absolute inset-0">
             <Image
@@ -134,7 +134,9 @@ export default async function EventPage({ params }: EventPageProps) {
               priority
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-surface-primary/75 dark:bg-surface-primary/60 backdrop-blur-[2px]" />
+            {/* Scrim so the title stays readable no matter how dark/light
+                the cover photo is, independent of the site's own theme. */}
+            <div className="absolute inset-0 bg-black/55" />
           </div>
         ) : (
           <CircuitBackground
@@ -145,22 +147,42 @@ export default async function EventPage({ params }: EventPageProps) {
 
         <Container className="relative flex flex-col gap-6 py-20">
           <Breadcrumbs
-            variant="default"
+            variant={event.coverImage ? "light" : "default"}
             items={[
               { label: d.events.pageTitle, href: "/events" },
               { label: title },
             ]}
           />
 
-          <h1 className="max-w-3xl text-3xl font-bold text-text-primary sm:text-5xl">
+          <h1
+            className={`max-w-3xl text-3xl font-bold sm:text-5xl ${
+              event.coverImage
+                ? "text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]"
+                : "text-text-primary"
+            }`}
+          >
             {title}
           </h1>
 
           {subtitle ? (
-            <p className="max-w-2xl text-lg text-text-secondary">{subtitle}</p>
+            <p
+              className={`max-w-2xl text-lg ${
+                event.coverImage
+                  ? "text-white/85 drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]"
+                  : "text-text-secondary"
+              }`}
+            >
+              {subtitle}
+            </p>
           ) : null}
 
-          <div className="flex flex-col gap-3 text-sm text-text-secondary sm:flex-row sm:gap-8">
+          <div
+            className={`flex flex-col gap-3 text-sm sm:flex-row sm:gap-8 ${
+              event.coverImage
+                ? "text-white/85 drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]"
+                : "text-text-secondary"
+            }`}
+          >
             <span className="flex items-center gap-2">
               <Calendar className="size-4 text-accent" aria-hidden="true" />
               {formatWeekday(event.date, locale)}
