@@ -25,6 +25,16 @@ export interface EventSummary {
   readonly status: EventStatus;
 }
 
+export interface EventSpeaker {
+  readonly id: string;
+  readonly name: string;
+  readonly nameEn: string | null;
+  readonly bio: string | null;
+  readonly bioEn: string | null;
+  readonly photo: string | null;
+  readonly sortOrder: number;
+}
+
 export interface EventDetail extends EventSummary {
   readonly description: string;
   readonly descriptionEn: string | null;
@@ -34,4 +44,5 @@ export interface EventDetail extends EventSummary {
   readonly speakerBio: string | null;
   readonly speakerBioEn: string | null;
   readonly timeline: readonly EventTimelineItem[];
+  readonly speakers: readonly EventSpeaker[];
 }

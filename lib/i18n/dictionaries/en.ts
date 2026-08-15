@@ -176,6 +176,7 @@ export const en: Dictionary = {
       "This event has already taken place. Follow the events page for the next one.",
     aboutEvent: "About this event",
     speaker: "Speaker",
+    speakers: "Speakers",
     schedule: "Schedule",
     eventResources: "Resources from this event",
     eventGallery: "Gallery from this event",

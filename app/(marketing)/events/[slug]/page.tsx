@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, Clock, MapPin, Images, BookOpen } from "lucide-react";
+import { Calendar, Clock, MapPin, Images, BookOpen, User } from "lucide-react";
 
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
@@ -105,9 +105,15 @@ export default async function EventPage({ params }: EventPageProps) {
       : "https://schema.org/EventScheduled",
     location: { "@type": "Place", name: location },
     image: event.coverImage ? [event.coverImage] : undefined,
-    performer: speakerName
-      ? { "@type": "Person", name: speakerName }
-      : undefined,
+    performer:
+      event.speakers.length > 0
+        ? event.speakers.map((speaker) => ({
+            "@type": "Person",
+            name: pick(locale, speaker.name, speaker.nameEn),
+          }))
+        : speakerName
+          ? { "@type": "Person", name: speakerName }
+          : undefined,
     // The site name is a brand wordmark rather than a translatable string, so
     // it comes from the logo keys ("پیشتاک" / "Pishtalk") to stay localized.
     organizer: {
@@ -236,7 +242,53 @@ export default async function EventPage({ params }: EventPageProps) {
               </p>
             </div>
 
-            {speakerName ? (
+            {event.speakers.length > 0 ? (
+              <div className="flex flex-col gap-4">
+                <h2 className="text-2xl font-bold text-text-primary">
+                  {event.speakers.length > 1 ? d.events.speakers : d.events.speaker}
+                </h2>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {event.speakers.map((speaker) => {
+                    const name = pick(locale, speaker.name, speaker.nameEn);
+                    const bio = pick(locale, speaker.bio, speaker.bioEn);
+                    return (
+                      <Card key={speaker.id} className="flex flex-col gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="relative size-14 shrink-0 overflow-hidden rounded-full bg-surface-secondary">
+                            {speaker.photo ? (
+                              <Image
+                                src={speaker.photo}
+                                alt={name}
+                                fill
+                                className="object-cover"
+                              />
+                            ) : (
+                              <div className="flex size-full items-center justify-center">
+                                <User
+                                  className="size-6 text-text-secondary"
+                                  aria-hidden="true"
+                                />
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <span className="text-sm font-semibold text-accent-hover">
+                              {d.events.speaker}
+                            </span>
+                            <p className="text-lg font-bold text-text-primary">{name}</p>
+                          </div>
+                        </div>
+                        {bio ? (
+                          <p className="text-sm leading-relaxed text-text-secondary">
+                            {bio}
+                          </p>
+                        ) : null}
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : speakerName ? (
               <Card>
                 <CardHeader>
                   <span className="text-sm font-semibold text-accent-hover">

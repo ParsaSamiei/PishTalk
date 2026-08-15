@@ -11,7 +11,10 @@ export default async function EditEventPage({ params }: EditEventPageProps) {
   const { id } = await params;
   const event = await prisma.event.findUnique({
     where: { id },
-    include: { timeline: { orderBy: { sortOrder: "asc" } } },
+    include: {
+      timeline: { orderBy: { sortOrder: "asc" } },
+      speakers: { orderBy: { sortOrder: "asc" } },
+    },
   });
 
   if (!event) notFound();
@@ -52,6 +55,13 @@ export default async function EditEventPage({ params }: EditEventPageProps) {
             description: item.description ?? "",
             titleEn: item.titleEn ?? "",
             descriptionEn: item.descriptionEn ?? "",
+          })),
+          speakers: event.speakers.map((speaker) => ({
+            name: speaker.name,
+            bio: speaker.bio ?? "",
+            photo: speaker.photo ?? "",
+            nameEn: speaker.nameEn ?? "",
+            bioEn: speaker.bioEn ?? "",
           })),
         }}
       />

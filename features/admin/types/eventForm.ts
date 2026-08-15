@@ -10,6 +10,23 @@ export const eventTimelineItemSchema = z.object({
   descriptionEn: z.string().trim().optional().or(z.literal("")),
 });
 
+export const eventSpeakerSchema = z.object({
+  name: z.string().trim().min(1, "نام سخنران الزامی است").max(150),
+  bio: z.string().trim().max(1000).optional().or(z.literal("")),
+  photo: z
+    .string()
+    .trim()
+    .refine((val) => val === "" || val.startsWith("/") || /^https?:\/\//.test(val), {
+      message: "آدرس تصویر معتبر نیست",
+    })
+    .optional()
+    .or(z.literal("")),
+  // Optional English translations. Blank means "not translated yet" and the
+  // public site falls back to the Persian text (lib/i18n/content.ts).
+  nameEn: z.string().trim().optional().or(z.literal("")),
+  bioEn: z.string().trim().optional().or(z.literal("")),
+});
+
 export const eventFormSchema = z.object({
   title: z.string().trim().min(3, "عنوان باید حداقل ۳ حرف باشد").max(200),
   slug: z
@@ -51,6 +68,9 @@ export const eventFormSchema = z.object({
     .optional()
     .or(z.literal("")),
   timeline: z.array(eventTimelineItemSchema),
+  // Up to 4 speakers per event; the single legacy speakerName/speakerBio
+  // fields above stay in place untouched for existing events.
+  speakers: z.array(eventSpeakerSchema).max(4, "حداکثر ۴ سخنران مجاز است"),
 });
 
 export type EventFormValues = z.infer<typeof eventFormSchema>;
