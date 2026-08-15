@@ -26,6 +26,8 @@ const TRANSLATABLE = [
 
 const TIMELINE_TRANSLATABLE = ["titleEn", "descriptionEn"] as const;
 
+const SPEAKER_TRANSLATABLE = ["nameEn", "bioEn"] as const;
+
 function toEventData(values: EventFormValues) {
   return blankToNull(
     {
@@ -75,6 +77,27 @@ function toTimelineData(timeline: EventFormValues["timeline"]) {
   }));
 }
 
+/**
+ * Speaker rows are recreated from scratch on every save, same as the
+ * timeline, so the English columns go through the same blank-to-NULL
+ * normalization.
+ */
+function toSpeakersData(speakers: EventFormValues["speakers"]) {
+  return speakers.map((speaker, index) => ({
+    ...blankToNull(
+      {
+        name: speaker.name,
+        bio: speaker.bio || null,
+        photo: speaker.photo || null,
+        nameEn: speaker.nameEn,
+        bioEn: speaker.bioEn,
+      },
+      SPEAKER_TRANSLATABLE,
+    ),
+    sortOrder: index,
+  }));
+}
+
 export async function createEvent(values: EventFormValues): Promise<ActionResult> {
   await requireAdmin();
   const parsed = eventFormSchema.safeParse(values);
@@ -93,6 +116,9 @@ export async function createEvent(values: EventFormValues): Promise<ActionResult
         ...toEventData(parsed.data),
         timeline: {
           create: toTimelineData(parsed.data.timeline),
+        },
+        speakers: {
+          create: toSpeakersData(parsed.data.speakers),
         },
       },
     });
@@ -126,12 +152,16 @@ export async function updateEvent(
 
     await prisma.$transaction([
       prisma.eventTimelineItem.deleteMany({ where: { eventId } }),
+      prisma.eventSpeaker.deleteMany({ where: { eventId } }),
       prisma.event.update({
         where: { id: eventId },
         data: {
           ...toEventData(parsed.data),
           timeline: {
             create: toTimelineData(parsed.data.timeline),
+          },
+          speakers: {
+            create: toSpeakersData(parsed.data.speakers),
           },
         },
       }),

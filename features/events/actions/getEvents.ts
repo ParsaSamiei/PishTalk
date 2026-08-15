@@ -31,6 +31,29 @@ function toSummary(event: {
   };
 }
 
+/** Shared mapper for an event's speakers, Persian plus English. */
+function toSpeakers(
+  speakers: ReadonlyArray<{
+    id: string;
+    name: string;
+    nameEn: string | null;
+    bio: string | null;
+    bioEn: string | null;
+    photo: string | null;
+    sortOrder: number;
+  }>,
+) {
+  return speakers.map((speaker) => ({
+    id: speaker.id,
+    name: speaker.name,
+    nameEn: speaker.nameEn,
+    bio: speaker.bio,
+    bioEn: speaker.bioEn,
+    photo: speaker.photo,
+    sortOrder: speaker.sortOrder,
+  }));
+}
+
 /** Shared mapper for an event's schedule rows, Persian plus English. */
 function toTimeline(
   timeline: ReadonlyArray<{
@@ -67,7 +90,10 @@ export async function getNextEvent(): Promise<EventDetail | null> {
         date: { gte: new Date(new Date().toDateString()) },
       },
       orderBy: { date: "asc" },
-      include: { timeline: { orderBy: { sortOrder: "asc" } } },
+      include: {
+        timeline: { orderBy: { sortOrder: "asc" } },
+        speakers: { orderBy: { sortOrder: "asc" } },
+      },
     });
 
     if (!event) return null;
@@ -82,6 +108,7 @@ export async function getNextEvent(): Promise<EventDetail | null> {
       speakerBio: event.speakerBio,
       speakerBioEn: event.speakerBioEn,
       timeline: toTimeline(event.timeline),
+      speakers: toSpeakers(event.speakers),
     };
   } catch {
     return null;
@@ -153,7 +180,10 @@ export async function getEventBySlug(slug: string): Promise<EventDetail | null> 
   try {
     const event = await prisma.event.findFirst({
       where: { slug, deletedAt: null },
-      include: { timeline: { orderBy: { sortOrder: "asc" } } },
+      include: {
+        timeline: { orderBy: { sortOrder: "asc" } },
+        speakers: { orderBy: { sortOrder: "asc" } },
+      },
     });
 
     if (!event) return null;
@@ -168,6 +198,7 @@ export async function getEventBySlug(slug: string): Promise<EventDetail | null> 
       speakerBio: event.speakerBio,
       speakerBioEn: event.speakerBioEn,
       timeline: toTimeline(event.timeline),
+      speakers: toSpeakers(event.speakers),
     };
   } catch {
     return null;

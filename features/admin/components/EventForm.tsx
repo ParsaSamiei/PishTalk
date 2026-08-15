@@ -45,12 +45,20 @@ function EventForm({ defaultValues, onSubmit, submitLabel }: EventFormProps) {
     defaultValues: {
       status: "DRAFT",
       timeline: [],
+      speakers: [],
       ...defaultValues,
       date: toDateInputValue(defaultValues?.date),
     } as EventFormInput,
   });
 
   const { fields, append, remove } = useFieldArray({ control, name: "timeline" });
+  const {
+    fields: speakerFields,
+    append: appendSpeaker,
+    remove: removeSpeaker,
+  } = useFieldArray({ control, name: "speakers" });
+
+  const MAX_SPEAKERS = 4;
 
   async function handleFormSubmit(values: EventFormValues) {
     setServerError(null);
@@ -182,49 +190,151 @@ function EventForm({ defaultValues, onSubmit, submitLabel }: EventFormProps) {
       </Card>
 
       <Card className="flex flex-col gap-5">
-        <h2 className="text-lg font-semibold text-text-primary">سخنران و ظرفیت</h2>
+        <h2 className="text-lg font-semibold text-text-primary">ظرفیت و وضعیت</h2>
+        {/* The legacy single-speaker fields (speakerName/speakerBio + EN) are
+            superseded by the "سخنرانان رویداد" section below and hidden from
+            this form. They stay registered as hidden inputs (rather than
+            removed) so existing values on older events round-trip through
+            save unchanged instead of being cleared. */}
+        <input type="hidden" {...register("speakerName")} />
+        <input type="hidden" {...register("speakerNameEn")} />
+        <input type="hidden" {...register("speakerBio")} />
+        <input type="hidden" {...register("speakerBioEn")} />
         <div className="grid gap-5 sm:grid-cols-2">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="speakerName">نام سخنران (اختیاری)</Label>
-            <Input id="speakerName" {...register("speakerName")} />
-          </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="capacity">ظرفیت (اختیاری)</Label>
             <Input id="capacity" type="number" min={1} {...register("capacity")} />
           </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="status">وضعیت</Label>
+            <select
+              id="status"
+              className="h-12 rounded-[var(--radius-input)] border border-border bg-surface px-4 text-base text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              {...register("status")}
+            >
+              {STATUS_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="speakerNameEn">
-            نام سخنران (انگلیسی){" "}
-            <span className="font-normal text-text-secondary">(اختیاری)</span>
-          </Label>
-          <Input id="speakerNameEn" dir="ltr" {...register("speakerNameEn")} />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="speakerBio">بیوگرافی سخنران (اختیاری)</Label>
-          <Textarea id="speakerBio" rows={3} {...register("speakerBio")} />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="speakerBioEn">
-            بیوگرافی سخنران (انگلیسی){" "}
-            <span className="font-normal text-text-secondary">(اختیاری)</span>
-          </Label>
-          <Textarea id="speakerBioEn" rows={3} dir="ltr" {...register("speakerBioEn")} />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="status">وضعیت</Label>
-          <select
-            id="status"
-            className="h-12 rounded-[var(--radius-input)] border border-border bg-surface px-4 text-base text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            {...register("status")}
+      </Card>
+
+      <Card className="flex flex-col gap-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-text-primary">سخنرانان رویداد</h2>
+            <p className="text-sm text-text-secondary">
+              حداکثر {MAX_SPEAKERS} سخنران قابل افزودن است.
+            </p>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={speakerFields.length >= MAX_SPEAKERS}
+            onClick={() =>
+              appendSpeaker({ name: "", bio: "", photo: "", nameEn: "", bioEn: "" })
+            }
           >
-            {STATUS_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+            <Plus className="size-4" aria-hidden="true" />
+            افزودن سخنران
+          </Button>
         </div>
+
+        {errors.speakers?.message ? (
+          <p className="text-sm text-danger">{errors.speakers.message}</p>
+        ) : null}
+
+        {speakerFields.length === 0 ? (
+          <p className="text-sm text-text-secondary">هنوز سخنرانی اضافه نشده است.</p>
+        ) : (
+          <div className="flex flex-col gap-4">
+            {speakerFields.map((field, index) => (
+              <div
+                key={field.id}
+                className="flex flex-col gap-4 rounded-[var(--radius-input)] border border-border p-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="grid flex-1 gap-3 sm:grid-cols-2">
+                    <div className="flex flex-col gap-2">
+                      <Label htmlFor={`speakers.${index}.name`}>نام سخنران</Label>
+                      <Input
+                        id={`speakers.${index}.name`}
+                        aria-invalid={Boolean(errors.speakers?.[index]?.name)}
+                        {...register(`speakers.${index}.name` as const)}
+                      />
+                      {errors.speakers?.[index]?.name ? (
+                        <p className="text-sm text-danger">
+                          {errors.speakers[index]?.name?.message}
+                        </p>
+                      ) : null}
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <Label htmlFor={`speakers.${index}.nameEn`}>
+                        نام سخنران (انگلیسی){" "}
+                        <span className="font-normal text-text-secondary">(اختیاری)</span>
+                      </Label>
+                      <Input
+                        id={`speakers.${index}.nameEn`}
+                        dir="ltr"
+                        {...register(`speakers.${index}.nameEn` as const)}
+                      />
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="mt-7 text-danger hover:bg-danger/10"
+                    aria-label="حذف سخنران"
+                    onClick={() => removeSpeaker(index)}
+                  >
+                    <Trash2 className="size-4" aria-hidden="true" />
+                  </Button>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor={`speakers.${index}.bio`}>بیوگرافی (اختیاری)</Label>
+                  <Textarea
+                    id={`speakers.${index}.bio`}
+                    rows={2}
+                    {...register(`speakers.${index}.bio` as const)}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor={`speakers.${index}.bioEn`}>
+                    بیوگرافی (انگلیسی){" "}
+                    <span className="font-normal text-text-secondary">(اختیاری)</span>
+                  </Label>
+                  <Textarea
+                    id={`speakers.${index}.bioEn`}
+                    rows={2}
+                    dir="ltr"
+                    {...register(`speakers.${index}.bioEn` as const)}
+                  />
+                </div>
+
+                <Controller
+                  control={control}
+                  name={`speakers.${index}.photo` as const}
+                  render={({ field: photoField }) => (
+                    <ImageUploadField
+                      id={`speakers.${index}.photo`}
+                      label="عکس سخنران (اختیاری)"
+                      value={photoField.value}
+                      onChange={photoField.onChange}
+                      folder="speakers"
+                      error={errors.speakers?.[index]?.photo?.message}
+                    />
+                  )}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </Card>
 
       <Card className="flex flex-col gap-5">

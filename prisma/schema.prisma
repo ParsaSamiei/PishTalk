@@ -107,6 +107,7 @@ model Event {
   deletedAt DateTime? @map("deleted_at")
 
   timeline      EventTimelineItem[]
+  speakers      EventSpeaker[]
   registrations Registration[]
   resources     Resource[]
   gallery       Gallery?
@@ -132,6 +133,30 @@ model EventTimelineItem {
 
   @@index([eventId])
   @@map("event_timelines")
+}
+
+/// A speaker (سخنران) presenting at an event. Distinct from the legacy
+/// Event.speakerName/speakerBio single-speaker columns, which stay in place
+/// unused-but-untouched rather than being migrated, per this file's
+/// "do not rename without updating docs/05_DATABASE.md" rule. Up to 3-4 per
+/// event, enforced by the form (features/admin/types/eventForm.ts), not the
+/// database, so a future need for more never requires a migration.
+model EventSpeaker {
+  id      String @id @default(uuid())
+  eventId String @map("event_id")
+  name    String
+  bio     String?
+  /// Path under /public/uploads/speakers, same convention as Event.coverImage.
+  photo   String?
+  sortOrder Int  @default(0) @map("sort_order")
+
+  nameEn String? @map("name_en")
+  bioEn  String? @map("bio_en")
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@map("event_speakers")
 }
 
 model Registration {

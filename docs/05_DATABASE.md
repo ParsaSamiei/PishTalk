@@ -50,6 +50,7 @@ Core Tables
 - admins
 - events
 - event_timelines
+- event_speakers
 - registrations
 - blogs
 - categories
@@ -164,6 +165,8 @@ One Event
 
 Many Timeline Items
 
+Many Speakers
+
 Many Gallery Images
 
 Many Resources
@@ -195,6 +198,40 @@ sort_order
 Relationships
 
 Belongs to Event.
+
+---
+
+# Event Speakers
+
+Purpose
+
+Speakers (سخنران) presenting at an event. Up to 3-4 per event, enforced by
+the admin form rather than the database.
+
+Fields
+
+id
+
+event_id
+
+name
+
+bio
+
+photo
+
+sort_order
+
+Relationships
+
+Belongs to Event.
+
+Notes
+
+Distinct from the legacy events.speaker_name / events.speaker_bio columns,
+which remain for backward compatibility. The public event page shows
+event_speakers when present and falls back to the legacy single-speaker
+fields otherwise.
 
 ---
 
